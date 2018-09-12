@@ -3,21 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package Servlets;
 
+import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
- * @author Sondre
+ * @author Erlend Thorsen
  */
-@WebServlet(name="loginServletFore", urlPatterns = {"/loginServletFore"})
-public class loginServletFore extends HttpServlet {
+@WebServlet(name = "Login", urlPatterns = {"/Login"})
+public class Login extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -30,19 +35,39 @@ public class loginServletFore extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet loginServletFore</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet loginServletFore at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+        String s = null;
+        connectToDatabase ctd = new connectToDatabase();
+        ctd.init();
+        Connection con = ctd.getConnection();
+        String brukernavn = request.getParameter("brukernavn");
+        String passord = request.getParameter("passord");
+        ResultSet rs = null;
+        PreparedStatement checklogon;
+        try {
+            System.out.println("11111");
+            checklogon = con.prepareStatement("SELECT ID FROM innlogginsinfo WHERE brukernavn = ? AND passord = ? LIMIT 1");
+            checklogon.setString(1, brukernavn);
+            checklogon.setString(2, passord);
+            System.out.println("22222");
+            rs = checklogon.executeQuery();
+            s = brukernavn;
+            System.out.println("XD");
+            if(rs.next()){
+                s = "you logged inn";
+                Forside forside = new Forside();
+                forside.skrivForside(request, response);
+                System.out.println("working loggin!");
+            }else if(!rs.next()){
+                s = "feil brukernavn eller passord";
+                System.out.println("working wrong username!");
+            }else{
+                s = "wat";
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            rs = null;
+            ctd.close(rs);        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

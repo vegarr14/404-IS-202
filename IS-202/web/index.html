@@ -6,25 +6,25 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>Vennligst log inn</title>
+        <title>SLIT</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
-        <h1> Vennligst log inn </h1>
-        <div> 
-            <form action="loginServletStud">
-
-                <input type="submit" value="Login Student">
-                
+        <h1>Velkommen til Unsafe SLIT</h1>
+        <h2> Et læringsplatform du ikke bør stole på<br>(Vi lagrer passord i klartekst!)</h2>
+        <div>
+            <h3>Logg inn her</h3>
+            <form action="whatever" method="post">
+                <label>Brukernavn:</label>  
+                <input class="field" type="text" name="brukernavn"><br>
+                <label>Passord:</label> 
+                <input class="field" type="password" name="passord"><br>
+                <label id="ikkekunde">Ikke kunde?</label>
+                <input class="button" formaction="signup" type="submit" name="signUpbtn" value="Registrer deg her">
+                <input class="button" formaction="Login" type="submit" name="loggInbtn" value="Logg inn">
             </form>
-            
-            <form action="loginServletFore">
-                
-                <input type="submit" value="Login Foreleser">
-                
-            </form>
-        
         </div>
     </body>
 </html>
