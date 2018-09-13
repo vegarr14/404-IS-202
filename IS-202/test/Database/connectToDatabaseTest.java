@@ -3,16 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Kunde;
+package Database;
 
-import Database.connectToDatabase;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,27 +48,6 @@ public class connectToDatabaseTest {
         System.out.println("init");
         connectToDatabase instance = new connectToDatabase();
         instance.init();
-        Connection con = instance.getConnection();
-        ResultSet rs = null;
-        PreparedStatement test;
-        try {
-            System.out.println("working 1!");
-            test = con.prepareStatement("SELECT * from kunde LIMIT 1");
-            System.out.println("working 2!");
-            rs = test.executeQuery();
-            System.out.println("working 3!");
-            while(rs.next()){
-                String s = rs.getString(2);
-                System.out.println(s);
-            }
-            System.out.println("working 4!");
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(connectToDatabaseTest.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("sql execute failed!");
-        }
-        rs = null;
-        instance.close(rs);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -81,7 +55,7 @@ public class connectToDatabaseTest {
     /**
      * Test of getConnection method, of class connectToDatabase.
      */
-    /*@Test
+    @Test
     public void testGetConnection() {
         System.out.println("getConnection");
         connectToDatabase instance = new connectToDatabase();
@@ -95,7 +69,7 @@ public class connectToDatabaseTest {
     /**
      * Test of close method, of class connectToDatabase.
      */
-    /*@Test
+    @Test
     public void testClose_ResultSet() {
         System.out.println("close");
         ResultSet rs = null;
@@ -108,7 +82,7 @@ public class connectToDatabaseTest {
     /**
      * Test of close method, of class connectToDatabase.
      */
-    /*@Test
+    @Test
     public void testClose_Statement() {
         System.out.println("close");
         Statement stmt = null;
@@ -121,13 +95,13 @@ public class connectToDatabaseTest {
     /**
      * Test of destroy method, of class connectToDatabase.
      */
-    /*@Test
+    @Test
     public void testDestroy() {
         System.out.println("destroy");
         connectToDatabase instance = new connectToDatabase();
         instance.destroy();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-    }*/
+    }
     
 }

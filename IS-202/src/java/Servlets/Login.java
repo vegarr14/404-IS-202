@@ -45,7 +45,7 @@ public class Login extends HttpServlet {
         PreparedStatement checklogon;
         try {
             System.out.println("11111");
-            checklogon = con.prepareStatement("SELECT ID FROM innlogginsinfo WHERE brukernavn = ? AND passord = ? LIMIT 1");
+            checklogon = con.prepareStatement("SELECT ID FROM bruker WHERE brukernavn = ? AND passord = AES_ENCRYPT(?, 'domo arigato mr.roboto') LIMIT 1");
             checklogon.setString(1, brukernavn);
             checklogon.setString(2, passord);
             System.out.println("22222");
