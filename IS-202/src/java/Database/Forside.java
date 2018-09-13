@@ -31,6 +31,12 @@ public class Forside {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Forside! :D</h1>");
+            out.println("<form name='StudentListe' action='StudentListe' method='post'>");
+            out.println("<a href='StudentListe'>Studentliste</a>");
+            out.println("</form>");
+            out.println("<form name='ModulListe' action='ModulListe' method='post'>");
+            out.println("<a href='ModulListe'>Modulliste</a>");
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
         }
