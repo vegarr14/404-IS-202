@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 /**
  *
  * @author Erlend Thorsen
@@ -35,39 +36,43 @@ public class Login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String s = null;
+        //Kobler til database
         connectToDatabase ctd = new connectToDatabase();
         ctd.init();
         Connection con = ctd.getConnection();
+        
         String brukernavn = request.getParameter("brukernavn");
         String passord = request.getParameter("passord");
+        
         ResultSet rs = null;
         PreparedStatement checklogon;
+        
         try {
-            System.out.println("11111");
+           
             checklogon = con.prepareStatement("SELECT ID FROM bruker WHERE brukernavn = ? AND passord = AES_ENCRYPT(?, 'domo arigato mr.roboto') LIMIT 1");
             checklogon.setString(1, brukernavn);
             checklogon.setString(2, passord);
-            System.out.println("22222");
             rs = checklogon.executeQuery();
-            s = brukernavn;
-            System.out.println("XD");
+            
             if(rs.next()){
-                s = "you logged inn";
+                //Hvis riktig innlogging send til forside
                 Forside forside = new Forside();
                 forside.skrivForside(request, response);
-                System.out.println("working loggin!");
             }else if(!rs.next()){
-                s = "feil brukernavn eller passord";
-                System.out.println("working wrong username!");
+                //Ved feil brukernavn eller passord, send tilbake med feilmelding
+                request.setAttribute("loginResult", "true");
+                RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+                rd.forward(request, response);
             }else{
-                s = "wat";
+
+                System.out.println("Feil i innlogging. Dette skal ikke skje");
             }
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            rs = null;
-            ctd.close(rs);        
+          // Lukker database kobling
+          rs = null;
+          ctd.close(rs);        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
