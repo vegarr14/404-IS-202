@@ -1,9 +1,11 @@
+<%-- 
+    Document   : index
+    Created on : 14.sep.2018, 09:42:45
+    Author     : Erlend Thorsen
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>SLIT</title>
@@ -23,6 +25,13 @@ and open the template in the editor.
                 <input class="field" type="password" name="passord"><br>
                 <input class="button" formaction="Login" type="submit" name="loggInbtn" value="Logg inn">
             </form>
+                <%
+                    if(request.getAttribute("loginResult") != null && request.getAttribute("loginResult") == "true"){
+                %>
+                <p style="color:red">Feil brukernavn eller passord. <br> Vennligst prøv igjen</p>
+                <%
+                }
+                %>
         </div>
     </body>
 </html>
