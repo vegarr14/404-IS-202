@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author vegar
  */
-@WebServlet(name = "LeggTilStudent", urlPatterns = {"/LeggTilStudent"})
-public class LeggTilStudent extends HttpServlet {
+@WebServlet(name = "LeggTilBruker", urlPatterns = {"/LeggTilBruker"})
+public class LeggTilBruker extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,15 +37,17 @@ public class LeggTilStudent extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LeggTilStudent</title>");            
+            out.println("<title>Legg til bruker</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LeggTilStudent at " + request.getContextPath() + "</h1>");
-            out.println("<form name='StudentListe' action='StudentListe' id='LeggTilStudent' method='post'>");
+            out.println("<h1>Servlet LeggTilBruker at " + request.getContextPath() + "</h1>");
+            out.println("<form name='BrukerListe' action='BrukerListe' id='LeggTilBruker' method='post'>");
             out.println("Fornavn <input type='text' name='Fornavn'><br>");
             out.println("Etternavn <input type='text' name='Etternavn'><br>");
             out.println("Email <input type='text' name='Email'><br>");
             out.println("Tlf <input type='text' name='Tlf'><br>");
+            out.println("<input type='radio' name='brukertype' value='student'> Student<br>");
+            out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
             out.println("<input type='submit' value='legg til'>");
             out.println("</form>");
             out.println("</body>");

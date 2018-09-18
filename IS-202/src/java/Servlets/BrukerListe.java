@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author vegar
  */
-@WebServlet(name = "StudentListe", urlPatterns = {"/StudentListe"})
-public class StudentListe extends HttpServlet {
+@WebServlet(name = "BrukerListe", urlPatterns = {"/BrukerListe"})
+public class BrukerListe extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,14 +44,15 @@ public class StudentListe extends HttpServlet {
             Connection con = ctd.getConnection();
             ResultSet rs = null;
             PreparedStatement studentliste;
+            PreparedStatement foreleserliste;
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StudentListe</title>");            
+            out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StudentListe at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             try {
                 if(!request.getParameter("Fornavn").equals("null")) {
                    
@@ -59,6 +60,7 @@ public class StudentListe extends HttpServlet {
                     String Etternavn = request.getParameter("Etternavn");
                     String Email = request.getParameter("Email");
                     String Tlf = request.getParameter("Tlf");
+                    String Type = request.getParameter("brukertype");
                     
                     String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
                     PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
@@ -68,41 +70,55 @@ public class StudentListe extends HttpServlet {
                     rs = hentverdi.executeQuery();
                     rs.next();
                     int id = rs.getInt(1);
-                    rs = null;
+                    rs = null;                    
                     
-                    
-                    String LeggTil =("INSERT INTO Student values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
+                    String LeggTil =("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
                     PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
                     leggtilstudent.executeUpdate();
                     
                 }
             }
             catch (NullPointerException ignore) {
-                out.println("nullpointer");
+                System.out.println("nullpointer");
             }
             catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            out.println("<ul>");
+            
             
             try {
-                studentliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Student");
-                rs =studentliste.executeQuery();
+                //Forelesere
+                out.println("<b>Forelesere:</b>");
+                foreleserliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Foreleser");
+                rs = foreleserliste.executeQuery();
                 //Skriver ut felt en og to for hver rad i query
+                out.println("<ul>");
                 while(rs.next()){
                     out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
                 }
+                out.println("</u1>");
+                rs = null;
+                
+                //Srudenter
+                out.println("<b>Studenter:</b>");
+                studentliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Student");
+                rs = studentliste.executeQuery();
+                //Skriver ut felt en og to for hver rad i query
+                out.println("<u1>");
+                while(rs.next()){
+                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
+                }
+                rs = null;
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("</ul>");
-            out.println("<form name='LeggTilStudent' action='LeggTilStudent' method='post'>");
-            out.println("<button type='submit'>Legg til student</button>");
+            out.println("</u1>");
+            out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
+            out.println("<button type='submit'>Legg til bruker</button>");
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-            rs = null;
             ctd.close(rs);
         }
     }
