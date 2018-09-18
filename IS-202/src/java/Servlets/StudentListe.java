@@ -38,6 +38,7 @@ public class StudentListe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
+            
             connectToDatabase ctd = new connectToDatabase();
             ctd.init();
             Connection con = ctd.getConnection();
@@ -51,6 +52,38 @@ public class StudentListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet StudentListe at " + request.getContextPath() + "</h1>");
+            try {
+                if(!request.getParameter("Fornavn").equals("null")) {
+                   
+                    String Fornavn = request.getParameter("Fornavn");
+                    String Etternavn = request.getParameter("Etternavn");
+                    String Email = request.getParameter("Email");
+                    String Tlf = request.getParameter("Tlf");
+                    
+                    String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                    PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
+                    Leggtilbruker.executeUpdate();
+                    
+                    PreparedStatement hentverdi = con.prepareStatement("SELECT max(id) FROM Bruker");
+                    rs = hentverdi.executeQuery();
+                    rs.next();
+                    int id = rs.getInt(1);
+                    rs = null;
+                    
+                    
+                    String LeggTil =("INSERT INTO Student values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
+                    PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
+                    leggtilstudent.executeUpdate();
+                    
+                }
+            }
+            catch (NullPointerException ignore) {
+                out.println("nullpointer");
+            }
+            catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             out.println("<ul>");
             
             try {
@@ -63,8 +96,10 @@ public class StudentListe extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
             out.println("</ul>");
+            out.println("<form name='LeggTilStudent' action='LeggTilStudent' method='post'>");
+            out.println("<button type='submit'>Legg til student</button>");
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
             rs = null;
