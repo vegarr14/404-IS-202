@@ -43,8 +43,6 @@ public class BrukerListe extends HttpServlet {
             ctd.init();
             Connection con = ctd.getConnection();
             ResultSet rs = null;
-            PreparedStatement studentliste;
-            PreparedStatement foreleserliste;
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -85,35 +83,17 @@ public class BrukerListe extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            String foreleser = ("SELECT forNavn,etterNavn FROM Foreleser");
+            String student = ("SELECT forNavn,etterNavn FROM Student");
             
-            
-            try {
-                //Forelesere
-                out.println("<b>Forelesere:</b>");
-                foreleserliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Foreleser");
-                rs = foreleserliste.executeQuery();
-                //Skriver ut felt en og to for hver rad i query
-                out.println("<ul>");
-                while(rs.next()){
-                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
-                }
-                out.println("</u1>");
-                rs = null;
-                
-                //Srudenter
-                out.println("<b>Studenter:</b>");
-                studentliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Student");
-                rs = studentliste.executeQuery();
-                //Skriver ut felt en og to for hver rad i query
-                out.println("<u1>");
-                while(rs.next()){
-                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
-                }
-                rs = null;
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            out.println("</u1>");
+            //Forelesere
+            out.println("<b>Forelesere:</b>"); 
+            skrivListe(foreleser, rs, con, out);
+              
+            //Srudenter
+            out.println("<b>Studenter:</b>");
+            skrivListe(student, rs, con, out);
+
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
             out.println("<button type='submit'>Legg til bruker</button>");
             out.println("</form>");
@@ -121,6 +101,24 @@ public class BrukerListe extends HttpServlet {
             out.println("</html>");
             ctd.close(rs);
         }
+    }
+    
+    public void skrivListe(String statement, ResultSet rs, Connection con, PrintWriter out) {
+        try {
+            PreparedStatement liste = con.prepareStatement(statement);
+            rs = liste.executeQuery();
+            out.println("<u1>");
+            //Skriver ut felt en og to for hver rad i query
+            while(rs.next()){
+                out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
+            }
+            out.println("</u1>");
+            rs = null;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
