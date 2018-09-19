@@ -5,6 +5,7 @@
  */
 package Database;
 
+import Servlets.Navbar;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
@@ -27,16 +28,16 @@ public class Forside {
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet presentContactInfo</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Forside! :D</h1>");
-            out.println("<form name='BrukerListe' action='BrukerListe' method='post'>");
-            out.println("<a href='BrukerListe'>BrukerListe</a>");
-            out.println("</form>");
-            out.println("<form name='ModulListe' action='ModulListe' method='post'>");
-            out.println("<a href='ModulListe'>Modulliste</a>");
-            out.println("</form>");
+            Navbar navbar = new Servlets.Navbar();
+            navbar.printNavbar("test", out);
+            out.println("<div class='velkommen'>");
+            out.println("<h1>Under Construction</h1>");
+            out.println("<h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }
