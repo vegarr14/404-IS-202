@@ -5,12 +5,8 @@
  */
 package Servlets;
 
-import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author vegar
  */
-@WebServlet(name = "StudentListe", urlPatterns = {"/StudentListe"})
-public class StudentListe extends HttpServlet {
+@WebServlet(name = "LeggTilBruker", urlPatterns = {"/LeggTilBruker"})
+public class LeggTilBruker extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,37 +34,24 @@ public class StudentListe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
-            ResultSet rs = null;
-            PreparedStatement studentliste;
-            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StudentListe</title>");            
+            out.println("<title>Legg til bruker</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StudentListe at " + request.getContextPath() + "</h1>");
-            out.println("<ul>");
-            
-            try {
-                studentliste = con.prepareStatement("SELECT forNavn,etterNavn FROM Student");
-                rs =studentliste.executeQuery();
-                //Skriver ut felt en og to for hver rad i query
-                while(rs.next()){
-                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            out.println("</ul>");
+            out.println("<h1>Servlet LeggTilBruker at " + request.getContextPath() + "</h1>");
+            out.println("<form name='BrukerListe' action='BrukerListe' id='LeggTilBruker' method='post'>");
+            out.println("Fornavn <input type='text' name='Fornavn'><br>");
+            out.println("Etternavn <input type='text' name='Etternavn'><br>");
+            out.println("Email <input type='text' name='Email'><br>");
+            out.println("Tlf <input type='text' name='Tlf'><br>");
+            out.println("<input type='radio' name='brukertype' value='student'> Student<br>");
+            out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
+            out.println("<input type='submit' value='legg til'>");
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-            rs = null;
-            ctd.close(rs);
         }
     }
 
