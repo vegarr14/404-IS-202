@@ -52,11 +52,7 @@ public class ModulListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             
-            out.println("<h1> ModulForm </h1>");
-            out.println("<form action='ModulForm'>");
-                out.println("<input class='field' type='text'>");
-                out.println("<input class='submit' type='submit' value='Legg til'>");
-            out.println("</form>");
+            out.println("<h1> Moduler </h1>");
             
             out.println("<ul>");
             try {
@@ -74,6 +70,9 @@ public class ModulListe extends HttpServlet {
 
             rs = null;
             ctd.close(rs);
+            
+                //out.println("<input class='submit' type='submit' value='Legg til'>");
+                out.println("<input class='Tilbake' type='submit' value='Tilbake'>");   
             
             out.println("</body>");
             out.println("</html>");
