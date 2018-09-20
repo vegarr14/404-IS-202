@@ -43,6 +43,7 @@ public class BrukerListe extends HttpServlet {
             ctd.init();
             Connection con = ctd.getConnection();
             ResultSet rs = null;
+            Query query = new Query();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -51,48 +52,62 @@ public class BrukerListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
+            
+            
+            
             try {
-                if(!request.getParameter("Fornavn").equals("null")) {
-                   
-                    String Fornavn = request.getParameter("Fornavn");
-                    String Etternavn = request.getParameter("Etternavn");
-                    String Email = request.getParameter("Email");
-                    String Tlf = request.getParameter("Tlf");
-                    String Type = request.getParameter("brukertype");
+                if(request.getParameter("button") != null) {
+                    if(request.getParameter("button").equals("legg til")) {
+                        String Fornavn = request.getParameter("Fornavn");
+                        String Etternavn = request.getParameter("Etternavn");
+                        String Email = request.getParameter("Email");
+                        String Tlf = request.getParameter("Tlf");
+                        String Type = request.getParameter("brukertype");
+                        
+                        String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                        PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
+                        Leggtilbruker.executeUpdate();
                     
-                    String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
-                    PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
-                    Leggtilbruker.executeUpdate();
+                        PreparedStatement hentverdi = con.prepareStatement("SELECT max(id) FROM Bruker");
+                        rs = hentverdi.executeQuery();
+                        rs.next();
+                        int id = rs.getInt(1);
+                        rs = null;                    
+                        
+                        String LeggTil =("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
+                        PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
+                        leggtilstudent.executeUpdate();
+                    } else if (request.getParameter("button").equals("oppdater bruker")) {
+                        String forNavn = request.getParameter("Fornavn");
+                        String etterNavn = request.getParameter("Etternavn");
+                        String email = request.getParameter("Email");
+                        String tlf = request.getParameter("Tlf");
+                        String id = request.getParameter("id");
+                        query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                    } else if (request.getParameter("button").equals("slett bruker")) {
+                        query.update("DELETE from foreleser where id = "+request.getParameter("id"));
+                        query.update("DELETE from student where id = "+request.getParameter("id"));
+                        query.update("DELETE from bruker where id = "+request.getParameter("id"));
+                    }
                     
-                    PreparedStatement hentverdi = con.prepareStatement("SELECT max(id) FROM Bruker");
-                    rs = hentverdi.executeQuery();
-                    rs.next();
-                    int id = rs.getInt(1);
-                    rs = null;                    
-                    
-                    String LeggTil =("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
-                    PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
-                    leggtilstudent.executeUpdate();
                     
                 }
-            }
-            catch (NullPointerException ignore) {
-                System.out.println("nullpointer");
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            String foreleser = ("SELECT forNavn,etterNavn FROM Foreleser");
-            String student = ("SELECT forNavn,etterNavn FROM Student");
+            //Skriver ut liste over studenter og forelesere
+            String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
+            String student = ("SELECT forNavn,etterNavn,id FROM Student");
             
             //Forelesere
             out.println("<b>Forelesere:</b>"); 
-            skrivListe(foreleser, rs, con, out);
+            skrivListe(foreleser, rs, query, out);
               
             //Srudenter
             out.println("<b>Studenter:</b>");
-            skrivListe(student, rs, con, out);
+            skrivListe(student, rs, query, out);
 
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
             out.println("<button type='submit'>Legg til bruker</button>");
@@ -103,14 +118,13 @@ public class BrukerListe extends HttpServlet {
         }
     }
     
-    public void skrivListe(String statement, ResultSet rs, Connection con, PrintWriter out) {
+    public void skrivListe(String statement, ResultSet rs, Query query, PrintWriter out) {
         try {
-            PreparedStatement liste = con.prepareStatement(statement);
-            rs = liste.executeQuery();
+            rs = query.query(statement);
             out.println("<u1>");
-            //Skriver ut felt en og to for hver rad i query
+            //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             while(rs.next()){
-                out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
+                out.println("<li> <a href ='LeggTilBruker?id="+rs.getString(3)+"'>" + rs.getString(3) +". "+ rs.getString(1) + " " + rs.getString(2) + "</a></li>");
             }
             out.println("</u1>");
             rs = null;
@@ -118,7 +132,6 @@ public class BrukerListe extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
