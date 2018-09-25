@@ -22,7 +22,8 @@ public class Query {
     private Connection con;
     private ResultSet rs;
     
-    public Query(){
+    //Setter opp objektet med connection klar for statemtents
+    public Query(){    
         ctd = new connectToDatabase();
         ctd.init();
         con = ctd.getConnection();
