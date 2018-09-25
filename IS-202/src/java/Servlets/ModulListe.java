@@ -9,8 +9,6 @@ import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,9 +37,7 @@ public class ModulListe extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            Query query = new Query();
             ResultSet rs = null;
             PreparedStatement modulListe;
             
@@ -55,23 +51,12 @@ public class ModulListe extends HttpServlet {
             out.println("<h1> Moduler </h1>");
             
             out.println("<ul>");
-            try {
-                modulListe = con.prepareStatement("SELECT Modul_navn,Modul_Id FROM modulListe");
-                rs = modulListe.executeQuery();
-                //Skriver ut felt en og to for hver rad i query
-                while(rs.next()){
-                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
+            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
             out.println("</u2>");
 
             rs = null;
-            ctd.close(rs);
             
-                //out.println("<input class='submit' type='submit' value='Legg til'>");
+                out.println("<input class='modulKnapp' type='submit' value='Legg til'>");
                 out.println("<input class='Tilbake' type='submit' value='Tilbake'>");   
             
             out.println("</body>");
