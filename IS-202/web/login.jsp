@@ -31,6 +31,10 @@
                     %>
                     <p style="color:red">Feil brukernavn eller passord. <br> Vennligst prøv igjen</p>
                     <%
+                    }  if(request.getAttribute("missingStatus") != null && request.getAttribute("missingStatus") == "true"){
+                    %>
+                    <p style="color:red">Innlogging er riktig men du er verken student eller foreleser i systemet<br>"You have no power here Gandalf the grey" - King Theoden</p>
+                    <%
                     }
                     %>
             </div>
