@@ -8,22 +8,21 @@ package Servlets;
 import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
+
 /**
  *
- * @author Erlend Thorsen
+ * @author Sondre
  */
-@WebServlet(name = "Login", urlPatterns = {"/Login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
+public class ModulListe extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,43 +35,48 @@ public class Login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Kobler til database
-        connectToDatabase ctd = new connectToDatabase();
-        ctd.init();
-        Connection con = ctd.getConnection();
-        
-        String brukernavn = request.getParameter("brukernavn");
-        String passord = request.getParameter("passord");
-        
-        ResultSet rs = null;
-        PreparedStatement checklogon;
-        
-        try {
-           
-            checklogon = con.prepareStatement("SELECT ID FROM bruker WHERE brukernavn = ? AND passord = AES_ENCRYPT(?, 'domo arigato mr.roboto') LIMIT 1");
-            checklogon.setString(1, brukernavn);
-            checklogon.setString(2, passord);
-            rs = checklogon.executeQuery();
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             
-            if(rs.next()){
-                //Hvis riktig innlogging send til forside
-                Forside forside = new Forside();
-                forside.skrivForside(request, response);
-            }else if(!rs.next()){
-                //Ved feil brukernavn eller passord, send tilbake med feilmelding
-                request.setAttribute("loginResult", "true");
-                RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
-                rd.forward(request, response);
-            }else{
+            connectToDatabase ctd = new connectToDatabase();
+            ctd.init();
+            Connection con = ctd.getConnection();
+            ResultSet rs = null;
+            PreparedStatement modulListe;
+            
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ModulListe</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            
+            out.println("<h1> Moduler </h1>");
+            
+            out.println("<ul>");
+            try {
+                modulListe = con.prepareStatement("SELECT Modul_navn,Modul_Id FROM modulListe");
+                rs = modulListe.executeQuery();
+                //Skriver ut felt en og to for hver rad i query
+                while(rs.next()){
+                    out.println("<li>" + rs.getString(1) + " " + rs.getString(2) + "</li>");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            out.println("</u2>");
 
-                System.out.println("Feil i innlogging. Dette skal ikke skje");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          // Lukker database kobling
-          rs = null;
-          ctd.close(rs);        
+            rs = null;
+            ctd.close(rs);
+            
+                //out.println("<input class='submit' type='submit' value='Legg til'>");
+                out.println("<input class='Tilbake' type='submit' value='Tilbake'>");   
+            
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
