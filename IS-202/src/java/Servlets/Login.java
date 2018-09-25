@@ -66,16 +66,12 @@ public class Login extends HttpServlet {
                 rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + id + "'");                
                 if(rs.next()){
                     session.setAttribute("isForeleser", true);
-                    session.setAttribute("fornavn", rs.getString(1));
-                    session.setAttribute("etternavn", rs.getString(1));
-                
+
                 //Om bruker ikke er foreleser sjekker om bruker er student og legger attributter i session
                 }else if(!rs.next()){
                     rs = query.query("Select forNavn, etterNavn from student where id ='" + id + "'");
                     if(rs.next()){
                         session.setAttribute("isForeleser", false);
-                        session.setAttribute("fornavn", rs.getString(1));
-                        session.setAttribute("etternavn", rs.getString(2));
                         
                     //Om bruker er hverken student eller forelser sendes den tilbake til loginside med feilmeldin    
                     }else if(!rs.next()){
@@ -91,6 +87,9 @@ public class Login extends HttpServlet {
                     System.out.println("Feil i forsøk på å sjekke forelser tabell");
                 }
                 
+                //Setter atributter
+                session.setAttribute("fornavn", rs.getString(1));
+                session.setAttribute("etternavn", rs.getString(2));
                 session.setAttribute("id", id);
                 
                  //Hvis riktig innlogging send til forside
