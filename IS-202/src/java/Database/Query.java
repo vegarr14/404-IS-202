@@ -6,12 +6,12 @@
 package Database;
 
 import Servlets.Login;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.PrintWriter;
+import java.sql.*;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
@@ -48,5 +48,22 @@ public class Query {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rs;
+    }
+    
+    public void skrivModulliste(String selectNoe, String selected, PrintWriter out) {
+        try {
+            PreparedStatement query = con.prepareStatement(selectNoe);
+            rs = query.executeQuery();
+            out.println("<u1>");
+            //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
+            while(rs.next()){
+                out.println("<li> <a href ='LeggTilModul?id="+rs.getString(1)+"'>" + rs.getString(2) +" "+ rs.getString(3) + "</a></li>");
+            }
+            out.println("</u1>");
+            rs = null;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
