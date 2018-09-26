@@ -39,15 +39,17 @@ public class BrukerListe extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ResultSet rs = null;
             Query query = new Query();
-            
+            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'");    
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");    
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
+            Navbar navbar = new Navbar();
+            navbar.printNavbar("Brukerliste", out);
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             
@@ -68,7 +70,7 @@ public class BrukerListe extends HttpServlet {
                         rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);
-                        rs = null;                    
+                        rs = null;
                         
                         query.update("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
                         
@@ -95,6 +97,7 @@ public class BrukerListe extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+            out.println("<div class='velkommen'>");
             
             //Skriver ut liste over studenter og forelesere
             String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
@@ -111,6 +114,7 @@ public class BrukerListe extends HttpServlet {
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
             out.println("<button type='submit'>Legg til bruker</button>");
             out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }

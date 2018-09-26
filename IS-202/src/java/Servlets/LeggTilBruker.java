@@ -45,8 +45,9 @@ public class LeggTilBruker extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'");            
+            out.println("<meta default-character-set='utf8'/>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
             out.println("<title>Legg til bruker</title>");            
             out.println("</head>");
             out.println("<body>");
