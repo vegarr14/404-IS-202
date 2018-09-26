@@ -31,8 +31,9 @@ CREATE TABLE if not exists`Foreleser` (
 );
 
 CREATE TABLE if not exists `modulListe` (
-  `modul_Id` int(11) NOT null,
+  `modul_Id` int(11) NOT NULL AUTO_INCREMENT,
   `modul_Navn` varchar(20) NOT NULL,
+  `modul_Nummer int (30) NOT NULL,
   primary key(`modul_Id`)
   );
 
@@ -47,11 +48,11 @@ INSERT into Student values('1','Vegar','Ryen','emailxd','12345678'),
 ('2','Sondre','Hammersbøen','emailcx','87654321'),
 ('3','Erlend','Thorsen','mailmail','12344321');
 
-INSERT into modulListe (`modul_Id`, `modul_Navn`) 
-values (1, 'Modul'), 
-(2, 'Modul'), 
-(3, 'Modul'), 
-(4, 'Modul'), 
-(5, 'Modul');
+INSERT into modulListe (`modul_Navn`, `modul_Nummer`) 
+values ('Modul', 1), 
+('Modul', 2), 
+('Modul', 3), 
+('Modul', 4), 
+('Modul', 5);
                      
-select * from bruker;
+select * from modulListe;
