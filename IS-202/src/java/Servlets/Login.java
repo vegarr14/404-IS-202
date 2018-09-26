@@ -91,10 +91,11 @@ public class Login extends HttpServlet {
                 session.setAttribute("fornavn", rs.getString(1));
                 session.setAttribute("etternavn", rs.getString(2));
                 session.setAttribute("id", id);
+                session.setAttribute("loggedIn", "true");
                 
                  //Hvis riktig innlogging send til forside
-                Forside forside = new Forside();
-                forside.skrivForside(request, response);
+                RequestDispatcher rd = request.getRequestDispatcher("forside.jsp");
+                rd.forward(request, response);
             
             //Ved feil brukernavn eller passord, send tilbake til login.jsp med feilmelding
             }else if(!rs.next()){                
