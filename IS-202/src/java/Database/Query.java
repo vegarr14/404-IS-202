@@ -50,6 +50,9 @@ public class Query {
         return rs;
     }
     
+    /*@param selectNoe er MySQL-teksten som skal sendes som query (prepareStatement)
+    @param selected er table-navn
+    @param out er for at PrintWriter skal skrive ut.*/
     public void skrivModulliste(String selectNoe, String selected, PrintWriter out) {
         try {
             PreparedStatement query = con.prepareStatement(selectNoe);
@@ -57,8 +60,9 @@ public class Query {
             out.println("<u1>");
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             while(rs.next()){
-                out.println("<li> <a href ='LeggTilModul?id="+rs.getString(1)+"'>" + rs.getString(2) +" "+ rs.getString(3) + "</a></li>");
+                out.println("<th>" + rs.getString(2) +" "+ rs.getString(3) + "</th>" + "<td><a href ='LeggTilModul?id="+"rs.getString(4)"+"'></td>");
             }
+            /*Itererer gjennom lista og returnerer det som står på kolonne 1, 2 og 3, i den rekkefølgen.*/ 
             out.println("</u1>");
             rs = null;
             

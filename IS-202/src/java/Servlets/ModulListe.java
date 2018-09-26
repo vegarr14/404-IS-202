@@ -37,6 +37,7 @@ public class ModulListe extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
+            /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
             Query query = new Query();
             ResultSet rs = null;
             PreparedStatement modulListe;
@@ -44,20 +45,22 @@ public class ModulListe extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");            
+            out.println("<title>Servlet ModulListe</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
             out.println("</head>");
             out.println("<body>");
             
             out.println("<h1> Moduler </h1>");
             
-            out.println("<ul>");
+            out.println("<table name=modulListe>");
+            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
             query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</u2>");
+            out.println("</table>");
 
             rs = null;
             
-                out.println("<input class='modulKnapp' type='submit' value='Legg til'>");
-                out.println("<input class='Tilbake' type='submit' value='Tilbake'>");   
+                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
+                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
             
             out.println("</body>");
             out.println("</html>");
