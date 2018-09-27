@@ -22,6 +22,8 @@ public class Navbar {
     /**
      *
      * @param active
+     * @param out
+     * @throws java.io.IOException
      */
         public void printNavbar(String active, PrintWriter out) throws IOException{
             
