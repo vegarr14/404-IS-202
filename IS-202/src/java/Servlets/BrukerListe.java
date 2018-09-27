@@ -60,13 +60,14 @@ public class BrukerListe extends HttpServlet {
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny bruker
                         //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String Fornavn = request.getParameter("Fornavn");
                         String Etternavn = request.getParameter("Etternavn");
                         String Email = request.getParameter("Email");
                         String Tlf = request.getParameter("Tlf");
                         String Type = request.getParameter("brukertype");
                         
-                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
                         rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);

@@ -25,7 +25,7 @@ public class Navbar {
      */
         public void printNavbar(String active, PrintWriter out) throws IOException{
             
-            print("JSP", active, null, out);
+            print("PW", active, null, out);
             
         }
     
