@@ -38,6 +38,7 @@ public class Navbar {
             out.println("<a href='#'>IS-200</a>");
             out.println("<a href='#'>IS-201</a>");
             out.println("<a href='#'>IS-202</a>");
+            out.println("<a href='LeggTilKurs'>Legg til kurs</a>");
             out.println("</div>");
             out.println("<li style='float:right'><a href='#about'>Innstillinger</a></li>");
             out.println("</ul>");
