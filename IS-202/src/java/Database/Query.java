@@ -60,34 +60,51 @@ public class Query {
             
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             out.println("<tr>");
+            out.println("<th></th>");
             while(rs.next()){
                 //<a href ='LeggTilModul?id="+"rs.getString(4)"+"'>
                     out.println("<th>" + rs.getString(2) +" "+ rs.getString(3) + "</th>");
             }
             out.println("</tr>");
-            rs.first();
-            out.println("<tr class='student'>");
+            out.println("<tr>");
+            rs.beforeFirst();
             while (rs.next()){
-                    out.println("<td> Student nr " + rs.getString(3) + " </td>");
+                out.println("<tr>");
+                out.println("<td class='student'> Student nr " + rs.getString(3) + " </td>");
+                int tellerI = 0;
+                while (tellerI<5)   {
+                        tellerI++;
+                        out.println("<td class='kommentar'> Kommentarer nr " + tellerI +" </td>");
+                    }
+                out.println("<tp class='prosent'> Prosentvis framgang? " + "33%" + "</tp>");
+                out.println("</tr>");
             }
             out.println("</tr>");
-            rs.first();
+            
+            /*out.println("</tr>");
+            rs.beforeFirst();
+            out.println("<tr>");
+            while (rs.next()){
+                    out.println("<td class='student'> Student nr " + rs.getString(3) + " </td>");
+            }
+            out.println("</tr>");
+            rs.beforeFirst();
             out.println("<tr>");
             while (rs.next()){
                     out.println("<td class='kommentar'> Kommentarer nr " + rs.getString(3) +" </td>");
             }
             out.println("</tr>");
-            rs.first();
+            rs.beforeFirst();
             out.println("<tr>");
             while (rs.next()){
                     out.println("<td class='prosent'> Prosentvis framgang? " + "33%" + "</td>");
             }
             out.println("</tr>");
-            rs.first();
+            rs.beforeFirst();
                     //out.println("</a>");
             
             /*Itererer gjennom lista og returnerer det som står på kolonne 1, 2 og 3, i den rekkefølgen.*/ 
-            //query.close();
+            //query.close();*/
             
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
