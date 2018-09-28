@@ -9,6 +9,13 @@ and open the template in the editor.
 */
 
 body    {
-    text-align: center;
     
+}
+
+th {
+    border: 1px solid black;
+}
+
+.student {
+    border: 5px solid black;
 }

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author vegar
@@ -21,7 +20,7 @@ public class Query {
     private connectToDatabase ctd;
     private Connection con;
     private ResultSet rs;
-    
+            
     //Setter opp objektet med connection klar for statemtents
     public Query(){    
         ctd = new connectToDatabase();
@@ -58,14 +57,37 @@ public class Query {
         try {
             PreparedStatement query = con.prepareStatement(selectNoe);
             rs = query.executeQuery();
-            out.println("<u1>");
+            
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
+            out.println("<tr>");
             while(rs.next()){
-                out.println("<th>" + rs.getString(2) +" "+ rs.getString(3) + "</th>" + "<td><a href ='LeggTilModul?id="+"rs.getString(4)"+"'></td>");
+                //<a href ='LeggTilModul?id="+"rs.getString(4)"+"'>
+                    out.println("<th>" + rs.getString(2) +" "+ rs.getString(3) + "</th>");
             }
+            out.println("</tr>");
+            rs.first();
+            out.println("<tr class='student'>");
+            while (rs.next()){
+                    out.println("<td> Student nr " + rs.getString(3) + " </td>");
+            }
+            out.println("</tr>");
+            rs.first();
+            out.println("<tr>");
+            while (rs.next()){
+                    out.println("<td class='kommentar'> Kommentarer nr " + rs.getString(3) +" </td>");
+            }
+            out.println("</tr>");
+            rs.first();
+            out.println("<tr>");
+            while (rs.next()){
+                    out.println("<td class='prosent'> Prosentvis framgang? " + "33%" + "</td>");
+            }
+            out.println("</tr>");
+            rs.first();
+                    //out.println("</a>");
+            
             /*Itererer gjennom lista og returnerer det som står på kolonne 1, 2 og 3, i den rekkefølgen.*/ 
-            out.println("</u1>");
-            rs = null;
+            //query.close();
             
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

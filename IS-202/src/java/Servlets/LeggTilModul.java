@@ -41,13 +41,15 @@ public class LeggTilModul extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LeggTilModul</title>");            
+            out.println("<title>Servlet LeggTilModul</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
-            
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            
+                /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
+                out.println("<table name=modulListe align='center'>");
+                    query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
+                out.println("</table>");
             out.println("</body>");
             out.println("</html>");
         }
