@@ -5,22 +5,23 @@
  */
 package Servlets;
 
-import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Sondre
+ * @author Erlend Thorsen
  */
-@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
-public class ModulListe extends HttpServlet {
+@WebServlet(name = "LoggUt", urlPatterns = {"/LoggUt"})
+public class LoggUt extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,37 +35,18 @@ public class ModulListe extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+        try {
             
-            /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
-            Query query = new Query();
-            ResultSet rs = null;
-            PreparedStatement modulListe;
+            HttpSession session = request.getSession();
             
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
-            out.println("</head>");
-            out.println("<body>");
-            
-            out.println("<h1> Moduler </h1>");
-            
-            out.println("<table name=modulListe>");
-            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</table>");
-
-            rs = null;
-            
-                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
-            
-            out.println("</body>");
-            out.println("</html>");
+            session.invalidate();
+            response.sendRedirect("login.jsp");
+           
+        } catch(IOException ex){
+            System.out.println("Feil i LoggUt servlet");
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

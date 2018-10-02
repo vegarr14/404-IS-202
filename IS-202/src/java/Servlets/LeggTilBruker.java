@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.connectToDatabase;
+import Database.Query;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -44,18 +45,17 @@ public class LeggTilBruker extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            //out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'");
-            //out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'");            
+            out.println("<meta default-character-set='utf8'/>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
             out.println("<title>Legg til bruker</title>");            
             out.println("</head>");
             out.println("<body>");
-            
             out.println("<h1>Servlet LeggTilBruker at " + request.getContextPath() + "</h1>");
             out.println("<form name='BrukerListe' action='BrukerListe' id='LeggTilBruker' method='post'>");
             
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            //Query, resultset og variabler som skal brukes
+            Query query = new Query();
             ResultSet rs = null;
             String Fornavn = "";
             String Etternavn = "";
@@ -63,10 +63,12 @@ public class LeggTilBruker extends HttpServlet {
             String Tlf = "";
             
             if(request.getParameter("id")!= null) {
+                /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
+                 * bruker i BrukerListe slik at informasjon om brukeren kommer opp i feltene
+                 * + valg mellom oppdater bruker og slett bruker
+                 */
                 String id = request.getParameter("id");
-                String DataString = ("select * from foreleser where id = "+id+" union select * from student where id = "+id);
-                PreparedStatement HentData = con.prepareStatement(DataString);
-                rs = HentData.executeQuery();
+                rs = query.query("select * from foreleser where id = "+id+" union select * from student where id = "+id);
                 rs.next();
                 Fornavn = rs.getString(2);
                 Etternavn = rs.getString(3);
@@ -78,6 +80,7 @@ public class LeggTilBruker extends HttpServlet {
                 out.println("<input type='submit' name='button' value='oppdater bruker'>");
                 out.println("<input type='submit' name='button' value='slett bruker'>");
             } else {
+                //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
                 printFelter(Fornavn,Etternavn,Email,Tlf,out);
                 out.println("<input type='radio' name='brukertype' value='student' checked> Student<br>");
                 out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
@@ -93,11 +96,12 @@ public class LeggTilBruker extends HttpServlet {
         
     }
     
+    //Felles metode for input feltene på siden
     public void printFelter (String Fornavn, String Etternavn, String Email, String Tlf, PrintWriter out) {
         out.println("Fornavn <input type='text' name='Fornavn' value='"+Fornavn+"'><br>");
         out.println("Etternavn <input type='text' name='Etternavn' value='"+Etternavn+"'><br>");
         out.println("Email <input type='text' name='Email' value='"+Email+"'><br>");
-        out.println("Tlf <input type='text' name='Tlf' Value='"+Tlf+"'><br>");
+        out.println("Tlf <input type='number' maxlength='8' name='Tlf' Value='"+Tlf+"'><br>");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

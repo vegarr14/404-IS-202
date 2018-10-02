@@ -37,47 +37,48 @@ public class BrukerListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
             ResultSet rs = null;
             Query query = new Query();
-            
+            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");    
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
+            Navbar navbar = new Navbar();
+            navbar.printNavbar("Brukerliste", out);
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             
             
             try {
                 if(request.getParameter("button") != null) {
+                    //sjekker om en knapp med name button er trykket på for å åpne siden
                     if(request.getParameter("button").equals("legg til")) {
+                        //Kjører hvis det skal legges til ny bruker
+                        //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String Fornavn = request.getParameter("Fornavn");
                         String Etternavn = request.getParameter("Etternavn");
                         String Email = request.getParameter("Email");
                         String Tlf = request.getParameter("Tlf");
                         String Type = request.getParameter("brukertype");
                         
-                        String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
-                        PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
-                        Leggtilbruker.executeUpdate();
-                    
-                        PreparedStatement hentverdi = con.prepareStatement("SELECT max(id) FROM Bruker");
-                        rs = hentverdi.executeQuery();
+                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                        rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);
-                        rs = null;                    
+                        rs = null;
                         
-                        String LeggTil =("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
-                        PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
-                        leggtilstudent.executeUpdate();
+                        query.update("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
+                        
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
+                        //kjører hvis en bruker skal oppdateres
+                        //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String forNavn = request.getParameter("Fornavn");
                         String etterNavn = request.getParameter("Etternavn");
                         String email = request.getParameter("Email");
@@ -85,7 +86,10 @@ public class BrukerListe extends HttpServlet {
                         String id = request.getParameter("id");
                         query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
                     } else if (request.getParameter("button").equals("slett bruker")) {
+                        //kjører hvis en bruker skal slettes
+                        //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
                         query.update("DELETE from foreleser where id = "+request.getParameter("id"));
                         query.update("DELETE from student where id = "+request.getParameter("id"));
                         query.update("DELETE from bruker where id = "+request.getParameter("id"));
@@ -96,6 +100,7 @@ public class BrukerListe extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+            out.println("<div class='velkommen'>");
             
             //Skriver ut liste over studenter og forelesere
             String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
@@ -112,9 +117,9 @@ public class BrukerListe extends HttpServlet {
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
             out.println("<button type='submit'>Legg til bruker</button>");
             out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
-            ctd.close(rs);
         }
     }
     

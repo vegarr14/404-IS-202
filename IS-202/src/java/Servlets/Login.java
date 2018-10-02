@@ -18,6 +18,7 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpSession;
 /**
  *
  * @author Erlend Thorsen
@@ -33,33 +34,64 @@ public class Login extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     */
+     */   
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //Kobler til database
-        connectToDatabase ctd = new connectToDatabase();
-        ctd.init();
-        Connection con = ctd.getConnection();
+        Query query = new Query();
+        ResultSet rs = null;
         
         String brukernavn = request.getParameter("brukernavn");
         String passord = request.getParameter("passord");
         
-        ResultSet rs = null;
-        PreparedStatement checklogon;
-        
         try {
            
-            checklogon = con.prepareStatement("SELECT ID FROM bruker WHERE brukernavn = ? AND passord = AES_ENCRYPT(?, 'domo arigato mr.roboto') LIMIT 1");
-            checklogon.setString(1, brukernavn);
-            checklogon.setString(2, passord);
-            rs = checklogon.executeQuery();
+            rs = query.query("SELECT ID FROM bruker WHERE brukernavn ='" + brukernavn + "' AND passord = AES_ENCRYPT('" + passord + "', 'domo arigato mr.roboto') LIMIT 1");
             
+            // Om innloggingsinfo er riktig prøv å logg inn
             if(rs.next()){
-                //Hvis riktig innlogging send til forside
-                Forside forside = new Forside();
-                forside.skrivForside(request, response);
-            }else if(!rs.next()){
-                //Ved feil brukernavn eller passord, send tilbake med feilmelding
+               
+                HttpSession session = request.getSession();
+                
+                String id = rs.getString(1);
+                
+                //Sjekker om bruker er foreleser og legger attributter i session
+                rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + id + "'");                
+                if(rs.next()){
+                    session.setAttribute("isForeleser", true);
+
+                //Om bruker ikke er foreleser sjekker om bruker er student og legger attributter i session
+                }else if(!rs.next()){
+                    rs = query.query("Select forNavn, etterNavn from student where id ='" + id + "'");
+                    if(rs.next()){
+                        session.setAttribute("isForeleser", false);
+                        
+                    //Om bruker er hverken student eller forelser sendes den tilbake til loginside med feilmeldin    
+                    }else if(!rs.next()){
+                        request.setAttribute("missingStatus", "true");
+                        RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
+                        rd.forward(request, response);
+                        
+                    }else{
+                        System.out.println("Feil i forsøk på å sjekke student tabell");
+                    }
+                   
+                }else{
+                    System.out.println("Feil i forsøk på å sjekke forelser tabell");
+                }
+                
+                //Setter atributter
+                session.setAttribute("fornavn", rs.getString(1));
+                session.setAttribute("etternavn", rs.getString(2));
+                session.setAttribute("id", id);
+                session.setAttribute("loggedIn", "true");
+                
+                 //Hvis riktig innlogging send til forside
+                RequestDispatcher rd = request.getRequestDispatcher("forside.jsp");
+                rd.forward(request, response);
+            
+            //Ved feil brukernavn eller passord, send tilbake til login.jsp med feilmelding
+            }else if(!rs.next()){                
                 request.setAttribute("loginResult", "true");
                 RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
                 rd.forward(request, response);
@@ -71,8 +103,7 @@ public class Login extends HttpServlet {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
           // Lukker database kobling
-          rs = null;
-          ctd.close(rs);        
+          //query.close()       
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
