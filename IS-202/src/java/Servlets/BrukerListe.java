@@ -78,6 +78,7 @@ public class BrukerListe extends HttpServlet {
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String forNavn = request.getParameter("Fornavn");
                         String etterNavn = request.getParameter("Etternavn");
                         String email = request.getParameter("Email");
@@ -85,6 +86,7 @@ public class BrukerListe extends HttpServlet {
                         String id = request.getParameter("id");
                         query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
                     } else if (request.getParameter("button").equals("slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
