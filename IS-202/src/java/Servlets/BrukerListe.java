@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -48,8 +49,15 @@ public class BrukerListe extends HttpServlet {
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
-            Navbar navbar = new Navbar();
-            navbar.printNavbar("Brukerliste", out);
+            
+
+            try{
+                HttpSession session = request.getSession();
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Brukerliste",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             

@@ -16,7 +16,7 @@
     <body>
         <div class="velkommen">
             <h1>Velkommen til <span style="color: orange">SLIT</span></h1>
-            <h2> Et læringsplatform med få funksjoner</h2>
+            <h2> En læringsplatform med få funksjoner</h2>
             <div>
                 <h3>Logg inn her</h3>
                 <form action="Login" method="post">
