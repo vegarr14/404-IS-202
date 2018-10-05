@@ -23,13 +23,20 @@ public class Brukernavn {
     public static String lastnamechars;
     public static String dato = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
     public static String Ã¥r;
-    public String brukernavn;     
+    public String brukernavn; 
     
     public Brukernavn(HttpServletRequest request){
     firstname=request.getParameter("Fornavn");
-    lastname=request.getParameter("Etternavn");   
-    firstnamechars = firstname.substring(0, 4);
-    lastnamechars = lastname.substring(0, 3);
+    lastname=request.getParameter("Etternavn");
+    
+    if (firstname.length() > 4)
+            firstnamechars = firstname.substring(0, 4);
+    else firstnamechars = firstname;
+    
+    if (lastname.length() > 3)
+        lastnamechars = lastname.substring(0, 3);
+    else lastnamechars = lastname;
+    
     Ã¥r = dato.substring(Math.max(dato.length() - 2, 0));
     brukernavn = firstnamechars + lastnamechars + Ã¥r;    
     sjekkBrukernavn();
