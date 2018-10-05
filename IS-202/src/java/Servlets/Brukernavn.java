@@ -16,30 +16,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.Integer;
 
-//Funksjon som kalles inni eksisterende servlet, genererer brukernavn for DB
-
-//Heller plassere koden i LeggTilBruker?
-
-//public class Brukernavn extends LeggTilBruker { 
-
 public class Brukernavn {
-    public static String firstname; //Må hentes fra input i leggtilbruker eller DB?
-    public static String lastname; //Må hentes fra input i leggtilbruker eller DB?
+    public static String firstname;
+    public static String lastname;
     public static String firstnamechars;
     public static String lastnamechars;
     public static String dato = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
     public static String Ã¥r;
-    public String brukernavn; //Skal sendes til DB eller sendes tilbake til leggtilbruker som sender til DB, må diskuteres
-    
-    //Må kunne håndtere feilmelding fra DB om det eksisterer et likt brukernavn
-    //Bruke feilmeldingen til å ta i bruk alternativ generering av brukernavn unique/ikke unique
-    //eller bare gjøre et søk på forhånd med en if != setning, 
+    public String brukernavn; 
     
     public Brukernavn(HttpServletRequest request){
     firstname=request.getParameter("Fornavn");
-    lastname=request.getParameter("Etternavn");   
-    firstnamechars = firstname.substring(0, 4);
-    lastnamechars = lastname.substring(0, 3);
+    lastname=request.getParameter("Etternavn");
+    
+    if (firstname.length() > 4)
+            firstnamechars = firstname.substring(0, 4);
+    else firstnamechars = firstname;
+    
+    if (lastname.length() > 3)
+        lastnamechars = lastname.substring(0, 3);
+    else lastnamechars = lastname;
+    
     Ã¥r = dato.substring(Math.max(dato.length() - 2, 0));
     brukernavn = firstnamechars + lastnamechars + Ã¥r;    
     sjekkBrukernavn();
