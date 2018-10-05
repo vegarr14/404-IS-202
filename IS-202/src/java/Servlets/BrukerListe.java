@@ -89,7 +89,6 @@ public class BrukerListe extends HttpServlet {
                         query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
-                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + session.getAttribute("id") + "'"); 
                         session.setAttribute("fornavn", forNavn);
                         session.setAttribute("etternavn", etterNavn);
                     } else if (request.getParameter("button").equals("slett bruker")) {
