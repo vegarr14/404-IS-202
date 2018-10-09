@@ -90,13 +90,14 @@ public class Navbar {
                 }else{
                     rs = query.query("Select * from tarKurs where studentId ='"+id+"'");
                 }
-
+                
                 while(rs.next()){                  
                     String kursId = rs.getString(1);
-                    rs2 = query.query("Select kursId from kurs where id ='"+kursId+"'");
+                    rs2 = query.query("Select kursId,kursNavn from kurs where id ='"+kursId+"'");
                     rs2.next();
-                    String kursNavn = rs2.getString(1);
-                    navArray.add("<a href='"+kursNavn+"'>"+kursNavn+"</a>");
+                    String kursKode = rs2.getString(1);
+                    String kursNavn = rs2.getString(2);
+                    navArray.add("<a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>"+kursKode+"</a>");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
