@@ -55,7 +55,7 @@ public class Navbar {
                 classInnstillinger = "class='active'";
             }
             //navbar i array
-            String[] navArray = new String[20];
+            String[] navArray = new String[21];
             navArray[0] = "<div class='topnav'>";
             navArray[1] = "<ul>";
             navArray[2] = "<li><a "+classForside+" href='forside.jsp'>Forside</a></li>";
@@ -64,18 +64,19 @@ public class Navbar {
             navArray[5] = "<div class='dropdown-content'>";
             navArray[6] = "<a href='BrukerListe'>Brukerliste</a>";
             navArray[7] = "<a href='ModulListe'>Modulliste</a>";
-            navArray[8] = "</div>";
-            navArray[9] = "<li class='dropdown'>";
-            navArray[10] = "<a href='javascript:void(0)' class='dropbtn'>Kurs</a>";
-            navArray[11] = "<div class='dropdown-content'>";
-            navArray[12] = "<a href='#'>IS-200</a>";
-            navArray[13] = "<a href='#'>IS-201</a>";
-            navArray[14] = "<a href='#'>IS-202</a>";
-            navArray[15] = "</div>";
-            navArray[16] = "<li style='float:right'><a href='LoggUt'>Logg ut</a><li>";
-            navArray[17] = "<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>";
-            navArray[18] = "</ul>";
-            navArray[19] = "</div>";
+            navArray[8] = "<a href='GruppeListe'>Gruppeliste</a>";
+            navArray[9] = "</div>";
+            navArray[10] = "<li class='dropdown'>";
+            navArray[11] = "<a href='javascript:void(0)' class='dropbtn'>Kurs</a>";
+            navArray[12] = "<div class='dropdown-content'>";
+            navArray[13] = "<a href='#'>IS-200</a>";
+            navArray[14] = "<a href='#'>IS-201</a>";
+            navArray[15] = "<a href='#'>IS-202</a>";
+            navArray[16] = "</div>";
+            navArray[17] = "<li style='float:right'><a href='LoggUt'>Logg ut</a><li>";
+            navArray[18] = "<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>";
+            navArray[19] = "</ul>";
+            navArray[20] = "</div>";
             
             //velger type Writer og skriver ut navbar
             if(type == "JSP"){
