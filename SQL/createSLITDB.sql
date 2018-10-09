@@ -37,12 +37,6 @@ CREATE TABLE if not exists `modulListe` (
   primary key(`modul_Id`)
   );
 
-CREATE TABLE if not exists`Kurs` (
-`id` int(6) NOT NULL auto_increment,
-`kursid` varchar(6) NOT NULL,
-`kursnavn` varchar(50) NOT NULL,
-primary key(`id`)
-);
 
 INSERT into bruker (brukernavn, passord) Values ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
