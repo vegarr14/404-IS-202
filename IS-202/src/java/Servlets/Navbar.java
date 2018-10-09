@@ -22,7 +22,10 @@ public class Navbar {
     /**
      *
      * @param active
+     * @param out
+     * @throws java.io.IOException
      */
+  
         public void printNavbar(String active, PrintWriter out) throws IOException{
             
             print("PW", active, null, out);
@@ -55,7 +58,7 @@ public class Navbar {
                 classInnstillinger = "class='active'";
             }
             //navbar i array
-            String[] navArray = new String[20];
+            String[] navArray = new String[21];
             navArray[0] = "<div class='topnav'>";
             navArray[1] = "<ul>";
             navArray[2] = "<li><a "+classForside+" href='forside.jsp'>Forside</a></li>";
@@ -71,11 +74,12 @@ public class Navbar {
             navArray[12] = "<a href='#'>IS-200</a>";
             navArray[13] = "<a href='#'>IS-201</a>";
             navArray[14] = "<a href='#'>IS-202</a>";
-            navArray[15] = "</div>";
-            navArray[16] = "<li style='float:right'><a href='LoggUt'>Logg ut</a><li>";
-            navArray[17] = "<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>";
-            navArray[18] = "</ul>";
-            navArray[19] = "</div>";
+            navArray[15] = "<a href='LeggTilKurs'>Legg til kurs</a>";
+            navArray[16] = "</div>";
+            navArray[17] = "<li style='float:right'><a href='LoggUt'>Logg ut</a><li>";
+            navArray[18] = "<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>";
+            navArray[19] = "</ul>";
+            navArray[20] = "</div>";
             
             //velger type Writer og skriver ut navbar
             if(type == "JSP"){
