@@ -5,8 +5,14 @@
  */
 package Servlets;
 
+import Database.Query;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.jsp.JspWriter;
 
 /**
@@ -18,27 +24,27 @@ public class Navbar {
         public Navbar(){
             
         }
-
+        
     /**
      *
      * @param active
      * @param out
      * @throws java.io.IOException
      */
-  
-        public void printNavbar(String active, PrintWriter out) throws IOException{
+        public void printNavbar(String active, String id, boolean isForeleser, PrintWriter out) throws IOException, SQLException{
             
-            print("PW", active, null, out);
+            print("PW", active, id, isForeleser, null, out);
             
         }
     
-        public void printNavbarJSP(String active, JspWriter out) throws IOException{
+        public void printNavbarJSP(String active, String id, boolean isForeleser, JspWriter out) throws IOException, SQLException{
             
-            print("JSP", active, out, null);
+            print("JSP", active, id, isForeleser, out, null);
 
         }
         
-        private void print(String type, String active, JspWriter JW, PrintWriter PW) throws IOException{
+        private void print(String type, String active, String id, boolean isForeleser, JspWriter JW, PrintWriter PW) throws IOException, SQLException{
+
             
             String classForside = "";
             String classLister = "";
@@ -57,29 +63,53 @@ public class Navbar {
             else if(active == "Innstillinger"){
                 classInnstillinger = "class='active'";
             }
+                                
             //navbar i array
-            String[] navArray = new String[21];
-            navArray[0] = "<div class='topnav'>";
-            navArray[1] = "<ul>";
-            navArray[2] = "<li><a "+classForside+" href='forside.jsp'>Forside</a></li>";
-            navArray[3] = "<li class='dropdown'>";
-            navArray[4] = "<a href='javascript:void(0)' class='dropbtn'>Lister</a>";
-            navArray[5] = "<div class='dropdown-content'>";
-            navArray[6] = "<a href='BrukerListe'>Brukerliste</a>";
-            navArray[7] = "<a href='ModulListe'>Modulliste</a>";
-            navArray[8] = "</div>";
-            navArray[9] = "<li class='dropdown'>";
-            navArray[10] = "<a href='javascript:void(0)' class='dropbtn'>Kurs</a>";
-            navArray[11] = "<div class='dropdown-content'>";
-            navArray[12] = "<a href='#'>IS-200</a>";
-            navArray[13] = "<a href='#'>IS-201</a>";
-            navArray[14] = "<a href='#'>IS-202</a>";
-            navArray[15] = "<a href='LeggTilKurs'>Legg til kurs</a>";
-            navArray[16] = "</div>";
-            navArray[17] = "<li style='float:right'><a href='LoggUt'>Logg ut</a><li>";
-            navArray[18] = "<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>";
-            navArray[19] = "</ul>";
-            navArray[20] = "</div>";
+            ArrayList<String> navArray = new ArrayList<String>();
+            navArray.add("<div class='topnav'>");
+            navArray.add("<ul>");
+            navArray.add("<li><a "+classForside+" href='forside.jsp'>Forside</a></li>");
+            navArray.add("<li class='dropdown'>");
+            navArray.add("<a href='javascript:void(0)' class='dropbtn'>Lister</a>");
+            navArray.add("<div class='dropdown-content'>");
+            navArray.add("<a href='BrukerListe'>Brukerliste</a>");
+            navArray.add("<a href='ModulListe'>Modulliste</a>");
+            navArray.add("</div>");
+            navArray.add("<li class='dropdown'>");
+            navArray.add("<a href='javascript:void(0)' class='dropbtn'>Kurs</a>");
+            navArray.add("<div class='dropdown-content'>");
+            
+            try{
+                //Databasetilkobling
+                Query query = new Query();
+                ResultSet rs = null;
+                ResultSet rs2 = null;
+                if(isForeleser){
+                    rs = query.query("Select * from foreleserKurs where foreleserId ='"+id+"'");
+
+                }else{
+                    rs = query.query("Select * from tarKurs where studentId ='"+id+"'");
+                }
+                
+                while(rs.next()){                  
+                    String kursId = rs.getString(1);
+                    rs2 = query.query("Select kursId,kursNavn from kurs where id ='"+kursId+"'");
+                    rs2.next();
+                    String kursKode = rs2.getString(1);
+                    String kursNavn = rs2.getString(2);
+                    navArray.add("<a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>"+kursKode+"</a>");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(isForeleser){
+                navArray.add("<a href='LeggTilKurs'>Legg til kurs</a>");
+            }
+            navArray.add("</div>");
+            navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
+            navArray.add("<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>");
+            navArray.add("</ul>");
+            navArray.add("</div>");
             
             //velger type Writer og skriver ut navbar
             if(type == "JSP"){
