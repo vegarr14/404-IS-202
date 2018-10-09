@@ -92,7 +92,7 @@ public class BrukerListe extends HttpServlet {
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
                         
-                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + id + "'");                
+                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + session.getAttribute("id") + "'");                
                         if(rs.next()){
                             String OppdatertforNavn = rs.getString(1);
                             String OppdatertetterNavn = rs.getString(2);
@@ -100,7 +100,7 @@ public class BrukerListe extends HttpServlet {
                             session.setAttribute("etternavn", OppdatertetterNavn);
                             rs = null;
                         }
-                        rs = query.query("Select forNavn, etterNavn from student where id ='" + id + "'");                
+                        rs = query.query("Select forNavn, etterNavn from student where id ='" + session.getAttribute("id") + "'");                 
                         if (rs.next()){
                             String OppdatertforNavn = rs.getString(1);
                             String OppdatertetterNavn = rs.getString(2);
