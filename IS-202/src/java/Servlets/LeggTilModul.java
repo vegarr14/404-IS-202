@@ -7,6 +7,8 @@ import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,6 +40,8 @@ public class LeggTilModul extends HttpServlet {
             ResultSet rs = null;
             PreparedStatement modulListe;
             
+            
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -47,11 +51,28 @@ public class LeggTilModul extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
                 /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-                out.println("<table name=modulListe align='center'>");
+                out.println("<table name=modulListe>");
                     query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
                 out.println("</table>");
+            out.println("<form name='LeggTilModul' action='LeggTilModul'>");
+            out.println("<input type='submit' value=Oppdater></input>");
+            out.println("</form>");
+            
+            rs=null;
+            String id = request.getParameter("id");
+            
+            if (id!=null) {
+                String navnet = request.getParameter("id");
+                
+                rs = query.query("SELECT * from Foreleser WHERE id = "+id+" UNION SELECT * from Student WHERE id = "+id);
+                String modulNavn = request.getParameter("modul");
+                
+            }
+            
+            
             out.println("</body>");
             out.println("</html>");
+            
         }
     }
 

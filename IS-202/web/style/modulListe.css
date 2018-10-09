@@ -12,8 +12,16 @@ body    {
     
 }
 
-table, th, td {
+table   {
+    border-collapse:collapse;
+}
+
+th, td {
     border: 1px solid black;
-    border-collapse: collapse;
     padding: 5px;
 }
+
+#prosent    {
+    border: none;
+}
+

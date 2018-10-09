@@ -54,13 +54,11 @@ public class ModulListe extends HttpServlet {
             
                 /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
                 out.println("<table name=modulListe>");
-                    query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
+                    query.skrivModulliste("SELECT modul_Navn, modul_Nummer, forNavn, etterNavn, Foreleser.id FROM modulListe JOIN Foreleser ON ModulListe.id = Foreleser.id", "modulListe", out);
                 out.println("</table>");
             
-                out.println("<form name='LeggTilModul' action='LeggTilModul'>");
-                out.println("<button type='submit'>Legg til modul</button>");
-                out.println("</form>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
+                //out.println("<button href='LeggTilModul' name='nyModul'>Legg Til Modul</button>");
+                //out.println("<button href='Login' class='Tilbake'>Tilbake</button>");   
             
             out.println("</body>");
             out.println("</html>");

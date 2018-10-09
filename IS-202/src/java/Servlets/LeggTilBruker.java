@@ -61,13 +61,13 @@ public class LeggTilBruker extends HttpServlet {
             String Etternavn = "";
             String Email = "";
             String Tlf = "";
+            String id = request.getParameter("id");
             
-            if(request.getParameter("id")!= null) {
+            if(id!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
                  * bruker i BrukerListe slik at informasjon om brukeren kommer opp i feltene
                  * + valg mellom oppdater bruker og slett bruker
                  */
-                String id = request.getParameter("id");
                 rs = query.query("select * from foreleser where id = "+id+" union select * from student where id = "+id);
                 rs.next();
                 Fornavn = rs.getString(2);
@@ -75,7 +75,7 @@ public class LeggTilBruker extends HttpServlet {
                 Email = rs.getString(4);
                 Tlf = rs.getString(5);
                 
-                out.println("Brukerid <input type='text' name='id' value='"+request.getParameter("id")+"' readonly><br>");
+                out.println("Brukerid <input type='text' name='id' value='"+id+"' readonly><br>");
                 printFelter(Fornavn,Etternavn,Email,Tlf,out);
                 out.println("<input type='submit' name='button' value='oppdater bruker'>");
                 out.println("<input type='submit' name='button' value='slett bruker'>");

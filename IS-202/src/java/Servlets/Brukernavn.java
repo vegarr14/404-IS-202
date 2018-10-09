@@ -65,6 +65,4 @@ public class Brukernavn {
             //ignore
         }
     }
-    
-    public static void main(String[] args) {}
 }
