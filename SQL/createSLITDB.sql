@@ -30,27 +30,6 @@ CREATE TABLE if not exists`Foreleser` (
   Constraint `FK_Foreleser_Bruker` Foreign Key (`id`) references `bruker` (`id`)
 );
 
-CREATE TABLE if not exists `Gruppe`(
-    `gruppe_id` INT(11) NOT NULL auto_increment,
-    `gruppenavn` VARCHAR(20) NOT NULL,
-    PRIMARY KEY (`gruppe_id`)
-);
-CREATE TABLE if not exists `Gruppetilbruker`(
-    `id` INT(11),
-    `gruppe_id` INT(11)
-);
-
-INSERT INTO Gruppe (gruppenavn) Values ("Gruppe404");
-INSERT INTO Gruppe (gruppenavn) Values ("Gruppe505");
-INSERT INTO Gruppe (gruppenavn) Values ("Gruppe606");
-INSERT INTO Gruppe (gruppenavn) Values ("Gruppe707");
-
-INSERT INTO gruppetilbruker (id,gruppe_id) VALUES
-(7, 1),
-(3, 1),	
-(2, 1),
-(1, 1);	
-
 CREATE TABLE if not exists `modulListe` (
   `modul_Id` int(11) NOT NULL AUTO_INCREMENT,
   `modul_Navn` varchar(20) NOT NULL,
@@ -58,6 +37,12 @@ CREATE TABLE if not exists `modulListe` (
   primary key(`modul_Id`)
   );
 
+CREATE TABLE if not exists`Kurs` (
+`id` int(6) NOT NULL auto_increment,
+`kursid` varchar(6) NOT NULL,
+`kursnavn` varchar(50) NOT NULL,
+primary key(`id`)
+);
 
 INSERT into bruker (brukernavn, passord) Values ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
