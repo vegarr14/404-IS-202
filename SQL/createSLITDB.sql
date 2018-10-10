@@ -40,20 +40,19 @@ CREATE TABLE if not exists`Foreleser` (
 );
 
 CREATE TABLE if not exists`Kurs` (
-`id` int(6) NOT NULL auto_increment,
-`kursid` varchar(6) NOT NULL,
-`kursnavn` varchar(50) NOT NULL,
-primary key(`id`)
+`kursId` int(11) NOT NULL AUTO_INCREMENT,
+`kursNavn` varchar(50) NOT NULL,
+primary key(`kursId`)
 );
 
 CREATE TABLE if not exists `Modul` (
  `modulId` int(11) not null auto_increment,
- `kursId` int(6) not null,
+ `kursId` int(11) not null,
  `foreleserId` int(11) not null,
  `modulNummer` int(11) not null,
  `oppgaveTekst` text not null,
- primary key(`id`),
- constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`id`),
+ primary key(`modulId`),
+ constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`kursId`),
  constraint `FK_Modul_Forelser` foreign key (`foreleserId`) references `Foreleser` (`id`)
  );
  
@@ -65,7 +64,7 @@ CREATE TABLE if not exists `Modul` (
   `innlevKommentar` varchar (250) NOT NULL,
   `innlevPoeng` int NOT NULL,
   primary key(`innlevId`),
-  Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `ModulListe` (`modulId`),
+  Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `Modul` (`modulId`),
   Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
   );
   
@@ -83,13 +82,13 @@ CREATE TABLE `TarKurs` (
   `kursId` int(6) Not Null,
   `studentId` int(11) Not null,
   primary key(`kursId`,`studentId`),
-  Constraint `FK_TarKurs_Kurs` foreign key (`kursId`) references `kurs` (id),
+  Constraint `FK_TarKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_TarKurs_Student` foreign key (`studentId`) references `Student` (id) 
 );
 
 CREATE TABLE `ForeleserKurs` (
   `kursId` int(6) not null,
   `foreleserId` int(11) not null,
-  Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (id),
+  Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
 );
