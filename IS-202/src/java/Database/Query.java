@@ -58,7 +58,8 @@ public class Query {
                 rs.close();
             }
             statement.close();
-            con.close();  
+            con.close();
+            ctd.destroy();
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
