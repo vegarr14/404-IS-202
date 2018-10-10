@@ -39,15 +39,6 @@ CREATE TABLE if not exists`Foreleser` (
   Constraint `FK_Foreleser_Bruker` Foreign Key (`id`) references `bruker` (`id`)
 );
 
-CREATE TABLE if not exists `modulListe` (
-  `modul_Id` int(11) NOT NULL AUTO_INCREMENT,
-  `id` int(11) NOT NULL,
-  `modul_Navn` varchar(20) NOT NULL,
-  `modul_Nummer` int (30) NOT NULL,
-  primary key(`modul_Id`),
-  Constraint `FK_Foreleser_ModulListe` Foreign Key (`id`) references `Foreleser`(`id`)
-  );
-
 CREATE TABLE if not exists`Kurs` (
 `id` int(6) NOT NULL auto_increment,
 `kursid` varchar(6) NOT NULL,
