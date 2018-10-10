@@ -47,36 +47,36 @@ primary key(`id`)
 );
 
 CREATE TABLE if not exists `Modul` (
- `id` int(11) not null auto_increment,
+ `modulId` int(11) not null auto_increment,
  `kursId` int(6) not null,
  `foreleserId` int(11) not null,
  `modulNummer` int(11) not null,
- `tekst` text not null,
+ `oppgaveTekst` text not null,
  primary key(`id`),
  constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`id`),
  constraint `FK_Modul_Forelser` foreign key (`foreleserId`) references `Foreleser` (`id`)
  );
  
  CREATE TABLE if not exists `Innlevering` (
-  `innlev_Id` int(11) NOT NULL AUTO_INCREMENT,
-  `modul_Id` int (11) NOT NULL,
-  `modul_Nummer` int (11) NOT NULL,
+  `innlevId` int(11) NOT NULL AUTO_INCREMENT,
+  `modulId` int (11) NOT NULL,
+  `modulNummer` int (11) NOT NULL,
   `id` int (11) NOT NULL,
-  `innlev_Kommentar` varchar (250) NOT NULL,
-  `innlev_Poeng` int NOT NULL,
+  `innlevKommentar` varchar (250) NOT NULL,
+  `innlevPoeng` int NOT NULL,
   primary key(`innlev_Id`),
   Constraint `FK_ModulListe_Innlevering` Foreign Key (`modul_Id`) references `ModulListe` (`modul_Id`),
   Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
   );
   
   CREATE TABLE if not exists `Kommentarer` (
-  `kom_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `komId` int(11) NOT NULL AUTO_INCREMENT,
   `id` int (11) NOT NULL,
-  `innlev_Id` int(11) NOT NULL,
-  `kom_kommentar` varchar (250) NOT NULL,
-  primary key(`kom_Id`),
+  `innlevId` int(11) NOT NULL,
+  `komKommentar` varchar (250) NOT NULL,
+  primary key(`komId`),
   Constraint `FK_Kommentarer_Bruker` Foreign Key (`id`) references `Bruker` (`id`),
-  Constraint `FK_Kommentarer_Innlev` Foreign Key (`innlev_Id`) references `Innlevering` (`innlev_Id`)
+  Constraint `FK_Kommentarer_Innlev` Foreign Key (`innlevId`) references `Innlevering` (`innlevId`)
   );
 
 CREATE TABLE `TarKurs` (
