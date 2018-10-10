@@ -86,15 +86,36 @@ public class BrukerListe extends HttpServlet {
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+                        HttpSession session = request.getSession();
                         Brukernavn brukernavn = new Brukernavn(request);
                         String forNavn = request.getParameter("Fornavn");
                         String etterNavn = request.getParameter("Etternavn");
                         String email = request.getParameter("Email");
                         String tlf = request.getParameter("Tlf");
                         String id = request.getParameter("id");
+                        String oppdatertforNavn;
+                        String oppdatertetterNavn;
                         query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
+                        
+                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + session.getAttribute("id") + "'");                
+                        if(rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }
+                        rs = query.query("Select forNavn, etterNavn from student where id ='" + session.getAttribute("id") + "'");                 
+                        if (rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }                                        
+                        
                     } else if (request.getParameter("button").equals("slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
