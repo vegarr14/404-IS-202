@@ -99,6 +99,7 @@ public class Navbar {
                     String kursNavn = rs2.getString(2);
                     navArray.add("<a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>"+kursKode+"</a>");
                 }
+                query.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
