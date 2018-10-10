@@ -64,8 +64,8 @@ CREATE TABLE if not exists `Modul` (
   `id` int (11) NOT NULL,
   `innlevKommentar` varchar (250) NOT NULL,
   `innlevPoeng` int NOT NULL,
-  primary key(`innlev_Id`),
-  Constraint `FK_ModulListe_Innlevering` Foreign Key (`modul_Id`) references `ModulListe` (`modul_Id`),
+  primary key(`innlevId`),
+  Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `ModulListe` (`modulId`),
   Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
   );
   
