@@ -26,13 +26,6 @@ insert into TarKurs values('1','1'),
 ('3','2');
 
 insert into ForeleserKurs values('1','4');
-
-INSERT into modulListe (`id`, `modul_Navn`, `modul_Nummer`) 
-values (4, 'Modul', 1), 
-(4, 'Modul', 2), 
-(4, 'Modul', 3), 
-(5, 'Modul', 4), 
-(5, 'Modul', 5);
                  
 INSERT ignore into Innlevering (`modul_Id`, `id`, `innlev_Kommentar`, `innlev_Poeng`) 
 values (1, 1, 'Funker ting? Hurra', 80),
