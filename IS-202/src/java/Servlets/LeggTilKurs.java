@@ -5,22 +5,28 @@
  */
 package Servlets;
 
-import Database.*;
+
+import Database.connectToDatabase;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.logging.Logger;
 
 /**
  *
- * @author Sondre
+ * @author Josef
  */
-@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
-public class ModulListe extends HttpServlet {
+@WebServlet(name = "LeggTilKurs", urlPatterns = {"/LeggTilKurs"})
+public class LeggTilKurs extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,36 +42,55 @@ public class ModulListe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            
-            /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
-            Query query = new Query();
-            ResultSet rs = null;
-            PreparedStatement modulListe;
-            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
+            out.println("<title>Legg Til Kurs</title>");            
             out.println("</head>");
             out.println("<body>");
+            out.println("<h1>Servlet LeggTilKurs at " + request.getContextPath() + "</h1>");            
+            out.println("<form name='KursListe' action='KursListe' id='LeggTilKurs' method='post'>");          
             
-            out.println("<h1> Moduler </h1>");
-            
-            out.println("<table name=modulListe>");
-            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</table>");
+            connectToDatabase ctd = new connectToDatabase();
+            ctd.init();
+            Connection con = ctd.getConnection();
+            ResultSet rs = null;
+            String Kursid = "";
+            String Kursnavn = "";
 
-            rs = null;
             
-                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
-            
+            if(request.getParameter("id")!= null) {     
+                String id = request.getParameter("id");
+                String DataString = ("select * from kurs where id = '"+id+"'");
+                PreparedStatement HentData = con.prepareStatement(DataString);
+                rs = HentData.executeQuery();
+                rs.next();
+                Kursid = rs.getString(2);
+                Kursnavn = rs.getString(3);
+
+                out.println("Antallid <input type='text' name='id' value='"+id+"' readonly><br>"); 
+                printFelter(Kursid,Kursnavn,out);
+                out.println("<input type='submit' name='button' value='oppdater kurs'>");
+                out.println("<input type='submit' name='button' value='slett kurs'>");
+            } else {
+                printFelter(Kursid,Kursnavn,out);
+                out.println("<input type='submit' name='button' value='legg til'>");
+                }
+            out.println("</form>");       
             out.println("</body>");
             out.println("</html>");
+       
+        }catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
+    
+    public void printFelter (String Kursid, String Kursnavn, PrintWriter out) {
+     out.println("Kursid <input type='text' name='Kursid' value='"+Kursid+"'><br>");
+     out.println("Kursnavn <input type='text' name='Kursnavn' value='"+Kursnavn+"'><br>");
+    }
+
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

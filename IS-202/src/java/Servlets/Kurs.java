@@ -5,22 +5,24 @@
  */
 package Servlets;
 
-import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Sondre
+ * @author Erlend Thorsen
  */
-@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
-public class ModulListe extends HttpServlet {
+@WebServlet(name = "Kurs", urlPatterns = {"/Kurs"})
+public class Kurs extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,33 +37,31 @@ public class ModulListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            HttpSession session = request.getSession();
+            String kursId = request.getParameter("kursId");
+            String kursKode = request.getParameter("kursKode");
+            String kursNavn = request.getParameter("kursNavn");
+            
+            
+            
             /* TODO output your page here. You may use following sample code. */
-            
-            /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
-            Query query = new Query();
-            ResultSet rs = null;
-            PreparedStatement modulListe;
-            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
+            out.println("<title>SLIT - "+kursKode+"</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("</head>");
             out.println("<body>");
-            
-            out.println("<h1> Moduler </h1>");
-            
-            out.println("<table name=modulListe>");
-            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</table>");
-
-            rs = null;
-            
-                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
-            
+            //Printer navbar
+            Navbar navbar = new Navbar();
+            try {
+                navbar.printNavbar(kursId,(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("<h1>Servlet Kurs at " + request.getContextPath() + "</h1>");
+            out.println("<h1>"+ kursKode + " | " + kursNavn + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }

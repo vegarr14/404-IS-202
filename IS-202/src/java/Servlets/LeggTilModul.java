@@ -1,7 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Det som har med å legge til moduler.
  */
 package Servlets;
 
@@ -19,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sondre
  */
-@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
-public class ModulListe extends HttpServlet {
+@WebServlet(name = "LeggTilModul", urlPatterns = {"/LeggTilModul"})
+public class LeggTilModul extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,9 +33,7 @@ public class ModulListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             
-            /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
             Query query = new Query();
             ResultSet rs = null;
             PreparedStatement modulListe;
@@ -45,22 +41,12 @@ public class ModulListe extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
+            out.println("<title>Servlet LeggTilModul</title>");            
             out.println("</head>");
             out.println("<body>");
+            out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
             
-            out.println("<h1> Moduler </h1>");
-            
-            out.println("<table name=modulListe>");
-            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
             query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</table>");
-
-            rs = null;
-            
-                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
             
             out.println("</body>");
             out.println("</html>");

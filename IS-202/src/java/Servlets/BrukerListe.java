@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -48,8 +49,15 @@ public class BrukerListe extends HttpServlet {
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
-            Navbar navbar = new Navbar();
-            navbar.printNavbar("Brukerliste", out);
+            
+
+            try{
+                HttpSession session = request.getSession();
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Brukerliste",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             
@@ -60,13 +68,14 @@ public class BrukerListe extends HttpServlet {
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny bruker
                         //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String Fornavn = request.getParameter("Fornavn");
                         String Etternavn = request.getParameter("Etternavn");
                         String Email = request.getParameter("Email");
                         String Tlf = request.getParameter("Tlf");
                         String Type = request.getParameter("brukertype");
                         
-                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
                         rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);
@@ -77,6 +86,7 @@ public class BrukerListe extends HttpServlet {
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+                        Brukernavn brukernavn = new Brukernavn(request);
                         String forNavn = request.getParameter("Fornavn");
                         String etterNavn = request.getParameter("Etternavn");
                         String email = request.getParameter("Email");
@@ -84,6 +94,7 @@ public class BrukerListe extends HttpServlet {
                         String id = request.getParameter("id");
                         query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
                         query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
                     } else if (request.getParameter("button").equals("slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
