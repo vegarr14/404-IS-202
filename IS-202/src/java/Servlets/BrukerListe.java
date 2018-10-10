@@ -49,7 +49,7 @@ public class BrukerListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             Navbar navbar = new Navbar();
-            navbar.printNavbar("Brukerliste", out);
+            navbar.printNavbar("Lister", out);
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             

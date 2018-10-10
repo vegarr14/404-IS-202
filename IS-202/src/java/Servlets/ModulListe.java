@@ -42,70 +42,75 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
             Query query = new Query();
             ResultSet rs = null;
-            PreparedStatement modulListe;
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("</head>");
             out.println("<body>");
+            Navbar navbar = new Navbar();
+            navbar.printNavbar("Lister", out);
+            out.println("<div class='velkommen'>");
+            out.println("<b> Moduler </b>");
             
-            out.println("<h1> Moduler </h1>");
+            /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
+            //out.println("<table name=modulListe>");
+            //query.skrivModulliste("SELECT forNavn, etterNavn, innlev_Id, innlev_Poeng, innlevering.id, ModulListe.modul_Nummer FROM Innlevering join Student join ModulListe where Innlevering.id = Student.id and ModulListe.modul_Id = Innlevering.modul_Id order by Innlevering.id, modul_Nummer", out);
+            //out.println("</table>");
             
-                /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
-                out.println("<table name=modulListe>");
-                    query.skrivModulliste("SELECT forNavn, etterNavn, innlev_Id, innlev_Poeng, innlevering.id, ModulListe.modul_Nummer FROM Innlevering join Student join ModulListe where Innlevering.id = Student.id and ModulListe.modul_Id = Innlevering.modul_Id order by Innlevering.id, modul_Nummer", out);
-                out.println("</table>");
             
-                out.println("<button href='LeggTilModul' name='nyModul'>Legg Til Modul</button>");
-                //out.println("<button href='Login' class='Tilbake'>Tilbake</button>");   
+            //out.println("<button href='Login' class='Tilbake'>Tilbake</button>");   
                 
-             try {
+             //try {
                 if(request.getParameter("button") != null) {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
                     if(request.getParameter("button").equals("legg til")) {
-                        //Kjører hvis det skal legges til ny bruker
-                        //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
-                        Brukernavn brukernavn = new Brukernavn(request);
-                        String modulNavn = request.getParameter("modulNavn");
+                        //Kjører hvis det skal legges til ny modul
                         String modulNummer = request.getParameter("modulNummer");
+                        String kursId = request.getParameter("kursId");
+                        String foreleserId = request.getParameter("foreleserId");
+                        String oppgaveTekst = request.getParameter("oppgaveTekst");
                         
-                        query.update("INSERT into modul (modul_Navn, modul_Nummer) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
-                        rs = query.query("SELECT max(id) FROM Bruker");
-                        rs.next();
-                        int id = rs.getInt(1);
-                        rs = null;
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
                         
-                        query.update("INSERT INTO Modul values('"+id+"','"+modulNavn+"','"+modulNummer+"')");
+                    } else if (request.getParameter("button").equals("oppdater modul")) {
+                        //kjører hvis en modul skal oppdateres
+                        String modulId = request.getParameter("modulId");
+                        String modulNummer = request.getParameter("modulNummer");
+                        String kursId = request.getParameter("kursId");
+                        String foreleserId = request.getParameter("foreleserId");
+                        String oppgaveTekst = request.getParameter("oppgaveTekst");
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                    } else if (request.getParameter("button").equals("slett modul")) {
+                        //kjører hvis en modul skal slettes
                         
-                    } else if (request.getParameter("button").equals("oppdater bruker")) {
-                        //kjører hvis en bruker skal oppdateres
-                        //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
-                        Brukernavn brukernavn = new Brukernavn(request);
-                        String forNavn = request.getParameter("Fornavn");
-                        String etterNavn = request.getParameter("Etternavn");
-                        String email = request.getParameter("Email");
-                        String tlf = request.getParameter("Tlf");
-                        String id = request.getParameter("id");
-                        query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
-                    } else if (request.getParameter("button").equals("slett bruker")) {
-                        //kjører hvis en bruker skal slettes
-                        //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
-                        query.update("DELETE from foreleser where id = "+request.getParameter("id"));
-                        query.update("DELETE from student where id = "+request.getParameter("id"));
-                        query.update("DELETE from bruker where id = "+request.getParameter("id"));
+                        query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
+                        
                     }
                     
                     
                 }
+            //} //catch (SQLException ex) {
+                //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            //}
+            
+            try {
+                rs = query.query("Select * from Modul");
+                out.println("<ul>");
+                while(rs.next()){
+                    out.println("<li> <a href ='LeggTilModul?modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
+                }
+                out.println("</ul>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            out.println("<form name='LeggTilModul' action='LeggTilModul' method='post'>");
+            out.println("<button type='submit'>Legg Til Modul</button>");
+            out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }

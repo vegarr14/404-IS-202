@@ -36,18 +36,17 @@ public class LeggTilModul extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            /*Query query = new Query();
-            ResultSet rs = null;
-            PreparedStatement modulListe;*/
-            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
             out.println("<title>Servlet LeggTilModul</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
+            out.println("<form name='ModulListe' action='ModulListe' id='LeggTilModul' method='post'>");
+            
                 /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
                 /*out.println("<table name=modulListe>");
                     query.skrivModulliste("SELECT * FROM modulListe", out);
@@ -55,29 +54,31 @@ public class LeggTilModul extends HttpServlet {
                 
             Query query = new Query();
             ResultSet rs = null;
-            String id = request.getParameter("id");
-            String modulNavn = "";
+            String modulId = request.getParameter("modulId");
             String modulNummer = "";
+            String kursId = "";
+            String foreleserId = "";
+            String oppgaveTekst = "";
             
-            if(id!= null) {
+            if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
-                 * bruker i BrukerListe slik at informasjon om brukeren kommer opp i feltene
-                 * + valg mellom oppdater bruker og slett bruker
+                 * modul i ModulListe slik at informasjon om brukeren kommer opp i feltene
+                 * + valg mellom oppdater modul og slett modul
                  */
-                rs = query.query("select * from modulListe where id = "+id+" union select * from student where id = "+id);
+                rs = query.query("select * from Modul where modulId = "+modulId);
                 rs.next();
-                modulNavn = rs.getString(2);
-                modulNummer = rs.getString(3);
+                kursId = rs.getString(2);
+                foreleserId = rs.getString(3);
+                modulNummer = rs.getString(4);
+                oppgaveTekst = rs.getString(5);
                 
-                out.println("Brukerid <input type='text' name='id' value='"+id+"' readonly><br>");
-                printFelter(modulNavn, modulNummer,out);
-                out.println("<input type='submit' name='button' value='oppdater bruker'>");
-                out.println("<input type='submit' name='button' value='slett bruker'>");
+                out.println("Modulid <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                out.println("<input type='submit' name='button' value='oppdater modul'>");
+                out.println("<input type='submit' name='button' value='slett modul'>");
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
-                printFelter(modulNavn,modulNummer,out);
-                out.println("<input type='radio' name='brukertype' value='student' checked> Student<br>");
-                out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
             
@@ -103,9 +104,11 @@ public class LeggTilModul extends HttpServlet {
             }
             */
         }
-    public void printFelter (String modulNavn, String modulNummer, PrintWriter out) {
-        out.println("Fornavn <input type='text' name='Fornavn' value='"+modulNavn+"'><br>");
-        out.println("Etternavn <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
+    public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
+        out.println("modulNummer <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
+        out.println("kursId <input type='text' name='kursId' value='"+kursId+"'><br>");
+        out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"'><br>");
+        out.println("oppgaveTekst <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
     }
     
 
