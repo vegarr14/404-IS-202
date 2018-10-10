@@ -128,6 +128,7 @@ public class BrukerListe extends HttpServlet {
             out.println("</div>");
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
     }
     

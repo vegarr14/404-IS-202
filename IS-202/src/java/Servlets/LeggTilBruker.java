@@ -90,6 +90,7 @@ public class LeggTilBruker extends HttpServlet {
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
+            query.close();
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
