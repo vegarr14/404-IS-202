@@ -59,6 +59,8 @@ public class Query {
             }
             statement.close();
             con.close();  
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     /*@param selectNoe er MySQL-teksten som skal sendes som query (prepareStatement)
