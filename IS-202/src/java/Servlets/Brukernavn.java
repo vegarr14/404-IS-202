@@ -61,6 +61,7 @@ public class Brukernavn {
         } catch (SQLException ignore) {
             //ignore
         }
+        query.close();
     }
     
     public static void main(String[] args) {}

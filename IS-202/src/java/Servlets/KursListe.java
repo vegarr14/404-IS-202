@@ -38,10 +38,7 @@ public class KursListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            
             ResultSet rs = null;
             Query query = new Query();
             
@@ -54,30 +51,20 @@ public class KursListe extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet KursListe at " + request.getContextPath() + "</h1>");
             
-
-             try {
-                if(request.getParameter("button") != null) {
-                    if(request.getParameter("button").equals("legg til")) {
-                        String Kursid = request.getParameter("Kursid");
-                        String Kursnavn = request.getParameter("Kursnavn");
-                        
-                        String LeggTil =("INSERT INTO kurs (kursnavn, kursid) values('"+Kursnavn+"', '"+Kursid+"')");
-                        PreparedStatement leggtilkurs = con.prepareStatement(LeggTil);
-                        leggtilkurs.executeUpdate();
-                        
-                    } else if (request.getParameter("button").equals("oppdater kurs")) {
-                        String kursid = request.getParameter("Kursid");
-                        String kursnavn = request.getParameter("Kursnavn");
-                        String id = request.getParameter("id");
-                        query.update("UPDATE kurs set kursnavn ='"+kursnavn+"',kursid ='"+kursid+"' where id='"+id+"'");
-                    } else if (request.getParameter("button").equals("slett kurs")) {
-                        query.update("DELETE from kurs where id = '"+request.getParameter("id")+"'");
-                    }
+            if(request.getParameter("button") != null) {
+                if(request.getParameter("button").equals("legg til")) {
+                    String Kursid = request.getParameter("Kursid");
+                    String Kursnavn = request.getParameter("Kursnavn");
+                    query.update("INSERT INTO kurs (kursnavn, kursid) values('"+Kursnavn+"', '"+Kursid+"')");
+                } else if (request.getParameter("button").equals("oppdater kurs")) {
+                    String kursid = request.getParameter("Kursid");
+                    String kursnavn = request.getParameter("Kursnavn");
+                    String id = request.getParameter("id");
+                    query.update("UPDATE kurs set kursnavn ='"+kursnavn+"',kursid ='"+kursid+"' where id='"+id+"'");
+                } else if (request.getParameter("button").equals("slett kurs")) {
+                    query.update("DELETE from kurs where id = '"+request.getParameter("id")+"'");
                 }
-            }catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-                        
             //Skriver ut liste over kurs
             String kurs = ("SELECT kursnavn,kursid,id FROM Kurs");
             
@@ -102,8 +89,8 @@ public class KursListe extends HttpServlet {
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-            ctd.close(rs);
-    }
+            query.close();
+        }
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

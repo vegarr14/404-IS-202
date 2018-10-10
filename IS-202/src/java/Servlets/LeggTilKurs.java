@@ -6,6 +6,7 @@
 package Servlets;
 
 
+import Database.Query;
 import Database.connectToDatabase;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,9 +52,7 @@ public class LeggTilKurs extends HttpServlet {
             out.println("<h1>Servlet LeggTilKurs at " + request.getContextPath() + "</h1>");            
             out.println("<form name='KursListe' action='KursListe' id='LeggTilKurs' method='post'>");          
             
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            Query query = new Query();
             ResultSet rs = null;
             String Kursid = "";
             String Kursnavn = "";
@@ -61,9 +60,8 @@ public class LeggTilKurs extends HttpServlet {
             
             if(request.getParameter("id")!= null) {     
                 String id = request.getParameter("id");
-                String DataString = ("select * from kurs where id = '"+id+"'");
-                PreparedStatement HentData = con.prepareStatement(DataString);
-                rs = HentData.executeQuery();
+                String DataString = ("select * from kurs where id = '"+id+"'");;
+                rs = query.query(DataString);
                 rs.next();
                 Kursid = rs.getString(2);
                 Kursnavn = rs.getString(3);
@@ -79,6 +77,7 @@ public class LeggTilKurs extends HttpServlet {
             out.println("</form>");       
             out.println("</body>");
             out.println("</html>");
+            query.close();
        
         }catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
