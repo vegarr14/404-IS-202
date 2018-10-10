@@ -40,14 +40,14 @@ CREATE TABLE if not exists`Foreleser` (
 );
 
 CREATE TABLE if not exists`Kurs` (
-`kursId` int(11) NOT NULL AUTO_INCREMENT,
+`kursId` varchar(11) NOT NULL,
 `kursNavn` varchar(50) NOT NULL,
 primary key(`kursId`)
 );
 
 CREATE TABLE if not exists `Modul` (
  `modulId` int(11) not null auto_increment,
- `kursId` int(11) not null,
+ `kursId` varchar(11) not null,
  `foreleserId` int(11) not null,
  `modulNummer` int(11) not null,
  `oppgaveTekst` text not null,
@@ -79,7 +79,7 @@ CREATE TABLE if not exists `Modul` (
   );
 
 CREATE TABLE `TarKurs` (
-  `kursId` int(6) Not Null,
+  `kursId` varchar(11) Not Null,
   `studentId` int(11) Not null,
   primary key(`kursId`,`studentId`),
   Constraint `FK_TarKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
@@ -87,7 +87,7 @@ CREATE TABLE `TarKurs` (
 );
 
 CREATE TABLE `ForeleserKurs` (
-  `kursId` int(6) not null,
+  `kursId` varchar(11) not null,
   `foreleserId` int(11) not null,
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
