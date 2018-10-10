@@ -33,7 +33,7 @@ CREATE TABLE if not exists`Foreleser` (
 CREATE TABLE if not exists `modulListe` (
   `modul_Id` int(11) NOT NULL AUTO_INCREMENT,
   `modul_Navn` varchar(20) NOT NULL,
-  `modul_Nummer int (30) NOT NULL,
+  `modul_Nummer` int (30) NOT NULL,
   primary key(`modul_Id`)
   );
 
