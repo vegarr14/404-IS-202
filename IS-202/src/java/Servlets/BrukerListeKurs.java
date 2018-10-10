@@ -6,9 +6,9 @@
 package Servlets;
 
 import Database.Query;
-import java.sql.ResultSet;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +23,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author Erlend Thorsen
  */
-@WebServlet(name = "Kurs", urlPatterns = {"/Kurs"})
-public class Kurs extends HttpServlet {
+@WebServlet(name = "BrukerListeKurs", urlPatterns = {"/BrukerListeKurs"})
+public class BrukerListeKurs extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,47 +39,49 @@ public class Kurs extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            HttpSession session = request.getSession();
-            String kursId = request.getParameter("kursId");
-            String kursKode = request.getParameter("kursKode");
-            String kursNavn = request.getParameter("kursNavn");
-            
-            Query query = new Query();
             ResultSet rs = null;
+            Query query = new Query();
+            BrukerListe bl = new BrukerListe();
             
-            
-            
-            
-            
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>SLIT - "+kursKode+"</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<title></title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
             
+            HttpSession session = request.getSession();
+            String kursId = request.getParameter("kursId");
+            String kursKode = request.getParameter("kursKode");
+            String kursNavn = request.getParameter("kursNavn");
+            Navbar navbar = new Navbar();
+
+            
+
             out.println("<div class='mainContent'>");
-            out.println("<h1>"+ kursKode + " | " + kursNavn + "</h1>");
             
-            try{
-                rs = query.query("Select kursBilde, kursTekst from Kurs where id='"+kursId+"'");
-                if(rs.next()){
-                    out.println("<img id='kursImg' src='"+rs.getString(1)+"' alt='kursbilde'>");
-                    out.println("<h2>Kursbeskrivelse</h2>");
-                    out.println("<p>"+rs.getString(2)+"</p>");
-                }
-            }catch (SQLException ex){
-                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            //Skriver ut liste over studenter og forelesere
+            String foreleser = ("SELECT A.fornavn, A.etterNavn, A.id from Foreleser A where  A.id in ( select B.foreleserId from ForeleserKurs B where B.kursId ='"+kursId+"')");
+            String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
+            
+            //Forelesere
+            out.println("<h2>Studenter og forelesere som tar " +kursKode+ "</h2>");
+            out.println("<b>Forelesere:</b>");
+
+            bl.skrivListe(foreleser, rs, query, out);
+              
+            //Studenter
+            out.println("<b>Studenter:</b>");
+            bl.skrivListe(student, rs, query, out);
+           
+
             out.println("</div>");
-            
-            //Printer navbar og sidebar
-            Navbar navbar = new Navbar();            
-            navbar.printLeftSidebar("Hjem", kursId, kursKode, kursNavn, out);
+            //printer sidebar og navbar
+            navbar.printLeftSidebar("Personer", kursId, kursKode, kursNavn, out);
             try {
                 navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
@@ -87,7 +89,6 @@ public class Kurs extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-            
         }
     }
 

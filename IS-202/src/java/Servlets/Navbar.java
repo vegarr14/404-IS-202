@@ -43,6 +43,29 @@ public class Navbar {
 
         }
         
+        public void printLeftSidebar(String active, String kursId, String kursKode,String kursNavn, PrintWriter out){
+            String hjem = "";
+            String personer = "";
+            String moduler = "";
+            String activeStyle = "style='color:orange;'";
+            if(active == "Hjem"){
+                hjem = activeStyle;
+            }
+            else if(active == "Personer"){
+                personer = activeStyle;
+            }
+            else if(active == "Moduler"){
+                moduler = activeStyle;
+            }
+            out.println("<div class='leftSidebar'>");
+            out.println("<ul>");
+            out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Hjem</a></li>");
+            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Personer</a></li>");
+            out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Moduler</a></li>");
+            out.println("</ul>");
+            out.println("</div>");
+        }
+        
         private void print(String type, String active, String id, boolean isForeleser, JspWriter JW, PrintWriter PW) throws IOException, SQLException{
 
             
@@ -58,7 +81,7 @@ public class Navbar {
                 classLister = "class='active'";
             }
             else if(active == "Kurs"){
-                classKurs = "class='active'";
+                classKurs = "style='color:orange'";
             }
             else if(active == "Innstillinger"){
                 classInnstillinger = "class='active'";
@@ -76,7 +99,7 @@ public class Navbar {
             navArray.add("<a href='ModulListe'>Modulliste</a>");
             navArray.add("</div>");
             navArray.add("<li class='dropdown'>");
-            navArray.add("<a href='javascript:void(0)' class='dropbtn'>Kurs</a>");
+            navArray.add("<a "+classKurs+" href='javascript:void(0)' class='dropbtn'>Kurs</a>");
             navArray.add("<div class='dropdown-content'>");
             
             try{
