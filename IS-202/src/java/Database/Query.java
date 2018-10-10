@@ -53,30 +53,59 @@ public class Query {
     /*@param selectNoe er MySQL-teksten som skal sendes som query (prepareStatement)
     @param selected er table-navn
     @param out er for at PrintWriter skal skrive ut.*/
-    public void skrivModulliste(String selectNoe, String selected, PrintWriter out) {
+    public void skrivModulliste(String selectNoe, PrintWriter out) {
         try {
-            PreparedStatement query = con.prepareStatement(selectNoe);
-            rs = query.executeQuery();
             
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             out.println("<tr>");
             out.println("<th></th>");
+            int antallModuler = 0;
+            rs = query("SELECT modul_Navn, modul_Nummer from ModulListe");
             while(rs.next()){
                     //out.println("<a href ='LeggTilModul?id="+rs.getString(1)+rs.getString(2)+"'>");
                     out.println("<th>" + rs.getString(1) +" "+ rs.getString(2) + "</th></a>");
+                    antallModuler++;
             }
+            //PreparedStatement query2 = con.prepareStatement(selectNoe);
+            rs = query(selectNoe);
             out.println("</tr>");
             out.println("<tr>");
             rs.beforeFirst();
+            boolean a = false;
             while (rs.next()){  //Itererer gjennom tablet i databasen
                 out.println("<tr>");
-                out.println("<td class='student'>" + rs.getString(3) + " " + rs.getString (4) + " </td>");
+                out.println("<td class='student'>" + rs.getString(1) +" "+ rs.getString(2) + " </td>");
+                int studentId = rs.getInt(5);
+                boolean rsLast = false;
                 int tellerI = 0;
-                int max_modul_Nummer = 5;
-                while (tellerI<max_modul_Nummer)   {
-                        tellerI++;
-                        out.println("<td class='kommentar'> Kommentarer nr " + tellerI +" </td>");
+                while (tellerI<antallModuler)   {    
+                    tellerI++;
+                    if (rs.getInt(5) == studentId && rs.isLast()!=true) {
+                        if (rs.getInt(6)==tellerI) {    //Feilen er her. ModulNummer fra MYsql vs teller ant moduler =/ samme etter sletting av moduler
+                            out.println("<td> Poengsum " + rs.getString(4) +" </td>");
+                            rs.next();
+                        } else {
+                            out.println("<td>  </td>");
+                        }
+                        
+                            //if (rs.getInt(6)!=tellerI)  {
+                                
+                            //}
+                    } else if (rs.getInt(5) == studentId && rs.isLast()==true && rsLast==false){
+                        out.println("<td> Poengsum " + rs.getString(4) +" </td>");
+                        rsLast = true;
                     }
+                    else    {
+                       out.println("<td>  </td>");
+                    }
+                }
+                if (rs.isLast()!=true) {
+                    rs.previous();
+                } else if (rs.isLast()==true && a == false) {
+                    a =true;
+                    rs.previous();
+                }
+                
                 out.println("<td id='prosent'> p%" + "33%" + "</td>");
                 out.println("</tr>");
             }
