@@ -27,13 +27,13 @@ insert into TarKurs values('1','1'),
 
 insert into ForeleserKurs values('1','4');
                  
-INSERT ignore into Innlevering (`modul_Id`, `id`, `innlev_Kommentar`, `innlev_Poeng`) 
+INSERT ignore into Innlevering (`modul_id`, `id`, `innlevKommentar`, `innlev_Poeng`) 
 values (1, 1, 'Funker ting? Hurra', 80),
 (1, 2, 'Helsa hu murmur från mig nu da', 60),
 (3, 1, 'Hihihihihi', 40),
 (7, 1, 'nfldanf', 69);
 
-INSERT ignore into Kommentarer (`id`, `innlev_Id`, `kom_Kommentar`) 
+INSERT ignore into Kommentarer (`id`, `innlev_Id`, `komKommentar`) 
 values (4, 1, 'Helsa helsa masse');
                      
 /* select * from modulListe; */
