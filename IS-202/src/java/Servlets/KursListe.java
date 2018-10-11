@@ -58,20 +58,20 @@ public class KursListe extends HttpServlet {
              try {
                 if(request.getParameter("button") != null) {
                     if(request.getParameter("button").equals("legg til")) {
-                        String Kursid = request.getParameter("Kursid");
-                        String Kursnavn = request.getParameter("Kursnavn");
+                        String kursId = request.getParameter("kursId");
+                        String kursNavn = request.getParameter("kursNavn");
                         
-                        String LeggTil =("INSERT INTO kurs (kursnavn, kursid) values('"+Kursnavn+"', '"+Kursid+"')");
+                        String LeggTil =("INSERT INTO kurs (kursnavn, kursid) values('"+kursNavn+"', '"+kursId+"')");
                         PreparedStatement leggtilkurs = con.prepareStatement(LeggTil);
                         leggtilkurs.executeUpdate();
                         
                     } else if (request.getParameter("button").equals("oppdater kurs")) {
-                        String kursid = request.getParameter("Kursid");
-                        String kursnavn = request.getParameter("Kursnavn");
+                        String kursId = request.getParameter("kursId");
+                        String kursNavn = request.getParameter("kursNavn");
                         String id = request.getParameter("id");
-                        query.update("UPDATE kurs set kursnavn ='"+kursnavn+"',kursid ='"+kursid+"' where id='"+id+"'");
+                        query.update("UPDATE kurs set kursNavn ='"+kursNavn+"',kursId ='"+kursId+"' where id='"+id+"'");
                     } else if (request.getParameter("button").equals("slett kurs")) {
-                        query.update("DELETE from kurs where id = '"+request.getParameter("id")+"'");
+                        query.update("DELETE from Kurs where id = '"+request.getParameter("id")+"'");
                     }
                 }
             }catch (SQLException ex) {
@@ -79,7 +79,7 @@ public class KursListe extends HttpServlet {
             }
                         
             //Skriver ut liste over kurs
-            String kurs = ("SELECT kursnavn,kursid,id FROM Kurs");
+            String kurs = ("SELECT kursNavn,kursId,id FROM Kurs");
             
             //Kurs
             out.println("<b>Kurs:</b>"); 

@@ -67,30 +67,27 @@ public class ModulListe extends HttpServlet {
              //try {
                 if(request.getParameter("button") != null) {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
+                    String modulId = request.getParameter("modulId");
+                    String modulNummer = request.getParameter("modulNummer");
+                    String kursId = request.getParameter("kursId");
+                    String foreleserId = request.getParameter("foreleserId");
+                    String oppgaveTekst = request.getParameter("oppgaveTekst");
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny modul
-                        String modulNummer = request.getParameter("modulNummer");
-                        String kursId = request.getParameter("kursId");
-                        String foreleserId = request.getParameter("foreleserId");
-                        String oppgaveTekst = request.getParameter("oppgaveTekst");
                         
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
                         
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
-                        String modulId = request.getParameter("modulId");
-                        String modulNummer = request.getParameter("modulNummer");
-                        String kursId = request.getParameter("kursId");
-                        String foreleserId = request.getParameter("foreleserId");
-                        String oppgaveTekst = request.getParameter("oppgaveTekst");
+                        
                         query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                        
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
                         
                         query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
                         
                     }
-                    
                     
                 }
             //} //catch (SQLException ex) {

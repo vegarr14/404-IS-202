@@ -55,25 +55,25 @@ public class LeggTilKurs extends HttpServlet {
             ctd.init();
             Connection con = ctd.getConnection();
             ResultSet rs = null;
-            String Kursid = "";
-            String Kursnavn = "";
+            String kursId = "";
+            String kursNavn = "";
 
             
             if(request.getParameter("id")!= null) {     
                 String id = request.getParameter("id");
-                String DataString = ("select * from kurs where id = '"+id+"'");
-                PreparedStatement HentData = con.prepareStatement(DataString);
+                String dataString = ("select * from kurs where id = '"+id+"'");
+                PreparedStatement HentData = con.prepareStatement(dataString);
                 rs = HentData.executeQuery();
                 rs.next();
-                Kursid = rs.getString(2);
-                Kursnavn = rs.getString(3);
+                kursId = rs.getString(2);
+                kursNavn = rs.getString(3);
 
                 out.println("Antallid <input type='text' name='id' value='"+id+"' readonly><br>"); 
-                printFelter(Kursid,Kursnavn,out);
+                printFelter(kursId,kursNavn,out);
                 out.println("<input type='submit' name='button' value='oppdater kurs'>");
                 out.println("<input type='submit' name='button' value='slett kurs'>");
             } else {
-                printFelter(Kursid,Kursnavn,out);
+                printFelter(kursId,kursNavn,out);
                 out.println("<input type='submit' name='button' value='legg til'>");
                 }
             out.println("</form>");       
@@ -86,9 +86,9 @@ public class LeggTilKurs extends HttpServlet {
         
     }
     
-    public void printFelter (String Kursid, String Kursnavn, PrintWriter out) {
-     out.println("Kursid <input type='text' name='Kursid' value='"+Kursid+"'><br>");
-     out.println("Kursnavn <input type='text' name='Kursnavn' value='"+Kursnavn+"'><br>");
+    public void printFelter (String kursId, String kursNavn, PrintWriter out) {
+     out.println("Kursid <input type='text' name='Kursid' value='"+kursId+"'><br>");
+     out.println("Kursnavn <input type='text' name='Kursnavn' value='"+kursNavn+"'><br>");
     }
 
 

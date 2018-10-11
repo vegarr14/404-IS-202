@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.Integer;
 
 public class Brukernavn {
-    public static String firstname;
-    public static String lastname;
+    public static String fornavn;
+    public static String etternavn;
     public static String firstnamechars;
     public static String lastnamechars;
     public static String dato = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
@@ -26,16 +26,16 @@ public class Brukernavn {
     public String brukernavn; 
     
     public Brukernavn(HttpServletRequest request){
-    firstname=request.getParameter("Fornavn");
-    lastname=request.getParameter("Etternavn");
+    fornavn=request.getParameter("fornavn");
+    etternavn=request.getParameter("etternavn");
     
-    if (firstname.length() > 4)
-            firstnamechars = firstname.substring(0, 4);
-    else firstnamechars = firstname;
+    if (fornavn.length() > 4)
+            firstnamechars = fornavn.substring(0, 4);
+    else firstnamechars = fornavn;
     
-    if (lastname.length() > 3)
-        lastnamechars = lastname.substring(0, 3);
-    else lastnamechars = lastname;
+    if (fornavn.length() > 3)
+        lastnamechars = etternavn.substring(0, 3);
+    else lastnamechars = etternavn;
     
     Ã¥r = dato.substring(Math.max(dato.length() - 2, 0));
     brukernavn = firstnamechars + lastnamechars + Ã¥r;    

@@ -61,38 +61,37 @@ public class BrukerListe extends HttpServlet {
                         //Kjører hvis det skal legges til ny bruker
                         //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
                         Brukernavn brukernavn = new Brukernavn(request);
-                        String Fornavn = request.getParameter("Fornavn");
-                        String Etternavn = request.getParameter("Etternavn");
-                        String Email = request.getParameter("Email");
-                        String Tlf = request.getParameter("Tlf");
-                        String Type = request.getParameter("brukertype");
-                        
+                        String fornavn = request.getParameter("fornavn");
+                        String etternavn = request.getParameter("etternavn");
+                        String email = request.getParameter("email");
+                        String tlf = request.getParameter("tlf");
+                        String type = request.getParameter("brukerType");
                         query.update("INSERT into bruker (brukernavn, passord) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
                         rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);
                         rs = null;
                         
-                        query.update("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
+                        query.update("INSERT INTO "+type+" values('"+id+"','"+fornavn+"','"+etternavn+"','"+email+"','"+tlf+"')");
                         
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
                         Brukernavn brukernavn = new Brukernavn(request);
-                        String forNavn = request.getParameter("Fornavn");
-                        String etterNavn = request.getParameter("Etternavn");
-                        String email = request.getParameter("Email");
-                        String tlf = request.getParameter("Tlf");
+                        String fornavn = request.getParameter("fornavn");
+                        String etternavn = request.getParameter("etternavn");
+                        String email = request.getParameter("email");
+                        String tlf = request.getParameter("tlf");
                         String id = request.getParameter("id");
-                        query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
+                        query.update("UPDATE Foreleser set fornavn ='"+fornavn+"',etternavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE Student set fornavn ='"+fornavn+"',etternavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE Bruker set brukernavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
                     } else if (request.getParameter("button").equals("slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
-                        query.update("DELETE from foreleser where id = "+request.getParameter("id"));
-                        query.update("DELETE from student where id = "+request.getParameter("id"));
-                        query.update("DELETE from bruker where id = "+request.getParameter("id"));
+                        query.update("DELETE from Foreleser where id = "+request.getParameter("id"));
+                        query.update("DELETE from Student where id = "+request.getParameter("id"));
+                        query.update("DELETE from Bruker where id = "+request.getParameter("id"));
                     }
                     
                     
@@ -103,8 +102,8 @@ public class BrukerListe extends HttpServlet {
             out.println("<div class='velkommen'>");
             
             //Skriver ut liste over studenter og forelesere
-            String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
-            String student = ("SELECT forNavn,etterNavn,id FROM Student");
+            String foreleser = ("SELECT fornavn,etternavn,id FROM Foreleser");
+            String student = ("SELECT fornavn,etternavn,id FROM Student");
             
             //Forelesere
             out.println("<b>Forelesere:</b>"); 

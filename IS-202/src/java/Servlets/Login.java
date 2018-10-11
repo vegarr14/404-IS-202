@@ -56,13 +56,13 @@ public class Login extends HttpServlet {
                 String id = rs.getString(1);
                 
                 //Sjekker om bruker er foreleser og legger attributter i session
-                rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + id + "'");                
+                rs = query.query("Select fornavn, etternavn from foreleser where id ='" + id + "'");                
                 if(rs.next()){
                     session.setAttribute("isForeleser", true);
 
                 //Om bruker ikke er foreleser sjekker om bruker er student og legger attributter i session
                 }else if(!rs.next()){
-                    rs = query.query("Select forNavn, etterNavn from student where id ='" + id + "'");
+                    rs = query.query("Select fornavn, etternavn from student where id ='" + id + "'");
                     if(rs.next()){
                         session.setAttribute("isForeleser", false);
                         
