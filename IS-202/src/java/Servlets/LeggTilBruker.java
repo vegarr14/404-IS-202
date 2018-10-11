@@ -80,7 +80,7 @@ public class LeggTilBruker extends HttpServlet {
                 
 
                 out.println("Brukerid <input type='text' name='id' value='"+id+"' readonly><br>");
-                printFelter(Fornavn,Etternavn,Email,Tlf,out);
+                printFelter(fornavn,etternavn,email,tlf,out);
                 if(isForeleser){
                 out.println("<input type='submit' name='button' value='Oppdater bruker'>");
                 out.println("<input type='submit' name='button' value='Slett bruker'>");
