@@ -38,3 +38,22 @@ label{
     background-color: gray;
     box-shadow: 0px 0px 0px black;
 }
+
+table   {
+    border-collapse:collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+#prosent    {
+    border: none;
+}
+
+li,ul  {
+    list-style: none;
+    padding:0px;
+    margin:0px;
+}
