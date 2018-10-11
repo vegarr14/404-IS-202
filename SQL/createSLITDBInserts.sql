@@ -14,9 +14,9 @@ INSERT into Student values('1','Vegar','Ryen','emailxd','12345678'),
 INSERT into Foreleser values ('4','Hans','Mr.olav','yo@yahoo.com','99999999'),
 (5, 'Mr.Vegar','Professor Ryen','emailxd', 12345678);
 
-insert into Kurs values('IS-200','Systemanalyse og systemutvikling'),
-('IS-201','Datamodellering og databasesystemer'),
-('IS-202','Programmeringsprosjekt');
+insert into Kurs values('IS-200','Systemanalyse og systemutvikling','img/is-200.jpg','All the silent students/people.<br>I dette kurset lærer vi om scrum.'),
+('IS-201','Datamodellering og databasesystemer','img/is-201.jpg','Velkommen til IS-201<br>I dette kurset lærer vi om many to many og one to one.'),
+('IS-202','Programmeringsprosjekt','img/is-202.jpg','Velkommen til IS-202<br>JAVA > html/css');
 
 INSERT INTO Modul values ('1','IS-202','4','1','You`re wondering who i am!'),
 ('2','IS-202','4','2','machine or mannequin. With parts made in Japan, I am the modern man!');
