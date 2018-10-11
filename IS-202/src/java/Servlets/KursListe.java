@@ -66,7 +66,7 @@ public class KursListe extends HttpServlet {
                 }
             }
             //Skriver ut liste over kurs
-            String kurs = ("SELECT kursnavn,kursid,id FROM Kurs");
+            String kurs = ("SELECT kursnavn,kursId FROM Kurs");
             
             //Kurs
             out.println("<b>Kurs:</b>"); 
@@ -75,7 +75,7 @@ public class KursListe extends HttpServlet {
             out.println("<u1>");
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             while(rs.next()){
-                out.println("<li> <a href ='LeggTilKurs?id="+rs.getString(3)+"'>" + rs.getString(2) +", "+ rs.getString(1) +"</a></li>");
+                out.println("<li> <a href ='LeggTilKurs?KursId="+rs.getString(2)+"'>" + rs.getString(1) +"</a></li>");
             }
             out.println("</u1>");
             rs = null;
