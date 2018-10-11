@@ -42,6 +42,8 @@ CREATE TABLE if not exists`Foreleser` (
 CREATE TABLE if not exists`Kurs` (
 `kursId` varchar(11) NOT NULL,
 `kursNavn` varchar(50) NOT NULL,
+`kursBilde`varchar(100),
+`kursTekst` text,  
 primary key(`kursId`)
 );
 
@@ -89,6 +91,7 @@ CREATE TABLE `TarKurs` (
 CREATE TABLE `ForeleserKurs` (
   `kursId` varchar(11) not null,
   `foreleserId` int(11) not null,
+  primary key(`kursId`,`foreleserId`),
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
 );
