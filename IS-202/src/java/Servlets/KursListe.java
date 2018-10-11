@@ -53,19 +53,20 @@ public class KursListe extends HttpServlet {
             
             if(request.getParameter("button") != null) {
                 if(request.getParameter("button").equals("legg til")) {
-                    String Kursid = request.getParameter("Kursid");
-                    String Kursnavn = request.getParameter("Kursnavn");
-                    query.update("INSERT INTO kurs (kursnavn, kursid) values('"+Kursnavn+"', '"+Kursid+"')");
+                    String kursId = request.getParameter("kursId");
+                    String kursNavn = request.getParameter("kursNavn");
+                    query.update("INSERT INTO Kurs (kursNavn, kursId) values('"+kursNavn+"', '"+kursId+"')");
                 } else if (request.getParameter("button").equals("oppdater kurs")) {
-                    String kursid = request.getParameter("Kursid");
-                    String kursnavn = request.getParameter("Kursnavn");
+                    String kursId = request.getParameter("kursId");
+                    String kursNavn = request.getParameter("kursNavn");
                     String id = request.getParameter("id");
-                    query.update("UPDATE kurs set kursnavn ='"+kursnavn+"',kursid ='"+kursid+"' where id='"+id+"'");
+                    query.update("UPDATE kurs set kursNavn ='"+kursNavn+"',kursid ='"+kursId+"' where id='"+id+"'");
                 } else if (request.getParameter("button").equals("slett kurs")) {
                     query.update("DELETE from kurs where id = '"+request.getParameter("id")+"'");
                 }
             }
             //Skriver ut liste over kurs
+
             String kurs = ("SELECT kursnavn,kursId FROM Kurs");
             
             //Kurs

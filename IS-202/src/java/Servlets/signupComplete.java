@@ -43,18 +43,18 @@ public class signupComplete extends HttpServlet {
         ctd.init();
         Connection con = ctd.getConnection();
         
-        String firstname = request.getParameter("firstname");
-        String lastname = request.getParameter("lastname");
+        String fornavn = request.getParameter("fornavn");
+        String etternavn = request.getParameter("etternavn");
         String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String tlf = request.getParameter("tlf");
+        String brukernavn = request.getParameter("brukernavn");
+        String passord = request.getParameter("passord");
         String s = "ok 1";
         
         ResultSet rs = null;
         //PreparedStatement checkUserAvailable;
         try{
-            PreparedStatement checkUserAvailable = con.prepareStatement("SELECT ID FROM innlogginsinfo WHERE brukernavn = '" + username + "'");
+            PreparedStatement checkUserAvailable = con.prepareStatement("SELECT ID FROM innlogginsinfo WHERE brukernavn = '" + brukernavn + "'");
             rs = checkUserAvailable.executeQuery();
             s = "ok 2";
             if(rs.next()){
@@ -63,17 +63,17 @@ public class signupComplete extends HttpServlet {
                 s ="ok før her";
                 String createKunde = "INSERT INTO kunde(Fornavn,Etternavn) VALUES(?,?)";
                 PreparedStatement createUser = con.prepareStatement(createKunde);
-                createUser.setString(1, firstname);
-                createUser.setString(2, lastname);
+                createUser.setString(1, fornavn);
+                createUser.setString(2, etternavn);
                 s ="ok før her2";
                 createUser.executeUpdate();
                 s = "ok 3";
                 createUser = con.prepareStatement(
-                        "INSERT INTO kontaktinfo (ID, Epost, TelefonNummer) VALUES(LAST_INSERT_ID(), '"+ email + "', '" + (Integer.parseInt(phone)) + "')");
+                        "INSERT INTO kontaktinfo (ID, Epost, TelefonNummer) VALUES(LAST_INSERT_ID(), '"+ email + "', '" + (Integer.parseInt(tlf)) + "')");
                 createUser.executeUpdate();
                 s = "ok 4";
                 createUser = con.prepareStatement(
-                        "INSERT INTO innlogginsinfo (ID, brukernavn, passord) VALUES(LAST_INSERT_ID(), '"+ username + "', '" + password + "')");
+                        "INSERT INTO innlogginsinfo (ID, brukernavn, passord) VALUES(LAST_INSERT_ID(), '"+ brukernavn + "', '" + passord + "')");
                 createUser.executeUpdate();
                 s = "Gratulerer du har laget en bruker";
              
