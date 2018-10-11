@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -48,8 +49,15 @@ public class BrukerListe extends HttpServlet {
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
-            Navbar navbar = new Navbar();
-            navbar.printNavbar("Lister", out);
+            
+
+            try{
+                HttpSession session = request.getSession();
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Brukerliste",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             
@@ -77,15 +85,38 @@ public class BrukerListe extends HttpServlet {
                     } else if (request.getParameter("button").equals("oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+                        HttpSession session = request.getSession();
                         Brukernavn brukernavn = new Brukernavn(request);
                         String fornavn = request.getParameter("fornavn");
                         String etternavn = request.getParameter("etternavn");
                         String email = request.getParameter("email");
                         String tlf = request.getParameter("tlf");
                         String id = request.getParameter("id");
-                        query.update("UPDATE Foreleser set fornavn ='"+fornavn+"',etternavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE Student set fornavn ='"+fornavn+"',etternavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE Bruker set brukernavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
+
+                        String oppdatertforNavn;
+                        String oppdatertetterNavn;
+                        query.update("UPDATE foreleser set forNavn ='"+fornavn+"',etterNavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE student set forNavn ='"+fornavn+"',etterNavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
+                        
+                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + session.getAttribute("id") + "'");                
+                        if(rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }
+                        rs = query.query("Select forNavn, etterNavn from student where id ='" + session.getAttribute("id") + "'");                 
+                        if (rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }                                        
+                        
+
                     } else if (request.getParameter("button").equals("slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
@@ -119,6 +150,7 @@ public class BrukerListe extends HttpServlet {
             out.println("</div>");
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
     }
     

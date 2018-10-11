@@ -25,12 +25,14 @@
     </head>
     <body>
         <% 
+            boolean isForeleser = (boolean) session.getAttribute("isForeleser");
+            String id = (String)session.getAttribute("id");
             Navbar navbar = new Servlets.Navbar();
-            navbar.printNavbarJSP("Forside", out);
+            navbar.printNavbarJSP("Forside", id, isForeleser, out);
         %>
         <div class='velkommen'>
             <h1>Under Construction</h1>
-            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + "</h1>");%>
+            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
             <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
         </div>
     </body>

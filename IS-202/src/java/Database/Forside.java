@@ -37,7 +37,7 @@ public class Forside {
             out.println("</head>");
             out.println("<body>");
             Navbar navbar = new Servlets.Navbar();
-            navbar.printNavbar("Hjem", out);
+            //navbar.printNavbar("Hjem", out);
             out.println("<div class='velkommen'>");
             out.println("<h1>Under Construction</h1>");
             out.println("<h1> Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + "</h1>");

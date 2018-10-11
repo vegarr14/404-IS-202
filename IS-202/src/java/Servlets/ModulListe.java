@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -51,8 +52,13 @@ public class ModulListe extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("</head>");
             out.println("<body>");
-            Navbar navbar = new Navbar();
-            navbar.printNavbar("Lister", out);
+            try{
+                HttpSession session = request.getSession();
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("<div class='velkommen'>");
             out.println("<b> Moduler </b>");
             
