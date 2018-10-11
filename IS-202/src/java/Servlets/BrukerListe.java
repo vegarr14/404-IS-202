@@ -133,8 +133,8 @@ public class BrukerListe extends HttpServlet {
             out.println("<div class='velkommen'>");
             
             //Skriver ut liste over studenter og forelesere
-            String foreleser = ("SELECT fornavn,etternavn,id FROM Foreleser");
-            String student = ("SELECT fornavn,etternavn,id FROM Student");
+            String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
+            String student = ("SELECT forNavn,etterNavn,id FROM Student");
             
             //Forelesere
             out.println("<b>Forelesere:</b>"); 
