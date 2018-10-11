@@ -39,19 +39,14 @@ public class Kurs extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             String kursNavn  = null;
-
-            
+          
             Query query = new Query();
             ResultSet rs = null;
-            
-            
-            
-            
-            
-            /* TODO output your page here. You may use following sample code. */
+           
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -61,7 +56,9 @@ public class Kurs extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
+            
             try{
+                //Henter Kurs Data og plasserer disse i maincontent 
                 rs = query.query("Select kursBilde, kursTekst, kursNavn from Kurs where kursId='"+kursId+"'");
                 
                 if(rs.next()){
