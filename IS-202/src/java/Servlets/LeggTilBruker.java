@@ -82,8 +82,8 @@ public class LeggTilBruker extends HttpServlet {
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
                 printFelter(fornavn,etternavn,email,tlf,out);
-                out.println("<input type='radio' name='brukertype' value='student' checked> Student<br>");
-                out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
+                out.println("<input type='radio' name='brukerType' value='student' checked> Student<br>");
+                out.println("<input type='radio' name='brukerType' value='foreleser'> Foreleser<br>");
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
             
