@@ -9,11 +9,14 @@ import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -40,28 +43,77 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null, setter modulListe som PreparedStatement.*/
             Query query = new Query();
             ResultSet rs = null;
-            PreparedStatement modulListe;
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet ModulListe</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/modulListe.css'>");            
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("</head>");
             out.println("<body>");
+            try{
+                HttpSession session = request.getSession();
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("<div class='velkommen'>");
+            out.println("<b> Moduler </b>");
             
-            out.println("<h1> Moduler </h1>");
+            /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
+            //out.println("<table name=modulListe>");
+            //query.skrivModulliste("SELECT forNavn, etterNavn, innlev_Id, innlev_Poeng, innlevering.id, ModulListe.modul_Nummer FROM Innlevering join Student join ModulListe where Innlevering.id = Student.id and ModulListe.modul_Id = Innlevering.modul_Id order by Innlevering.id, modul_Nummer", out);
+            //out.println("</table>");
             
-            out.println("<table name=modulListe>");
-            /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
-            out.println("</table>");
-
-            rs = null;
             
-                out.println("<input href='Login' class='modulKnapp' type='button' value='Legg til'>");
-                out.println("<input href='Login' class='Tilbake' type='button' value='Tilbake'>");   
+            //out.println("<button href='Login' class='Tilbake'>Tilbake</button>");   
+                
+             //try {
+                if(request.getParameter("button") != null) {
+                    //sjekker om en knapp med name button er trykket på for å åpne siden
+                    String modulId = request.getParameter("modulId");
+                    String modulNummer = request.getParameter("modulNummer");
+                    String kursId = request.getParameter("kursId");
+                    String foreleserId = request.getParameter("foreleserId");
+                    String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    if(request.getParameter("button").equals("legg til")) {
+                        //Kjører hvis det skal legges til ny modul
+                        
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
+                        
+                    } else if (request.getParameter("button").equals("oppdater modul")) {
+                        //kjører hvis en modul skal oppdateres
+                        
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                        
+                    } else if (request.getParameter("button").equals("slett modul")) {
+                        //kjører hvis en modul skal slettes
+                        
+                        query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
+                        
+                    }
+                    
+                }
+            //} //catch (SQLException ex) {
+                //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            //}
             
+            try {
+                rs = query.query("Select * from Modul");
+                out.println("<ul>");
+                while(rs.next()){
+                    out.println("<li> <a href ='LeggTilModul?modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
+                }
+                out.println("</ul>");
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("<form name='LeggTilModul' action='LeggTilModul' method='post'>");
+            out.println("<button type='submit'>Legg Til Modul</button>");
+            out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }

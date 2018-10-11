@@ -1,0 +1,42 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 10.okt.2018, 13:31:06
+    Author     : Erlend Thorsen
+*/
+.leftSidebar{
+    text-align: center;
+    font-size: 24px;
+    color: white;
+    background-color: grey;
+    position: fixed;
+    left: 0px;
+    top: 55px;
+    width: 15%;
+    height: calc(100% - 55px);
+    padding-top: 10px;
+    border-right: orange 2px solid;
+    
+}
+.leftSidebar ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.leftSidebar li{
+    margin-bottom: 15px;
+    
+}
+.leftSidebar a{
+    color: inherit;
+    text-decoration: none;
+}
+.leftSidebar a:hover{
+    color: orange;
+}
+.leftSidebar a:before{
+    content: "• ";
+}

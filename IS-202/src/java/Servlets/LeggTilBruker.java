@@ -60,37 +60,39 @@ public class LeggTilBruker extends HttpServlet {
             //Query, resultset og variabler som skal brukes
             Query query = new Query();
             ResultSet rs = null;
-            String Fornavn = "";
-            String Etternavn = "";
-            String Email = "";
-            String Tlf = "";
+            String fornavn = "";
+            String etternavn = "";
+            String email = "";
+            String tlf = "";
+            String id = request.getParameter("id");
             
-            if(request.getParameter("id")!= null) {
+            if(id!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
                  * bruker i BrukerListe slik at informasjon om brukeren kommer opp i feltene
                  * + valg mellom oppdater bruker og slett bruker
                  */
-                String id = request.getParameter("id");
                 rs = query.query("select * from foreleser where id = "+id+" union select * from student where id = "+id);
                 rs.next();
-                Fornavn = rs.getString(2);
-                Etternavn = rs.getString(3);
-                Email = rs.getString(4);
-                Tlf = rs.getString(5);
+                fornavn = rs.getString(2);
+                etternavn = rs.getString(3);
+                email = rs.getString(4);
+                tlf = rs.getString(5);
                 
-                out.println("Brukerid <input type='text' name='id' value='"+request.getParameter("id")+"' readonly><br>");
+
+                out.println("Brukerid <input type='text' name='id' value='"+id+"' readonly><br>");
                 printFelter(Fornavn,Etternavn,Email,Tlf,out);
                 if(isForeleser){
                 out.println("<input type='submit' name='button' value='Oppdater bruker'>");
                 out.println("<input type='submit' name='button' value='Slett bruker'>");
                 }
                 out.println("<input type='submit' name='button' value='Gå tilbake'>");
+
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
-                printFelter(Fornavn,Etternavn,Email,Tlf,out);
-                out.println("<input type='radio' name='brukertype' value='student' checked> Student<br>");
-                out.println("<input type='radio' name='brukertype' value='foreleser'> Foreleser<br>");
-                out.println("<input type='submit' name='button' value='legg til'>");
+                printFelter(fornavn,etternavn,email,tlf,out);
+                out.println("<input type='radio' name='brukerType' value='student' checked> Student<br>");
+                out.println("<input type='radio' name='brukerType' value='foreleser'> Foreleser<br>");
+                out.println("<input type='submit' name='button' value='Legg til'>");
             }
             
             out.println("</form>");
@@ -100,15 +102,14 @@ public class LeggTilBruker extends HttpServlet {
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
     //Felles metode for input feltene på siden
-    public void printFelter (String Fornavn, String Etternavn, String Email, String Tlf, PrintWriter out) {
-        out.println("Fornavn <input type='text' name='Fornavn' value='"+Fornavn+"'><br>");
-        out.println("Etternavn <input type='text' name='Etternavn' value='"+Etternavn+"'><br>");
-        out.println("Email <input type='text' name='Email' value='"+Email+"'><br>");
-        out.println("Tlf <input type='number' maxlength='8' name='Tlf' Value='"+Tlf+"'><br>");
+    public void printFelter (String fornavn, String etternavn, String email, String tlf, PrintWriter out) {
+        out.println("Fornavn <input type='text' name='fornavn' value='"+fornavn+"'><br>");
+        out.println("Etternavn <input type='text' name='etternavn' value='"+etternavn+"'><br>");
+        out.println("Email <input type='text' name='email' value='"+email+"'><br>");
+        out.println("Tlf <input type='number' maxlength='8' name='tlf' Value='"+tlf+"'><br>");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
@@ -38,72 +39,83 @@ public class KursListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            HttpSession session = request.getSession();
+            
             ResultSet rs = null;
             Query query = new Query();
+            
+            String kursId = "";
+            String kursNavn = "";
+            String kursBilde = "";
+            String kursTekst = "";
             
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>KursListe</title>");            
+            out.println("<title>KursListe</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet KursListe at " + request.getContextPath() + "</h1>");
             
+            if(request.getParameter("button") != null) {
+                
+                kursId = request.getParameter("KursId");
+                kursNavn = request.getParameter("KursNavn");
+                kursBilde = request.getParameter("KursBilde");
+                kursTekst = request.getParameter("KursTekst");
+                
+                
+                if(request.getParameter("button").equals("legg til")) {
 
-             try {
-                if(request.getParameter("button") != null) {
-                    if(request.getParameter("button").equals("legg til")) {
-                        String Kursid = request.getParameter("Kursid");
-                        String Kursnavn = request.getParameter("Kursnavn");
-                        
-                        String LeggTil =("INSERT INTO kurs (kursnavn, kursid) values('"+Kursnavn+"', '"+Kursid+"')");
-                        PreparedStatement leggtilkurs = con.prepareStatement(LeggTil);
-                        leggtilkurs.executeUpdate();
-                        
-                    } else if (request.getParameter("button").equals("oppdater kurs")) {
-                        String kursid = request.getParameter("Kursid");
-                        String kursnavn = request.getParameter("Kursnavn");
-                        String id = request.getParameter("id");
-                        query.update("UPDATE kurs set kursnavn ='"+kursnavn+"',kursid ='"+kursid+"' where id='"+id+"'");
-                    } else if (request.getParameter("button").equals("slett kurs")) {
-                        query.update("DELETE from kurs where id = '"+request.getParameter("id")+"'");
-                    }
+                    //Legger til kurs
+                    query.update("INSERT INTO kurs (kursId, kursNavn, kursBilde, kursTekst) values('"+kursId+"', '"+kursNavn+"', '"+kursBilde+"','"+kursTekst+"')");
+                } else if (request.getParameter("button").equals("oppdater kurs")) {
+                    //Oppdaterer Kurs
+                    query.update("UPDATE kurs set kursId ='"+kursId+"',kursNavn ='"+kursNavn+"', kursBilde='"+kursBilde+"', kursTekst='"+kursTekst+"' where kursId='"+kursId+"'");
+                } else if (request.getParameter("button").equals("slett kurs")) {
+                    //Fjerner Kurs
+                    query.update("DELETE from kurs where kursId = '"+request.getParameter("KursId")+"'");
                 }
-            }catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-                        
             //Skriver ut liste over kurs
-            String kurs = ("SELECT kursnavn,kursid,id FROM Kurs");
+
+            String kurs = ("SELECT kursnavn,kursId FROM Kurs");
             
             //Kurs
+            out.println("<div class='velkommen'>");
             out.println("<b>Kurs:</b>"); 
             try{
             rs = query.query(kurs);
             out.println("<u1>");
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             while(rs.next()){
-                out.println("<li> <a href ='LeggTilKurs?id="+rs.getString(3)+"'>" + rs.getString(2) +", "+ rs.getString(1) +"</a></li>");
+                out.println("<li> <a href ='LeggTilKurs?KursId="+rs.getString(2)+"'>" + rs.getString(2) +"</a></li>");
             }
             out.println("</u1>");
             rs = null;
             
-        }   catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
   
             out.println("<form name='LeggTilKurs' action='LeggTilKurs' method='post'>");
             out.println("<button type='submit'>Legg til kurs</button>");
             out.println("</form>");
+            out.println("</div>");
+            
+            //Printer Navbar
+            try {
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
-            ctd.close(rs);
-    }
+            query.close();
+        }
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
