@@ -41,8 +41,8 @@ public class Kurs extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
-            String kursKode = request.getParameter("kursKode");
-            String kursNavn = request.getParameter("kursNavn");
+            String kursNavn  = null;
+
             
             Query query = new Query();
             ResultSet rs = null;
@@ -55,19 +55,19 @@ public class Kurs extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>SLIT - "+kursKode+"</title>");
+            out.println("<title>SLIT - "+kursId+"</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
-            
-            out.println("<div class='mainContent'>");
-            out.println("<h1>"+ kursKode + " | " + kursNavn + "</h1>");
-            
             try{
-                rs = query.query("Select kursBilde, kursTekst from Kurs where id='"+kursId+"'");
+                rs = query.query("Select kursBilde, kursTekst, kursNavn from Kurs where kursId='"+kursId+"'");
+                
                 if(rs.next()){
+                    kursNavn = rs.getString(3);
+                    out.println("<div class='mainContent'>");
+                    out.println("<h1>"+ kursId + " | " + kursNavn + "</h1>");
                     out.println("<img id='kursImg' src='"+rs.getString(1)+"' alt='kursbilde'>");
                     out.println("<h2>Kursbeskrivelse</h2>");
                     out.println("<p>"+rs.getString(2)+"</p>");
@@ -79,7 +79,7 @@ public class Kurs extends HttpServlet {
             
             //Printer navbar og sidebar
             Navbar navbar = new Navbar();            
-            navbar.printLeftSidebar("Hjem", kursId, kursKode, kursNavn, out);
+            navbar.printLeftSidebar("Hjem", kursId, out);
             try {
                 navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {

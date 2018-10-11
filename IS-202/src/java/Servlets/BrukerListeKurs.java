@@ -55,8 +55,6 @@ public class BrukerListeKurs extends HttpServlet {
             
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
-            String kursKode = request.getParameter("kursKode");
-            String kursNavn = request.getParameter("kursNavn");
             Navbar navbar = new Navbar();
 
             
@@ -69,7 +67,7 @@ public class BrukerListeKurs extends HttpServlet {
             String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
             
             //Forelesere
-            out.println("<h2>Studenter og forelesere som tar " +kursKode+ "</h2>");
+            out.println("<h2>Studenter og forelesere som tar " +kursId+ "</h2>");
             out.println("<b>Forelesere:</b>");
 
             bl.skrivListe(foreleser, rs, query, out);
@@ -81,7 +79,7 @@ public class BrukerListeKurs extends HttpServlet {
 
             out.println("</div>");
             //printer sidebar og navbar
-            navbar.printLeftSidebar("Personer", kursId, kursKode, kursNavn, out);
+            navbar.printLeftSidebar("Personer", kursId, out);
             try {
                 navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {

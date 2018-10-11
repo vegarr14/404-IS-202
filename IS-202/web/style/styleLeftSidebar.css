@@ -37,6 +37,6 @@ and open the template in the editor.
 .leftSidebar a:hover{
     color: orange;
 }
-.leftSidebar li:before{
+.leftSidebar a:before{
     content: "• ";
 }

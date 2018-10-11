@@ -43,7 +43,7 @@ public class Navbar {
 
         }
         
-        public void printLeftSidebar(String active, String kursId, String kursKode,String kursNavn, PrintWriter out){
+        public void printLeftSidebar(String active, String kursId, PrintWriter out){
             String hjem = "";
             String personer = "";
             String moduler = "";
@@ -59,9 +59,9 @@ public class Navbar {
             }
             out.println("<div class='leftSidebar'>");
             out.println("<ul>");
-            out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Hjem</a></li>");
-            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Personer</a></li>");
-            out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>Moduler</a></li>");
+            out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
+            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"'>Personer</a></li>");
+            out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"'>Moduler</a></li>");
             out.println("</ul>");
             out.println("</div>");
         }
@@ -112,15 +112,10 @@ public class Navbar {
 
                 }else{
                     rs = query.query("Select * from tarKurs where studentId ='"+id+"'");
-                }
-                
+                }          
                 while(rs.next()){                  
                     String kursId = rs.getString(1);
-                    rs2 = query.query("Select kursId,kursNavn from kurs where id ='"+kursId+"'");
-                    rs2.next();
-                    String kursKode = rs2.getString(1);
-                    String kursNavn = rs2.getString(2);
-                    navArray.add("<a href='Kurs?kursId="+kursId+"&kursKode="+kursKode+"&kursNavn="+kursNavn+"'>"+kursKode+"</a>");
+                    navArray.add("<a href='Kurs?kursId="+kursId+"'>"+kursId+"</a>");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
