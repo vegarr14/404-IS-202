@@ -68,6 +68,7 @@ public class KursListe extends HttpServlet {
                 
                 
                 if(request.getParameter("button").equals("legg til")) {
+
                     //Legger til kurs
                     query.update("INSERT INTO kurs (kursId, kursNavn, kursBilde, kursTekst) values('"+kursId+"', '"+kursNavn+"', '"+kursBilde+"','"+kursTekst+"')");
                 } else if (request.getParameter("button").equals("oppdater kurs")) {
@@ -79,6 +80,7 @@ public class KursListe extends HttpServlet {
                 }
             }
             //Skriver ut liste over kurs
+
             String kurs = ("SELECT kursnavn,kursId FROM Kurs");
             
             //Kurs

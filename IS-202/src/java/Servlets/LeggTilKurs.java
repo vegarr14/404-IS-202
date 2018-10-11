@@ -64,12 +64,14 @@ public class LeggTilKurs extends HttpServlet {
             String kursBilde = "";
             String kursTekst = "";
 
+
             
             if(request.getParameter("KursId")!= null) {     
                 kursId = request.getParameter("KursId");
                 String dataString = ("select * from kurs where kursId = '"+kursId+"'");;
                 rs = query.query(dataString);
                 rs.next();
+
                 kursId = rs.getString(1);
                 kursNavn = rs.getString(2);
                 kursBilde = rs.getString(3);
@@ -80,6 +82,7 @@ public class LeggTilKurs extends HttpServlet {
                 out.println("<input type='submit' name='button' value='slett kurs'>");
             } else {
                 printFelter(kursId,kursNavn, kursBilde, kursTekst, out);
+
                 out.println("<input type='submit' name='button' value='legg til'>");
                 }
             out.println("</form>");
@@ -101,11 +104,13 @@ public class LeggTilKurs extends HttpServlet {
         
     }
     
+
     public void printFelter (String kursId, String kursNavn, String kursBilde, String kursTekst, PrintWriter out) {
      out.println("Kursid<br><input type='text' name='KursId' value='"+kursId+"'><br>");
      out.println("Kursnavn<br><input type='text' name='KursNavn' value='"+kursNavn+"'><br>");
      out.println("Link til Bilde<br><input type='text' name='KursBilde' value='"+kursBilde+"'><br>");
      out.println("Beskrivelse av kurset<br><textarea cols='40' rows='5' name='KursTekst'>"+kursTekst+"</textarea><br>");
+
     }
 
 

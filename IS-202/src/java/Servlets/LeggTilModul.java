@@ -7,6 +7,8 @@ import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,24 +36,97 @@ public class LeggTilModul extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            Query query = new Query();
-            ResultSet rs = null;
-            PreparedStatement modulListe;
-            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LeggTilModul</title>");            
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
+            out.println("<title>Servlet LeggTilModul</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
+            out.println("<form name='ModulListe' action='ModulListe' id='LeggTilModul' method='post'>");
             
-            query.skrivModulliste("SELECT * FROM modulListe", "modulListe", out);
+                /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
+                /*out.println("<table name=modulListe>");
+                    query.skrivModulliste("SELECT * FROM modulListe", out);
+                out.println("</table>");*/
+                
+            Query query = new Query();
+            ResultSet rs = null;
+            String modulId = request.getParameter("modulId");
+            String modulNummer = "";
+            String kursId = "";
+            String foreleserId = "";
+            String oppgaveTekst = "";
             
+            if(modulId!= null) {
+                /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
+                 * modul i ModulListe slik at informasjon om brukeren kommer opp i feltene
+                 * + valg mellom oppdater modul og slett modul
+                 */
+                rs = query.query("select * from Modul where modulId = "+modulId);
+                rs.next();
+                kursId = rs.getString(2);
+                foreleserId = rs.getString(3);
+                modulNummer = rs.getString(4);
+                oppgaveTekst = rs.getString(5);
+                
+                out.println("Modulid <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                out.println("<input type='submit' name='button' value='oppdater modul'>");
+                out.println("<input type='submit' name='button' value='slett modul'>");
+            } else {
+                //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                out.println("<input type='submit' name='button' value='legg til'>");
+            }
+            
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
+        } catch (SQLException ex){
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            /*    
+            out.println("<form name='LeggTilModul' action='LeggTilModul'>");
+            out.println("<input type='submit' value=Oppdater></input>");
+            
+            rs=null;
+            String id = request.getParameter("id");
+            
+            if (id!=null) {
+                String navnet = request.getParameter("id");
+                
+                rs = query.query("SELECT * from Foreleser WHERE id = "+id+" UNION SELECT * from Student WHERE id = "+id);
+                String modulNavn = request.getParameter("modul");
+                
+            }
+            */
+        }
+    public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
+        try {
+        Query query = new Query();
+        ResultSet rs = null;
+        rs = query.query("SELECT kursId, kursNavn from Kurs");
+        
+        out.println("modulNummer <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
+        out.println("kursId <select name='kursId'>");
+        while (rs.next())   {
+            out.println("<option value='"+rs.getString(1)+"'>"+rs.getString(1) + " - "+rs.getString(2)+"</option>");
+        }
+        /*out.println("<option value='IS-200'>IS-200</option>" +
+        "<option value='IS-201'>IS-201</option>" +
+        "<option value='IS-202'>IS-202</option>" +*/
+        out.println("</select><br>");
+        out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"'><br>");
+        out.println("oppgaveTekst <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
+        }   catch (SQLException ex){
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
     }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -91,5 +166,4 @@ public class LeggTilModul extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
