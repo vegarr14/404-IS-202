@@ -107,12 +107,14 @@ public class Navbar {
                 Query query = new Query();
                 ResultSet rs = null;
                 ResultSet rs2 = null;
+                
+                //velger tabell baser på om personen er student eller foreleser 
                 if(isForeleser){
                     rs = query.query("Select * from foreleserKurs where foreleserId ='"+id+"'");
-
                 }else{
                     rs = query.query("Select * from tarKurs where studentId ='"+id+"'");
-                }          
+                }
+                //Legger til kurs personen er medlem i navbar
                 while(rs.next()){                  
                     String kursId = rs.getString(1);
                     navArray.add("<a href='Kurs?kursId="+kursId+"'>"+kursId+"</a>");
@@ -121,8 +123,9 @@ public class Navbar {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //Om person er foreleser vil man få opp muligheten til å legge til kurs
             if(isForeleser){
-                navArray.add("<a href='LeggTilKurs'>Legg til kurs</a>");
+                navArray.add("<a href='KursListe'>Legg til kurs</a>");
             }
             navArray.add("</div>");
             navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
