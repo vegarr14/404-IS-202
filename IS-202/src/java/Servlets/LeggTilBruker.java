@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -41,6 +42,9 @@ public class LeggTilBruker extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+                 
+            HttpSession session = request.getSession();
+            boolean isForeleser = (boolean)session.getAttribute("isForeleser");
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -51,7 +55,6 @@ public class LeggTilBruker extends HttpServlet {
             out.println("<title>Legg til bruker</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LeggTilBruker at " + request.getContextPath() + "</h1>");
             out.println("<form name='BrukerListe' action='BrukerListe' id='LeggTilBruker' method='post'>");
             
             //Query, resultset og variabler som skal brukes
@@ -77,8 +80,11 @@ public class LeggTilBruker extends HttpServlet {
                 
                 out.println("Brukerid <input type='text' name='id' value='"+request.getParameter("id")+"' readonly><br>");
                 printFelter(Fornavn,Etternavn,Email,Tlf,out);
-                out.println("<input type='submit' name='button' value='oppdater bruker'>");
-                out.println("<input type='submit' name='button' value='slett bruker'>");
+                if(isForeleser){
+                out.println("<input type='submit' name='button' value='Oppdater bruker'>");
+                out.println("<input type='submit' name='button' value='Slett bruker'>");
+                }
+                out.println("<input type='submit' name='button' value='Gå tilbake'>");
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
                 printFelter(Fornavn,Etternavn,Email,Tlf,out);
