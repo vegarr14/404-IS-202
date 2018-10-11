@@ -2,7 +2,7 @@
 INSERT into bruker (brukernavn, passord) Values ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
-('test', aes_encrypt('test', 'domo arigato mr.roboto')),
+('hans', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('', aes_encrypt('', 'domo arigato mr.roboto'));
