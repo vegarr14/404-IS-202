@@ -38,8 +38,13 @@ public class BrukerListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            
+            HttpSession session = request.getSession();
+            boolean isForeleser = (boolean)session.getAttribute("isForeleser");
+            
             ResultSet rs = null;
             Query query = new Query();
+            
             request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -52,17 +57,19 @@ public class BrukerListe extends HttpServlet {
             
 
             try{
-                HttpSession session = request.getSession();
+                
                 Navbar navbar = new Navbar();
                 navbar.printNavbar("Brukerliste",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
             
             
             
             try {
+                
+                             
+              if(isForeleser){
                 if(request.getParameter("button") != null) {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
                     if(request.getParameter("button").equals("legg til")) {
@@ -83,10 +90,10 @@ public class BrukerListe extends HttpServlet {
                         
                         query.update("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
                         
-                    } else if (request.getParameter("button").equals("oppdater bruker")) {
+                    } else if (request.getParameter("button").equals("Oppdater bruker")) {
                         //kjører hvis en bruker skal oppdateres
                         //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
-                        HttpSession session = request.getSession();
+
                         Brukernavn brukernavn = new Brukernavn(request);
                         String forNavn = request.getParameter("Fornavn");
                         String etterNavn = request.getParameter("Etternavn");
@@ -116,15 +123,16 @@ public class BrukerListe extends HttpServlet {
                             rs = null;
                         }                                        
                         
-                    } else if (request.getParameter("button").equals("slett bruker")) {
+                    } else if (request.getParameter("button").equals("Slett bruker")) {
                         //kjører hvis en bruker skal slettes
                         //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
                         query.update("DELETE from foreleser where id = "+request.getParameter("id"));
                         query.update("DELETE from student where id = "+request.getParameter("id"));
                         query.update("DELETE from bruker where id = "+request.getParameter("id"));
-                    }
-                    
-                    
+                    }else if (request.getParameter("button").equals("Gå tilbake")) {
+                        //går tilbake fra LeggTilBruker til Brukerliste, uten å endre noe
+                        }
+                   } 
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
@@ -144,7 +152,9 @@ public class BrukerListe extends HttpServlet {
             skrivListe(student, rs, query, out);
 
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
-            out.println("<button type='submit'>Legg til bruker</button>");
+            if(isForeleser){
+                out.println("<button type='submit'>Legg til bruker</button>");
+            }
             out.println("</form>");
             out.println("</div>");
             out.println("</body>");
