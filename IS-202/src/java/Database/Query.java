@@ -20,6 +20,7 @@ public class Query {
     private connectToDatabase ctd;
     private Connection con;
     private ResultSet rs;
+    private PreparedStatement statement;
             
     //Setter opp objektet med connection klar for statemtents
     public Query(){    
@@ -31,8 +32,8 @@ public class Query {
     //For insert, update og delete etc.
     public void update(String Query) {
         try {
-            PreparedStatement update = con.prepareStatement(Query);
-            update.executeUpdate();
+            statement = con.prepareStatement(Query);
+            statement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -42,12 +43,25 @@ public class Query {
     //for select. returnerer resultset
     public ResultSet query(String Query) {
         try {
-            PreparedStatement query = con.prepareStatement(Query);
-            rs = query.executeQuery();
+            statement = con.prepareStatement(Query);
+            rs = statement.executeQuery();
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rs;
+    }
+    
+    public void close() {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            statement.close();
+            con.close();
+            ctd.destroy();
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /*@param selectNoe er MySQL-teksten som skal sendes som query (prepareStatement)
