@@ -105,10 +105,26 @@ public class LeggTilModul extends HttpServlet {
             */
         }
     public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
+        try {
+        Query query = new Query();
+        ResultSet rs = null;
+        rs = query.query("SELECT kursId, kursNavn from Kurs");
+        
         out.println("modulNummer <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
-        out.println("kursId <input type='text' name='kursId' value='"+kursId+"'><br>");
+        out.println("kursId <select name='kursId'>");
+        while (rs.next())   {
+            out.println("<option value='"+rs.getString(1)+"'>"+rs.getString(1) + " - "+rs.getString(2)+"</option>");
+        }
+        /*out.println("<option value='IS-200'>IS-200</option>" +
+        "<option value='IS-201'>IS-201</option>" +
+        "<option value='IS-202'>IS-202</option>" +*/
+        out.println("</select><br>");
         out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"'><br>");
         out.println("oppgaveTekst <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
+        }   catch (SQLException ex){
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
     }
     
 
