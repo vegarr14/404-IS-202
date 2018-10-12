@@ -16,7 +16,7 @@
     <body>
         <div class="velkommen">
             <h1>Velkommen til <span style="color: orange">SLIT</span></h1>
-            <h2> Et læringsplatform med få funksjoner</h2>
+            <h2> En læringsplatform med få funksjoner</h2>
             <div>
                 <h3>Logg inn her</h3>
                 <form action="Login" method="post">
@@ -30,6 +30,10 @@
                         if(request.getAttribute("loginResult") != null && request.getAttribute("loginResult") == "true"){
                     %>
                     <p style="color:red">Feil brukernavn eller passord. <br> Vennligst prøv igjen</p>
+                    <%
+                    }  if(request.getAttribute("missingStatus") != null && request.getAttribute("missingStatus") == "true"){
+                    %>
+                    <p style="color:red">Innlogging er riktig men du er verken student eller foreleser i systemet<br>"You have no power here Gandalf the grey" - King Theoden</p>
                     <%
                     }
                     %>

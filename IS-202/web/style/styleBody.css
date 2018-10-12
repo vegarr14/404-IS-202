@@ -4,12 +4,12 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
 /* 
-    Created on : 19.sep.2018, 12:57:36
+    Created on : 27.sep.2018, 13:11:58
     Author     : Erlend Thorsen
 */
 body{
     background-color: #fafafa;
-    font-family:Tahoma, Geneva, sans-serif;
+    font-family: Tahoma, Geneva, sans-serif;
 }
 .velkommen{
     margin: auto;
@@ -19,20 +19,41 @@ body{
     width: 50%;
     padding: 10px;
     text-align: center;
-    
 }
-label {
-  display: inline-block;
-  width: 140px;
-  text-align: right;
-}​
-.button {
-    background-color: #1cb8cf;
+label{
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+}
+.button{
+    background-color: orange;
     color: white;
-    height: 20px;
-    box-shadow: 2px 2px 5px black;
+    height: 30px;
+    border: none;
+    margin: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .button:hover{
-    background-color:orange;
+    background-color: gray;
     box-shadow: 0px 0px 0px black;
+}
+
+table   {
+    border-collapse:collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+#prosent    {
+    border: none;
+}
+
+li,ul  {
+    list-style: none;
+    padding:0px;
+    margin:0px;
 }

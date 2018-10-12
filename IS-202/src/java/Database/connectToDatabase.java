@@ -27,7 +27,7 @@ public class connectToDatabase {
         
         Class.forName("com.mysql.cj.jdbc.Driver");
         myConnection=DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/slitdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CET","root","root");
+                "jdbc:mysql://localhost:3306/slitdb?characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=CET","root","root");
                 System.out.println("Connection established");
         }
         catch(Exception e){

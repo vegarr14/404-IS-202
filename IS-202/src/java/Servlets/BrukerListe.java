@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -37,65 +38,107 @@ public class BrukerListe extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             
-            connectToDatabase ctd = new connectToDatabase();
-            ctd.init();
-            Connection con = ctd.getConnection();
+            HttpSession session = request.getSession();
+            boolean isForeleser = (boolean)session.getAttribute("isForeleser");
+            
             ResultSet rs = null;
             Query query = new Query();
             
+            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");    
             out.println("<title>BrukerListe</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BrukerListe at " + request.getContextPath() + "</h1>");
+            
+
+            try{
+                
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Brukerliste",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             
             
             try {
+                
+                             
+              if(isForeleser){
                 if(request.getParameter("button") != null) {
-                    if(request.getParameter("button").equals("legg til")) {
-                        String Fornavn = request.getParameter("Fornavn");
-                        String Etternavn = request.getParameter("Etternavn");
-                        String Email = request.getParameter("Email");
-                        String Tlf = request.getParameter("Tlf");
-                        String Type = request.getParameter("brukertype");
-                        
-                        String NyBruker = ("INSERT into bruker (brukernavn, passord) Values ('"+Fornavn+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
-                        PreparedStatement Leggtilbruker = con.prepareStatement(NyBruker);
-                        Leggtilbruker.executeUpdate();
-                    
-                        PreparedStatement hentverdi = con.prepareStatement("SELECT max(id) FROM Bruker");
-                        rs = hentverdi.executeQuery();
+                    //sjekker om en knapp med name button er trykket på for å åpne siden
+                    if(request.getParameter("button").equals("Legg til")) {
+                        //Kjører hvis det skal legges til ny bruker
+                        //lager ny bruker og henter id til ny bruker og setter inn i enten foreleser eller student
+                        Brukernavn brukernavn = new Brukernavn(request);
+                        String fornavn = request.getParameter("fornavn");
+                        String etternavn = request.getParameter("etternavn");
+                        String email = request.getParameter("email");
+                        String tlf = request.getParameter("tlf");
+                        String type = request.getParameter("brukerType");
+                        query.update("INSERT into bruker (brukernavn, passord) Values ('"+brukernavn.getBrukernavn()+"', aes_encrypt('test', 'domo arigato mr.roboto'))");
+                        rs = query.query("SELECT max(id) FROM Bruker");
                         rs.next();
                         int id = rs.getInt(1);
-                        rs = null;                    
+                        rs = null;
                         
-                        String LeggTil =("INSERT INTO "+Type+" values('"+id+"','"+Fornavn+"','"+Etternavn+"','"+Email+"','"+Tlf+"')");
-                        PreparedStatement leggtilstudent = con.prepareStatement(LeggTil);
-                        leggtilstudent.executeUpdate();
-                    } else if (request.getParameter("button").equals("oppdater bruker")) {
-                        String forNavn = request.getParameter("Fornavn");
-                        String etterNavn = request.getParameter("Etternavn");
-                        String email = request.getParameter("Email");
-                        String tlf = request.getParameter("Tlf");
+                        query.update("INSERT INTO "+type+" values('"+id+"','"+fornavn+"','"+etternavn+"','"+email+"','"+tlf+"')");
+                        
+                    } else if (request.getParameter("button").equals("Oppdater bruker")) {
+                        //kjører hvis en bruker skal oppdateres
+                        //prøver å oppdatere i både foreleser og student for en spesifikk id, som kun skal finnes i en av tabellene
+
+                        Brukernavn brukernavn = new Brukernavn(request);
+                        String fornavn = request.getParameter("fornavn");
+                        String etternavn = request.getParameter("etternavn");
+                        String email = request.getParameter("email");
+                        String tlf = request.getParameter("tlf");
                         String id = request.getParameter("id");
-                        query.update("UPDATE foreleser set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                        query.update("UPDATE student set forNavn ='"+forNavn+"',etterNavn='"+etterNavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
-                    } else if (request.getParameter("button").equals("slett bruker")) {
-                        query.update("DELETE from foreleser where id = "+request.getParameter("id"));
-                        query.update("DELETE from student where id = "+request.getParameter("id"));
-                        query.update("DELETE from bruker where id = "+request.getParameter("id"));
-                    }
-                    
-                    
+
+                        String oppdatertforNavn;
+                        String oppdatertetterNavn;
+                        query.update("UPDATE foreleser set forNavn ='"+fornavn+"',etterNavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE student set forNavn ='"+fornavn+"',etterNavn='"+etternavn+"',email ='"+email+"', tlf ='"+tlf+"' where id ='"+id+"'");
+                        query.update("UPDATE bruker set brukerNavn ='"+brukernavn.getBrukernavn()+"' where id ='"+id+"'");
+                        
+                        rs = query.query("Select forNavn, etterNavn from foreleser where id ='" + session.getAttribute("id") + "'");                
+                        if(rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }
+                        rs = query.query("Select forNavn, etterNavn from student where id ='" + session.getAttribute("id") + "'");                 
+                        if (rs.next()){
+                            String OppdatertforNavn = rs.getString(1);
+                            String OppdatertetterNavn = rs.getString(2);
+                            session.setAttribute("fornavn", OppdatertforNavn);
+                            session.setAttribute("etternavn", OppdatertetterNavn);
+                            rs = null;
+                        }                                        
+                        
+                    } else if (request.getParameter("button").equals("Slett bruker")) {
+                        //kjører hvis en bruker skal slettes
+                        //sletter fra både student og foreleser selv om kun en av de ikke gjør noe
+                        query.update("DELETE from Foreleser where id = "+request.getParameter("id"));
+                        query.update("DELETE from Student where id = "+request.getParameter("id"));
+                        query.update("DELETE from Bruker where id = "+request.getParameter("id"));
+                    } else if (request.getParameter("button").equals("Gå tilbake")) {
+                        //går tilbake fra LeggTilBruker til Brukerliste, uten å endre noe
+                        }
+                   } 
+
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+            out.println("<div class='velkommen'>");
             
             //Skriver ut liste over studenter og forelesere
             String foreleser = ("SELECT forNavn,etterNavn,id FROM Foreleser");
@@ -110,11 +153,14 @@ public class BrukerListe extends HttpServlet {
             skrivListe(student, rs, query, out);
 
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
-            out.println("<button type='submit'>Legg til bruker</button>");
+            if(isForeleser){
+                out.println("<button type='submit'>Legg til bruker</button>");
+            }
             out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
-            ctd.close(rs);
+            query.close();
         }
     }
     
