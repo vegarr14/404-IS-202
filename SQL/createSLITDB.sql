@@ -33,7 +33,7 @@ CREATE TABLE if not exists`Foreleser` (
   `id` int(11) NOT null,
   `forNavn` varchar(20) NOT NULL,
   `etterNavn` varchar(20) NOT NULL,
-  `email` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `tlf` int(8) Default null,
   primary key(`id`),
   Constraint `FK_Foreleser_Bruker` Foreign Key (`id`) references `bruker` (`id`)
@@ -94,4 +94,20 @@ CREATE TABLE `ForeleserKurs` (
   primary key(`kursId`,`foreleserId`),
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
+);
+
+CREATE TABLE if not exists `Gruppe`(
+    `gruppe_id` INT(11) NOT NULL auto_increment,
+    `gruppenavn` VARCHAR(20) NOT NULL,
+    `gruppeSkaperid` INT(11) NOT NULL,
+    PRIMARY KEY (`gruppe_id`),
+    Constraint `FK_Gruppe_gruppeSkaperid` Foreign Key (`id`) references `bruker` (`id`)
+);
+
+CREATE TABLE if not exists `Gruppetilbruker`(
+    `id` INT(11),
+    `gruppe_id` INT(11),
+    PRIMARY KEY (`id`,`gruppe_id`),
+      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
+      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppe_id`) references `gruppe` (`gruppe_id`)
 );
