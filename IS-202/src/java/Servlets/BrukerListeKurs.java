@@ -56,25 +56,34 @@ public class BrukerListeKurs extends HttpServlet {
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
+            boolean isForeleser = (boolean)session.getAttribute("isForeleser");
+            String redigerBrukere =  request.getParameter("redigerBrukere");
 
             
 
             out.println("<div class='mainContent'>");
             
-            
-            //Skriver ut liste over studenter og forelesere
-            String foreleser = ("SELECT A.fornavn, A.etterNavn, A.id from Foreleser A where  A.id in ( select B.foreleserId from ForeleserKurs B where B.kursId ='"+kursId+"')");
-            String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
-            
-            //Forelesere
-            out.println("<h2>Studenter og forelesere som tar " +kursId+ "</h2>");
-            out.println("<b>Forelesere:</b>");
+            if(!redigerBrukere.equals("true")){
+                //Skriver ut liste over studenter og forelesere
+                String foreleser = ("SELECT A.fornavn, A.etterNavn, A.id from Foreleser A where  A.id in ( select B.foreleserId from ForeleserKurs B where B.kursId ='"+kursId+"')");
+                String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
 
-            bl.skrivListe(foreleser, rs, query, out);
-              
-            //Studenter
-            out.println("<b>Studenter:</b>");
-            bl.skrivListe(student, rs, query, out);
+                //Forelesere
+                out.println("<h2>Studenter og forelesere som tar " +kursId+ "</h2>");
+                out.println("<b>Forelesere:</b>");
+
+                bl.skrivListe(foreleser, rs, query, out);
+
+                //Studenter
+                out.println("<b>Studenter:</b>");
+                bl.skrivListe(student, rs, query, out);
+                if(isForeleser){
+                    out.println("<button type='submit' onclick=\"window.location.href='BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true'\">Legg til/Fjern brukere</button>");
+                }
+            } else{
+                out.println("<h2>Legg til eller fjern brukere fra "+kursId+"</h2>");
+                
+            }
            
 
             out.println("</div>");
