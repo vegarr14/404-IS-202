@@ -14,13 +14,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author Sondre
  */
-@WebServlet(name = "LeggTilModul", urlPatterns = {"/LeggTilModul"})
-public class LeggTilModul extends HttpServlet {
+@WebServlet(name = "Modul", urlPatterns = {"/Modul"})
+public class Modul extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,6 +35,7 @@ public class LeggTilModul extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             
             out.println("<!DOCTYPE html>");
@@ -41,11 +43,11 @@ public class LeggTilModul extends HttpServlet {
             out.println("<head>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
-            out.println("<title>Servlet LeggTilModul</title>");
+            out.println("<title>Servlet Modul</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LeggTilModul at " + request.getContextPath() + "</h1>");
-            out.println("<form name='ModulListe' action='ModulListe' id='LeggTilModul' method='post'>");
+            out.println("<h1>Servlet Modul at " + request.getContextPath() + "</h1>");
+            out.println("<form name='ModulListe' action='ModulListe' id='Modul' method='post'>");
             
                 /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
                 /*out.println("<table name=modulListe>");
@@ -78,6 +80,8 @@ public class LeggTilModul extends HttpServlet {
                 out.println("<input type='submit' name='button' value='slett modul'>");
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
+                kursId=request.getParameter("kursId");
+                foreleserId = (String)session.getAttribute("id");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
@@ -89,7 +93,7 @@ public class LeggTilModul extends HttpServlet {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
             /*    
-            out.println("<form name='LeggTilModul' action='LeggTilModul'>");
+            out.println("<form name='Modul' action='Modul'>");
             out.println("<input type='submit' value=Oppdater></input>");
             
             rs=null;
@@ -105,26 +109,15 @@ public class LeggTilModul extends HttpServlet {
             */
         }
     public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
-        try {
         Query query = new Query();
         ResultSet rs = null;
         rs = query.query("SELECT kursId, kursNavn from Kurs");
         
+        out.println("kursId <input type='text' name='kursId' value='"+kursId+"' readonly><br>");
         out.println("modulNummer <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
-        out.println("kursId <select name='kursId'>");
-        while (rs.next())   {
-            out.println("<option value='"+rs.getString(1)+"'>"+rs.getString(1) + " - "+rs.getString(2)+"</option>");
-        }
-        /*out.println("<option value='IS-200'>IS-200</option>" +
-        "<option value='IS-201'>IS-201</option>" +
-        "<option value='IS-202'>IS-202</option>" +*/
-        out.println("</select><br>");
-        out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"'><br>");
+        out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
         out.println("oppgaveTekst <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
-        }   catch (SQLException ex){
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            
-        }
+
     }
     
 

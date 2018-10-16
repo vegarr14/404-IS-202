@@ -100,17 +100,19 @@ public class ModulListe extends HttpServlet {
                 //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             //}
             
+            String kursId = request.getParameter("kursId");
             try {
-                rs = query.query("Select * from Modul");
+                rs = query.query("Select * from Modul where kursId = '"+kursId+"'");
+                //System.out.println(kursId);
                 out.println("<ul>");
                 while(rs.next()){
-                    out.println("<li> <a href ='LeggTilModul?modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
+                    out.println("<li> <a href ='Modul?kursId="+kursId+"&modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
                 }
                 out.println("</ul>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("<form name='LeggTilModul' action='LeggTilModul' method='post'>");
+            out.println("<form name='Modul' action='Modul?kursId="+kursId+"' method='post'>");
             out.println("<button type='submit'>Legg Til Modul</button>");
             out.println("</form>");
             out.println("</div>");
