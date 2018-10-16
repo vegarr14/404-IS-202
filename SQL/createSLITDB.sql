@@ -61,7 +61,6 @@ CREATE TABLE if not exists `Modul` (
  CREATE TABLE if not exists `Innlevering` (
   `innlevId` int(11) NOT NULL AUTO_INCREMENT,
   `modulId` int (11) NOT NULL,
-  `modulNummer` int (11) NOT NULL,
   `id` int (11) NOT NULL,
   `innlevKommentar` varchar (250) NOT NULL,
   `innlevPoeng` int NOT NULL,
