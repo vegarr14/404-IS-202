@@ -60,7 +60,7 @@ public class Navbar {
             out.println("<div class='leftSidebar'>");
             out.println("<ul>");
             out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
-            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"'>Personer</a></li>");
+            out.println("<li "+personer+" ><a href=\"BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false\">Personer</a></li>");
             out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"'>Moduler</a></li>");
             out.println("</ul>");
             out.println("</div>");

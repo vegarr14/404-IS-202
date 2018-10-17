@@ -25,6 +25,9 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "BrukerListeKurs", urlPatterns = {"/BrukerListeKurs"})
 public class BrukerListeKurs extends HttpServlet {
+    
+    ResultSet rs = null;
+    Query query = new Query();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,8 +42,7 @@ public class BrukerListeKurs extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            ResultSet rs = null;
-            Query query = new Query();
+
             BrukerListe bl = new BrukerListe();
             
             out.println("<!DOCTYPE html>");
@@ -82,7 +84,24 @@ public class BrukerListeKurs extends HttpServlet {
                 }
             } else{
                 out.println("<h2>Legg til eller fjern brukere fra "+kursId+"</h2>");
-                
+                out.println("<form action='OppdaterBrukereKurs?kursId="+kursId+"&redigerBrukere=true' method='POST'>");
+                out.println("<div class='selectBrukere'");
+                out.println("<label>Alle brukere</label>");
+                out.println("<select name='brukereIkkeIKurs' size='15' multiple>");
+                printBrukereIkkeIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                out.println("<div class='buttonStack'>");
+                out.println("<input type='submit' name='leggTilBrukere' value='➜'>");
+                out.println("<input type='submit' name='fjernBrukere' style='-webkit-transform: rotate(-180deg);' value='➜'>");
+                out.println("</div>");
+                out.println("<div class='selectBrukere'");
+                out.println("<label>Brukere i Kurset</label>");
+                out.println("<select name='brukereIKurs' size='15' multiple>");
+                printBrukereIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                out.println("</form>");
             }
            
 
@@ -98,6 +117,49 @@ public class BrukerListeKurs extends HttpServlet {
             out.println("</html>");
         }
     }
+    
+    private void printBrukereIkkeIKurs(String kursId, PrintWriter out){
+            //Printer Alle forelesere som ikke er i kurset til en <option>
+            rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id NOT IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
+            out.println("<option class='optionLabel' value='label' disabled>Forelesere:</option>");
+            printOption(out);
+            //Printer Alle studenter som ikke er i kurset til <option>
+            rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id NOT IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
+            out.println("<option class='optionLabel' value='label' disabled>Studenter:</option>");
+            printOption(out);
+       
+    }
+
+    private void printBrukereIKurs(String kursId, PrintWriter out){
+            //Printer Alle forelesere som er i kurset til en <option>
+            rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
+            out.println("<option class='optionLabel' value='label' disabled>Forelesere:</option>");
+            printOption(out);
+
+            //Printer Alle studenter som er i kurset til <option>
+            rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
+            out.println("<option class='optionLabel' value='label' disabled>Studenter:</option>");
+            printOption(out);        
+    }
+        
+    private void printOption(PrintWriter out){
+        //Skriver ut resultset til <option>
+        try {
+            String id = null;
+            String fornavn = null;
+            String etternavn = null;
+            
+            while(rs.next()){
+                id = rs.getString(1);
+                fornavn = rs.getString(2);
+                etternavn = rs.getString(3);            
+                out.println("<option value="+id+">"+fornavn+ " "+etternavn+"</option>");           
+           }
+        } catch (SQLException ex) {
+            Logger.getLogger(BrukerListeKurs.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
