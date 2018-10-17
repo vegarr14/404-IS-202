@@ -36,6 +36,15 @@ public class Modul extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
+        if ((boolean)session.getAttribute("isForeleser")) {
+            isForeleser(request, response, session);
+        } else {
+            isStudent(request, response);
+        }
+    }
+    
+    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             
             out.println("<!DOCTYPE html>");
@@ -89,6 +98,7 @@ public class Modul extends HttpServlet {
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
+            query.close();
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -108,6 +118,33 @@ public class Modul extends HttpServlet {
             }
             */
         }
+    
+    public void isStudent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            Query query = new Query();
+            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId from Foreleser join Modul\n" +
+                    "on Foreleser.id = Modul.foreleserId and modulId = " + request.getParameter("modulId");
+            ResultSet rs = query.query(modul);
+            rs.next();
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
+            out.println("<title>Modul "+rs.getString(5)+"</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
+            out.println(rs.getString(6));
+            out.println("</body>");
+            out.println("</html>");
+            query.close();
+        } catch (SQLException ex){
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+            
     public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
         Query query = new Query();
         ResultSet rs = null;

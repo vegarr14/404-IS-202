@@ -37,6 +37,7 @@ public class ModulListe extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
@@ -53,7 +54,7 @@ public class ModulListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             try{
-                HttpSession session = request.getSession();
+                
                 Navbar navbar = new Navbar();
                 navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
@@ -113,7 +114,9 @@ public class ModulListe extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             out.println("<form name='Modul' action='Modul?kursId="+kursId+"' method='post'>");
-            out.println("<button type='submit'>Legg Til Modul</button>");
+            if ((boolean)session.getAttribute("isForeleser")) {
+                out.println("<button type='submit'>Legg Til Modul</button>");
+            }
             out.println("</form>");
             out.println("</div>");
             out.println("</body>");
