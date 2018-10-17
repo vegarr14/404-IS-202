@@ -96,6 +96,21 @@ public class Modul extends HttpServlet {
             }
             
             out.println("</form>");
+            if(modulId!= null) {
+                out.println("Innleveringer:<br>");
+                rs = query.query("select * from Innlevering where modulId = "+modulId);
+                try {
+                    out.println("<ul>");
+                    while (rs.next()) {
+                        out.println("<li> <a href='Innlevering?id="+rs.getString(2)+"'>" +rs.getString(1)+ "</a></li>");
+                    
+                    }
+                    out.println("</ul>");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            }
             out.println("</body>");
             out.println("</html>");
             query.close();
@@ -136,7 +151,13 @@ public class Modul extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
-            out.println(rs.getString(6));
+            out.println(rs.getString(6)+"<br><br>");
+            out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
+            out.println("<input type='text' name='kommentar' />");
+            out.println("<input type='file' name='file' />");
+            out.println("<input type='submit' />");
+            out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
             query.close();
