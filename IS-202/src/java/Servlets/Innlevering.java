@@ -9,6 +9,10 @@ import Database.Query;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -39,6 +43,45 @@ public class Innlevering extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
+        if ((boolean)session.getAttribute("isForeleser")) {
+            isForeleser(request, response, null);
+        } else {
+            isStudent(request, response, session);
+        }
+    }
+    
+    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet Innlevering</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
+            try {
+                Query query = new Query();
+                ResultSet rs = query.query("select * from Innlevering where innlevId = "+request.getParameter("innlevId"));
+                rs.next();
+                out.println(rs.getString(6)+"<br>");
+                out.println("<a href='Download?innlevId="+rs.getString(1)+"'>" +rs.getString(4)+ "</a>");
+                
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            out.println("</body>");
+            out.println("</html>");
+        }
+        
+        
+    }
+    
+    public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -50,7 +93,7 @@ public class Innlevering extends HttpServlet {
             out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
             
             Query query = new Query();
-            HttpSession session = request.getSession();
+            
             
             for (Part part : request.getParts()) {
                 String name = part.getSubmittedFileName();

@@ -98,11 +98,11 @@ public class Modul extends HttpServlet {
             out.println("</form>");
             if(modulId!= null) {
                 out.println("Innleveringer:<br>");
-                rs = query.query("select * from Innlevering where modulId = "+modulId);
+                rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
                 try {
                     out.println("<ul>");
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?id="+rs.getString(2)+"'>" +rs.getString(1)+ "</a></li>");
+                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
                     
                     }
                     out.println("</ul>");
