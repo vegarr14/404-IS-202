@@ -99,9 +99,9 @@ CREATE TABLE `ForeleserKurs` (
 CREATE TABLE if not exists `Gruppe`(
     `gruppe_id` INT(11) NOT NULL auto_increment,
     `gruppenavn` VARCHAR(20) NOT NULL,
-    `gruppeSkaperid` INT(11) NOT NULL,
+    `gruppeSkaper` INT(11) NOT NULL,
     PRIMARY KEY (`gruppe_id`),
-    Constraint `FK_Gruppe_gruppeSkaperid` Foreign Key (`id`) references `bruker` (`id`)
+    Constraint `FK_Gruppe_gruppeSkaperid` Foreign Key (`gruppeSkaper`) references `bruker` (`id`)
 );
 
 CREATE TABLE if not exists `Gruppetilbruker`(
@@ -111,3 +111,12 @@ CREATE TABLE if not exists `Gruppetilbruker`(
       Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
       Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppe_id`) references `gruppe` (`gruppe_id`)
 );
+
+CREATE TABLE if not exists `Gruppetilkurs`(
+	`kursId` varchar(11) NOT NULL,
+    `gruppe_id` INT(11) NOT NULL,
+    PRIMARY KEY (`kursId`,`gruppe_id`),
+      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
+      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppe_id`) references `gruppe` (`gruppe_id`)
+);
+

@@ -43,6 +43,7 @@ public class OpprettGruppe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
+            String kursId = request.getParameter("kursId");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -53,12 +54,13 @@ public class OpprettGruppe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OpprettGruppe at " + request.getContextPath() + "</h1>");
-            out.println("<form name='GruppeListe' action='GruppeListe' id='OpprettGruppe' method='post'>");
-            
+            out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
+                
             HttpSession session = request.getSession();
             Query query = new Query();
             ResultSet rs = null;
             String Gruppenavn = "";
+            
             
             if(request.getParameter("gruppeid")!= null) {
                 String gruppeid = request.getParameter("gruppeid");
@@ -73,9 +75,10 @@ public class OpprettGruppe extends HttpServlet {
                         printFelter(Gruppenavn,out);
                         rs = null;
                     }
-                    else printFelterReadonly(Gruppenavn,out);
+                    else printFelterGruppenavnReadonly(Gruppenavn,out);
                 } catch (SQLException ignore) {   
                 }  
+                out.println("<b>Kurs =</b> "+kursId+"<br>");
                 
                 out.println("<b>Medlemmer:</b>"); 
                 
@@ -130,7 +133,7 @@ public class OpprettGruppe extends HttpServlet {
     public void printFelter (String Gruppenavn, PrintWriter out) {
         out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'><br>");
     } 
-    public void printFelterReadonly (String Gruppenavn, PrintWriter out) {
+    public void printFelterGruppenavnReadonly (String Gruppenavn, PrintWriter out) {
     out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'readonly><br>");
     }
     
