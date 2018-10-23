@@ -51,8 +51,8 @@ public class Query {
         }
         return rs;
     }
-    
-     public void insertFile(String query, InputStream is) {
+    //Legger en fil inn i ett statement gjennom inputstream og legger inn i database
+    public void insertFile(String query, InputStream is) {
         try {
             statement = con.prepareStatement(query);
             statement.setBlob(1,is);
