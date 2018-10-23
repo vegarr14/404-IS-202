@@ -146,6 +146,15 @@ public class BrukerListeKurs extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
+            
+            try {
+                if(rs.next()){
+                    query.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BrukerListeKurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                
         }
     }
     
