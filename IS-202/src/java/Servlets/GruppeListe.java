@@ -53,11 +53,13 @@ public class GruppeListe extends HttpServlet {
             out.println("<h1>Servlet OpprettGrupper at " + request.getContextPath() + "</h1>");
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
-            out.println(kursId);
             Navbar navbar = new Navbar();
             
-            navbar.printLeftSidebar("Grupper", kursId, out);
-                try {
+            if(kursId != null && !kursId.isEmpty()) {
+                navbar.printLeftSidebar("Grupper", kursId, out);
+            }
+            
+            try {
                 navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
                 Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,6 +77,7 @@ public class GruppeListe extends HttpServlet {
                         rs.next();
                         int gruppeid = rs.getInt(1);
                         query.update("INSERT into Gruppetilkurs Values ('"+kursId+"',"+gruppeid+")");
+                        query.update("INSERT INTO Gruppetilbruker (id,gruppe_id) values ('"+session.getAttribute("id")+"','"+gruppeid+"')");
                         
                     } else if (request.getParameter("button").equals("endre gruppenavn")) {
                         String Gruppenavn = request.getParameter("Gruppenavn");
@@ -84,7 +87,7 @@ public class GruppeListe extends HttpServlet {
                     } 
                     else if (request.getParameter("button").equals("slett gruppe")) {
                         query.update("DELETE from gruppetilbruker where gruppe_id = "+request.getParameter("gruppeid"));
-                        query.update("DELETE from Gruppetilkurs where kursId = '"+kursId+"' AND gruppe_id = "+request.getParameter("gruppeid"));
+                        query.update("DELETE from Gruppetilkurs where gruppe_id = "+request.getParameter("gruppeid"));
                         query.update("DELETE from gruppe where gruppe_id = "+request.getParameter("gruppeid"));
                     }
                     else if (request.getParameter("button").equals("bli medlem")) {
@@ -95,6 +98,10 @@ public class GruppeListe extends HttpServlet {
                     else if (request.getParameter("button").equals("forlat gruppe")) {
                         
                         query.update("DELETE FROM Gruppetilbruker WHERE id = "+session.getAttribute("id")+" AND gruppe_id = "+request.getParameter("gruppeid")+""); 
+                    }
+                    else if (request.getParameter("button").equals("legg til kurs")) {
+                        
+                        query.update("INSERT into Gruppetilkurs Values ('"+request.getParameter("kursIdfraListe")+"','"+request.getParameter("gruppeid")+"')");
                     }
                 }   
             } catch (SQLException ex) {

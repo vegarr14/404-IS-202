@@ -119,4 +119,3 @@ CREATE TABLE if not exists `Gruppetilkurs`(
       Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
       Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppe_id`) references `gruppe` (`gruppe_id`)
 );
-

@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,12 +56,16 @@ public class OpprettGruppe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OpprettGruppe at " + request.getContextPath() + "</h1>");
+            if (!kursId.equals("null")){
             out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
-                
+            }   
+            else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
+            }
             HttpSession session = request.getSession();
             Query query = new Query();
             ResultSet rs = null;
             String Gruppenavn = "";
+            String kursIdfraListe = "";
             
             
             if(request.getParameter("gruppeid")!= null) {
@@ -78,12 +84,15 @@ public class OpprettGruppe extends HttpServlet {
                     else printFelterGruppenavnReadonly(Gruppenavn,out);
                 } catch (SQLException ignore) {   
                 }  
-                out.println("<b>Kurs =</b> "+kursId+"<br>");
                 
-                out.println("<b>Medlemmer:</b>"); 
+                String kursIdGruppeliste =("SELECT kursId FROM gruppetilkurs INNER JOIN gruppe ON gruppetilkurs.gruppe_id = gruppe.gruppe_id WHERE gruppetilkurs.gruppe_id = "+gruppeid+"");
+                out.println("<b>Kurs:</b><br/>"); 
+                skrivKursListe(kursIdGruppeliste, rs, query, out);                  
                 
                 String medlemmer =("SELECT Student.forNavn, Student.etterNavn FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppe_id ="+gruppeid+"");
+                out.println("<b>Medlemmer:</b><br/>");
                 skrivMedlemsListe(medlemmer, rs, query, out); 
+                
                              
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
                 try {
@@ -113,8 +122,17 @@ public class OpprettGruppe extends HttpServlet {
                         out.println("<input type='submit' name='button' value='bli medlem'>");              
                     }
                 } catch (SQLException ignore) {
+                }     
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
+                try {
+                    if (rs.next()){
+                        out.println("<input type='submit' name='button' value='legg til kurs'>");
+                        printDropdownListe(kursIdfraListe, out);
+                        rs = null;
+                    }
+                } catch (SQLException ignore) {   
                 }
-                
+                              
             } else {
              printFelter(Gruppenavn,out);
              out.println("<input type='submit' name='button' value='opprett'>");
@@ -133,8 +151,25 @@ public class OpprettGruppe extends HttpServlet {
     public void printFelter (String Gruppenavn, PrintWriter out) {
         out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'><br>");
     } 
+    
     public void printFelterGruppenavnReadonly (String Gruppenavn, PrintWriter out) {
     out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'readonly><br>");
+    }
+    
+    public void printDropdownListe (String kursIdfraListe, PrintWriter out) {
+        try {
+        Query query = new Query();
+        ResultSet rs = null;
+        rs = query.query("SELECT kursId from Kurs");       
+        out.println("kursId<select name='kursIdfraListe'>");
+        while (rs.next())   {
+            out.println("<option value='"+rs.getString(1)+"'>"+rs.getString(1) +"</option>");
+        }
+        out.println("</select><br>");
+        }   catch (SQLException ex){
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
     }
     
     public void skrivMedlemsListe(String statement, ResultSet rs, Query query, PrintWriter out) {
@@ -145,13 +180,25 @@ public class OpprettGruppe extends HttpServlet {
                 out.println("<li>" + rs.getString(1) +" "+ rs.getString(2) + "</a></li>");
             }
             out.println("</u1>");
-            rs = null;
-            
+            rs = null;           
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    public void skrivKursListe(String statement, ResultSet rs, Query query, PrintWriter out) {
+        try {
+            rs = query.query(statement);
+            out.println("<u1>");
+            while(rs.next()){
+                out.println("<li>" + rs.getString(1) + "</a></li>");
+            }
+            out.println("</u1>");
+            rs = null;           
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
