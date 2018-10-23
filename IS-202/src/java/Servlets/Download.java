@@ -41,17 +41,11 @@ public class Download extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (OutputStream os = response.getOutputStream()) {
-            /* TODO output your page here. You may use following sample code. */
-            //out.println("<!DOCTYPE html>");
-            //out.println("<html>");
-            //out.println("<head>");
-            //out.println("<title>Servlet download</title>");            
-            //out.println("</head>");
-            //out.println("<body>");
-            //out.println("<h1>Servlet download at " + request.getContextPath() + "</h1>");
+            
             Query query = new Query();
             ResultSet rs = query.query("select fileData,fileName from Innlevering where innlevId = "+request.getParameter("innlevId"));
             try {
+                //Skriver innholdet i FileData til en outputstream, som en array av bytes, for å laste ned filen
                 rs.next();
                 Blob blob = rs.getBlob(1);
                 InputStream is = blob.getBinaryStream();     
@@ -68,11 +62,6 @@ public class Download extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-                    
-            
-            //out.println("</body>");
-            //out.println("</html>");
         }
     }
 
