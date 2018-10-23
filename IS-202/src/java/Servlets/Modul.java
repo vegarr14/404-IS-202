@@ -35,6 +35,7 @@ public class Modul extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        //Sjekker om det er foreleser eller student
         HttpSession session = request.getSession();
         if ((boolean)session.getAttribute("isForeleser")) {
             isForeleser(request, response, session);
@@ -43,6 +44,7 @@ public class Modul extends HttpServlet {
         }
     }
     
+    //Felter for redigering av modul og lister opp alle studenter som har levert modulen
     public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
@@ -134,6 +136,7 @@ public class Modul extends HttpServlet {
             */
         }
     
+    //Student kan her levere enn modul
     public void isStudent(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
