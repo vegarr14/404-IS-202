@@ -43,6 +43,7 @@ public class Innlevering extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        //Sjekker om det er foreleser eller student som er innlogget
         HttpSession session = request.getSession();
         if ((boolean)session.getAttribute("isForeleser")) {
             isForeleser(request, response, null);
@@ -51,10 +52,10 @@ public class Innlevering extends HttpServlet {
         }
     }
     
+    //Viser en innlevering og gir mulighet til å laste ned fil som hører til innlevering
     public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -80,10 +81,10 @@ public class Innlevering extends HttpServlet {
         
     }
     
+    //Legger inn innlevering i database
     public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
