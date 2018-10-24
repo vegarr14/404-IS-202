@@ -6,6 +6,7 @@
 package Database;
 
 import Servlets.Login;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.sql.SQLException;
@@ -49,6 +50,16 @@ public class Query {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rs;
+    }
+    //Legger en fil inn i ett statement gjennom inputstream og legger inn i database
+    public void insertFile(String query, InputStream is) {
+        try {
+            statement = con.prepareStatement(query);
+            statement.setBlob(1,is);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void close() {

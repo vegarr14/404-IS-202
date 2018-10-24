@@ -2,7 +2,7 @@
 INSERT into bruker (brukernavn, passord) Values ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
-('test', aes_encrypt('test', 'domo arigato mr.roboto')),
+('hans', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('test', aes_encrypt('test', 'domo arigato mr.roboto')),
 ('', aes_encrypt('', 'domo arigato mr.roboto'));
@@ -30,8 +30,8 @@ insert into ForeleserKurs values('IS-200','4');
 INSERT ignore into Innlevering (`modulId`, `id`, `innlevKommentar`, `innlevPoeng`) 
 values (1, 1, 'Funker ting? Hurra', 80),
 (1, 2, 'Helsa hu murmur från mig nu da', 60),
-(3, 1, 'Hihihihihi', 40),
-(7, 1, 'nfldanf', 69);
+(2, 1, 'Hihihihihi', 40),
+(2, 1, 'nfldanf', 69);
 
 INSERT ignore into Kommentarer (`id`, `innlevId`, `komKommentar`) 
 values (4, 1, 'Helsa helsa masse');
