@@ -111,7 +111,9 @@ public class OpprettGruppe extends HttpServlet {
                     }
                 } catch (SQLException ignore) {   
                 } 
-                  
+                 
+                // Gjøre slik at bare medlemmer av kurs kan bli med i gruppa - VIKTIG
+                
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppe_id ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
