@@ -85,6 +85,7 @@ public class Kurs extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             
+            query.close();
         }
     }
 
