@@ -61,9 +61,11 @@ CREATE TABLE if not exists `Modul` (
  CREATE TABLE if not exists `Innlevering` (
   `innlevId` int(11) NOT NULL AUTO_INCREMENT,
   `modulId` int (11) NOT NULL,
+  `fileName` varchar(50),
+  `fileData` BLOB,
   `id` int (11) NOT NULL,
-  `innlevKommentar` varchar (250) NOT NULL,
-  `innlevPoeng` int NOT NULL,
+  `innlevKommentar` varchar (250),
+  `innlevPoeng` int,
   primary key(`innlevId`),
   Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `Modul` (`modulId`),
   Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)

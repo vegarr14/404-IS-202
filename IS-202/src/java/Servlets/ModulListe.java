@@ -37,6 +37,7 @@ public class ModulListe extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
@@ -53,7 +54,7 @@ public class ModulListe extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             try{
-                HttpSession session = request.getSession();
+                
                 Navbar navbar = new Navbar();
                 navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
@@ -100,18 +101,22 @@ public class ModulListe extends HttpServlet {
                 //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             //}
             
+            String kursId = request.getParameter("kursId");
             try {
-                rs = query.query("Select * from Modul");
+                rs = query.query("Select * from Modul where kursId = '"+kursId+"'");
+                //System.out.println(kursId);
                 out.println("<ul>");
                 while(rs.next()){
-                    out.println("<li> <a href ='LeggTilModul?modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
+                    out.println("<li> <a href ='Modul?kursId="+kursId+"&modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
                 }
                 out.println("</ul>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("<form name='LeggTilModul' action='LeggTilModul' method='post'>");
-            out.println("<button type='submit'>Legg Til Modul</button>");
+            out.println("<form name='Modul' action='Modul?kursId="+kursId+"' method='post'>");
+            if ((boolean)session.getAttribute("isForeleser")) {
+                out.println("<button type='submit'>Legg Til Modul</button>");
+            }
             out.println("</form>");
             out.println("</div>");
             out.println("</body>");
