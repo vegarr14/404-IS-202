@@ -101,7 +101,7 @@ CREATE TABLE if not exists `Gruppe`(
     `gruppeNavn` VARCHAR(20) NOT NULL,
     `gruppeSkaperId` INT(11) NOT NULL,
     PRIMARY KEY (`gruppeId`),
-    Constraint `FK_Gruppe_gruppeSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
+    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
 );
 
 CREATE TABLE if not exists `Gruppetilbruker`(
@@ -119,5 +119,3 @@ CREATE TABLE if not exists `Gruppetilkurs`(
       Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
       Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
 );
-
-INSERT into Gruppetilkurs Values ('IS-200',1)
