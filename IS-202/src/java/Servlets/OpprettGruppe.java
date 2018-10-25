@@ -61,14 +61,13 @@ public class OpprettGruppe extends HttpServlet {
             }   
             else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
             }
+            
             HttpSession session = request.getSession();
             Query query = new Query();
             ResultSet rs = null;
             String Gruppenavn = "";
             String kursIdfraListe = "";
-            String hardId = String.valueOf(session.getAttribute("id"));
-            
-            
+                      
             if(request.getParameter("gruppeid")!= null) {
                 String gruppeid = request.getParameter("gruppeid");
                 rs = query.query("select * from gruppe where gruppeId = "+gruppeid+"");
@@ -77,6 +76,7 @@ public class OpprettGruppe extends HttpServlet {
                 rs = null;
                 out.println("Gruppeid <input type='text' name='gruppeid' value='"+request.getParameter("gruppeid")+"' readonly><br>");
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
+                
                 try {
                     if (rs.next()){
                         printFelter(Gruppenavn,out);
@@ -131,8 +131,7 @@ public class OpprettGruppe extends HttpServlet {
                     }
                 } catch (SQLException ignore) {
                 }
-                
-                              
+                                            
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
@@ -141,9 +140,9 @@ public class OpprettGruppe extends HttpServlet {
                         rs = null;
                     }
                 } catch (SQLException ignore) {   
-                }
-                              
+                }                          
             } 
+            
             else {
             printFelter(Gruppenavn,out);
             out.println("<input type='submit' name='button' value='opprett'>");
@@ -153,10 +152,10 @@ public class OpprettGruppe extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             query.close();
+            
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        }       
     }
     
     public void printFelter (String Gruppenavn, PrintWriter out) {
@@ -178,8 +177,7 @@ public class OpprettGruppe extends HttpServlet {
         }
         out.println("</select><br>");
         }   catch (SQLException ex){
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);         
         }
     }
     
