@@ -66,16 +66,17 @@ public class OpprettGruppe extends HttpServlet {
             ResultSet rs = null;
             String Gruppenavn = "";
             String kursIdfraListe = "";
+            String hardId = String.valueOf(session.getAttribute("id"));
             
             
             if(request.getParameter("gruppeid")!= null) {
                 String gruppeid = request.getParameter("gruppeid");
-                rs = query.query("select * from gruppe where gruppe_id = "+gruppeid+"");
+                rs = query.query("select * from gruppe where gruppeId = "+gruppeid+"");
                 rs.next();
                 Gruppenavn = rs.getString(2);
                 rs = null;
                 out.println("Gruppeid <input type='text' name='gruppeid' value='"+request.getParameter("gruppeid")+"' readonly><br>");
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
                         printFelter(Gruppenavn,out);
@@ -85,16 +86,16 @@ public class OpprettGruppe extends HttpServlet {
                 } catch (SQLException ignore) {   
                 }  
                 
-                String kursIdGruppeliste =("SELECT kursId FROM gruppetilkurs INNER JOIN gruppe ON gruppetilkurs.gruppe_id = gruppe.gruppe_id WHERE gruppetilkurs.gruppe_id = "+gruppeid+"");
+                String kursIdGruppeliste =("SELECT kursId FROM gruppetilkurs INNER JOIN gruppe ON gruppetilkurs.gruppeId = gruppe.gruppeId WHERE gruppetilkurs.gruppeId = "+gruppeid+"");
                 out.println("<b>Kurs:</b><br/>"); 
                 skrivKursListe(kursIdGruppeliste, rs, query, out);                  
                 
-                String medlemmer =("SELECT Student.forNavn, Student.etterNavn FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppe_id ="+gruppeid+"");
+                String medlemmer =("SELECT Student.forNavn, Student.etterNavn FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+"");
                 out.println("<b>Medlemmer:</b><br/>");
                 skrivMedlemsListe(medlemmer, rs, query, out); 
                 
                              
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
                         out.println("<input type='submit' name='button' value='endre gruppenavn'>");
@@ -103,7 +104,7 @@ public class OpprettGruppe extends HttpServlet {
                 } catch (SQLException ignore) {   
                 }
                 
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
                         out.println("<input type='submit' name='button' value='slett gruppe'>");
@@ -111,33 +112,41 @@ public class OpprettGruppe extends HttpServlet {
                     }
                 } catch (SQLException ignore) {   
                 } 
-                 
-                // Gjøre slik at bare medlemmer av kurs kan bli med i gruppa - VIKTIG
                 
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppe_id ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
                         out.println("<input type='submit' name='button' value='forlat gruppe'>");
                         rs = null;                
-                    }
-                    else {
-                        out.println("<input type='submit' name='button' value='bli medlem'>");              
+                    }   
+                    else {                
+                    rs = query.query("SELECT tarkurs.kursId FROM Tarkurs INNER JOIN Student ON Student.id = tarkurs.studentId WHERE id ="+session.getAttribute("id")+"");
+                    try {
+                        if (rs.next()){
+                            out.println("<input type='submit' name='button' value='bli medlem'>");
+                            rs = null;                
+                        }               
+                    } catch (SQLException ignore) {
+                    }  
                     }
                 } catch (SQLException ignore) {
-                }     
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaper WHERE gruppe_id ="+gruppeid+" AND Gruppe.gruppeSkaper = "+session.getAttribute("id")+"");
+                }
+                
+                              
+                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
                         out.println("<input type='submit' name='button' value='legg til kurs'>");
-                        printDropdownListe(kursIdfraListe, out);
+                        printDropdownListe(kursIdfraListe,hardId, out);
                         rs = null;
                     }
                 } catch (SQLException ignore) {   
                 }
                               
-            } else {
-             printFelter(Gruppenavn,out);
-             out.println("<input type='submit' name='button' value='opprett'>");
+            } 
+            else {
+            printFelter(Gruppenavn,out);
+            out.println("<input type='submit' name='button' value='opprett'>");
             }
             
             out.println("</form>");
@@ -151,20 +160,20 @@ public class OpprettGruppe extends HttpServlet {
     }
     
     public void printFelter (String Gruppenavn, PrintWriter out) {
-        out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'><br>");
+        out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'><br>");
     } 
     
     public void printFelterGruppenavnReadonly (String Gruppenavn, PrintWriter out) {
-    out.println("Gruppenavn <input type='text' name='Gruppenavn' value='"+Gruppenavn+"'readonly><br>");
+    out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'readonly><br>");
     }
     
-    public void printDropdownListe (String kursIdfraListe, PrintWriter out) {
+    public void printDropdownListe (String kursIdfraListe, String hardId, PrintWriter out) {
         try {
         Query query = new Query();
         ResultSet rs = null;
-        rs = query.query("SELECT kursId from Kurs");       
+        rs = query.query("SELECT kurs.kursId from kurs INNER JOIN tarkurs ON kurs.kursId = tarkurs.kursId WHERE studentId = "+hardId+"");       
         out.println("kursId<select name='kursIdfraListe'>");
-        while (rs.next())   {
+        while (rs.next())   { 
             out.println("<option value='"+rs.getString(1)+"'>"+rs.getString(1) +"</option>");
         }
         out.println("</select><br>");
