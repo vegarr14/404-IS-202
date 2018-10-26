@@ -160,7 +160,7 @@ public class OpprettGruppe extends HttpServlet {
     }
     
     public void printFelter (String Gruppenavn, PrintWriter out) {
-        out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'><br>");
+    out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'><br>");
     } 
     
     public void printFelterGruppenavnReadonly (String Gruppenavn, PrintWriter out) {
