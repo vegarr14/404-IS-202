@@ -121,7 +121,7 @@ public class OpprettGruppe extends HttpServlet {
                         rs = null;                
                     }   
                     else {                
-                    rs = query.query("SELECT tarkurs.kursId FROM Tarkurs INNER JOIN Student ON Student.id = tarkurs.studentId WHERE id ="+session.getAttribute("id")+"");
+                    rs = query.query("SELECT tarkurs.kursId from Tarkurs INNER JOIN gruppetilkurs ON gruppetilkurs.kursId = tarkurs.kursId INNER JOIN student ON student.id = tarkurs.studentId INNER JOIN gruppe ON gruppe.gruppeId = gruppetilkurs.gruppeId WHERE id = "+session.getAttribute("id")+" AND gruppe.gruppeId = "+gruppeid+"");
                     try {
                         if (rs.next()){
                             out.println("<input type='submit' name='button' value='bli medlem'>");
