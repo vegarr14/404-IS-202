@@ -67,6 +67,7 @@ public class OpprettGruppe extends HttpServlet {
             ResultSet rs = null;
             String Gruppenavn = "";
             String kursIdfraListe = "";
+            String hardId = String.valueOf(session.getAttribute("id"));
                       
             if(request.getParameter("gruppeid")!= null) {
                 String gruppeid = request.getParameter("gruppeid");
