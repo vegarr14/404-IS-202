@@ -11,6 +11,10 @@ drop table if exists Kurs;
 drop table if exists Foreleser;
 drop table if exists Student;
 drop table if exists Bruker;
+drop table if exists Gruppe;
+drop table if exists Gruppetilbruker;
+drop table if exists Gruppetilkurs;
+
 
 CREATE TABLE if not exists`Bruker` (
   `id` int(11) NOT null AUTO_INCREMENT,
