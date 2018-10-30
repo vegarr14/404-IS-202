@@ -81,6 +81,10 @@ public class OpprettGruppe extends HttpServlet {
                 try {
                     if (rs.next()){
                         printFelter(Gruppenavn,out);
+                        out.println("<input type='submit' name='button' value='endre gruppenavn'>");
+                        out.println("<input type='submit' name='button' value='slett gruppe'>");
+                        out.println("<input type='submit' name='button' value='legg til kurs'>");
+                        printDropdownListe(kursIdfraListe,hardId, out);
                         rs = null;
                     }
                     else printFelterGruppenavnReadonly(Gruppenavn,out);
@@ -94,25 +98,6 @@ public class OpprettGruppe extends HttpServlet {
                 String medlemmer =("SELECT Student.forNavn, Student.etterNavn FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+"");
                 out.println("<b>Medlemmer:</b><br/>");
                 skrivMedlemsListe(medlemmer, rs, query, out); 
-                
-                             
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
-                try {
-                    if (rs.next()){
-                        out.println("<input type='submit' name='button' value='endre gruppenavn'>");
-                        rs = null;
-                    }
-                } catch (SQLException ignore) {   
-                }
-                
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
-                try {
-                    if (rs.next()){
-                        out.println("<input type='submit' name='button' value='slett gruppe'>");
-                        rs = null;
-                    }
-                } catch (SQLException ignore) {   
-                } 
                 
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
@@ -131,17 +116,7 @@ public class OpprettGruppe extends HttpServlet {
                     }  
                     }
                 } catch (SQLException ignore) {
-                }
-                                            
-                rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
-                try {
-                    if (rs.next()){
-                        out.println("<input type='submit' name='button' value='legg til kurs'>");
-                        printDropdownListe(kursIdfraListe,hardId, out);
-                        rs = null;
-                    }
-                } catch (SQLException ignore) {   
-                }                          
+                }                                                                     
             } 
             
             else {
