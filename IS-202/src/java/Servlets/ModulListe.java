@@ -49,20 +49,16 @@ public class ModulListe extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
+            out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
-            try{
-                
-                Navbar navbar = new Navbar();
-                navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            out.println("<div class='velkommen'>");
-            out.println("<b> Moduler </b>");
+            String kursId = request.getParameter("kursId");
+            
+            out.println("<div class='mainContent'>");
+            out.println("<h2> Moduler i "+kursId+"</h2>");
             
             /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
             //out.println("<table name=modulListe>");
@@ -77,7 +73,6 @@ public class ModulListe extends HttpServlet {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
                     String modulId = request.getParameter("modulId");
                     String modulNummer = request.getParameter("modulNummer");
-                    String kursId = request.getParameter("kursId");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
                     if(request.getParameter("button").equals("legg til")) {
@@ -102,7 +97,6 @@ public class ModulListe extends HttpServlet {
                 //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             //}
             
-            String kursId = request.getParameter("kursId");
             try {
                 rs = query.query("Select * from Modul where kursId = '"+kursId+"'");
                 //System.out.println(kursId);
@@ -120,8 +114,17 @@ public class ModulListe extends HttpServlet {
             }
             out.println("</form>");
             out.println("</div>");
+            try{
+                
+                Navbar navbar = new Navbar();
+                navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
     }
 
