@@ -65,10 +65,10 @@ public class Innlevering extends HttpServlet {
             out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
             try {
                 Query query = new Query();
-                ResultSet rs = query.query("select * from Innlevering where innlevId = "+request.getParameter("innlevId"));
+                ResultSet rs = query.query("select fileName, innlevKommentar, innlevId from Innlevering where innlevId = "+request.getParameter("innlevId"));
                 rs.next();
-                out.println(rs.getString(6)+"<br>");
-                out.println("<a href='Download?innlevId="+rs.getString(1)+"'>" +rs.getString(4)+ "</a>");
+                out.println(rs.getString(2)+"<br>");
+                out.println("<a href='Download?innlevId="+rs.getString(3)+"'>" +rs.getString(1)+ "</a>");
                 
                 
             } catch (SQLException ex) {
