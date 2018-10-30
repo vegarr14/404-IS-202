@@ -53,13 +53,10 @@ public class Brukernavn {
             if (rs.next()){
             rs.last();
             int tall = rs.getRow();
-            System.out.println(tall);
             String Stringtall = Integer.toString(tall);
-            System.out.println(Stringtall);
             brukernavn = brukernavn + Stringtall;
             }
         } catch (SQLException ignore) {
-            //ignore
         }
         query.close();
     }

@@ -11,6 +11,10 @@ drop table if exists Kurs;
 drop table if exists Foreleser;
 drop table if exists Student;
 drop table if exists Bruker;
+drop table if exists Gruppe;
+drop table if exists Gruppetilbruker;
+drop table if exists Gruppetilkurs;
+
 
 CREATE TABLE if not exists`Bruker` (
   `id` int(11) NOT null AUTO_INCREMENT,
@@ -33,7 +37,7 @@ CREATE TABLE if not exists`Foreleser` (
   `id` int(11) NOT null,
   `forNavn` varchar(20) NOT NULL,
   `etterNavn` varchar(20) NOT NULL,
-  `email` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `tlf` int(8) Default null,
   primary key(`id`),
   Constraint `FK_Foreleser_Bruker` Foreign Key (`id`) references `bruker` (`id`)
@@ -95,4 +99,28 @@ CREATE TABLE `ForeleserKurs` (
   primary key(`kursId`,`foreleserId`),
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
+);
+
+CREATE TABLE if not exists `Gruppe`(
+    `gruppeId` INT(11) NOT NULL auto_increment,
+    `gruppeNavn` VARCHAR(20) NOT NULL,
+    `gruppeSkaperId` INT(11) NOT NULL,
+    PRIMARY KEY (`gruppeId`),
+    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
+);
+
+CREATE TABLE if not exists `Gruppetilbruker`(
+    `id` INT(11),
+    `gruppeId` INT(11),
+    PRIMARY KEY (`id`,`gruppeId`),
+      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
+      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+);
+
+CREATE TABLE if not exists `Gruppetilkurs`(
+	`kursId` varchar(11) NOT NULL,
+    `gruppeId` INT(11) NOT NULL,
+    PRIMARY KEY (`kursId`,`gruppeId`),
+      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
+      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
 );
