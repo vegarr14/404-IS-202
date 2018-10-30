@@ -79,6 +79,7 @@ public class Navbar {
             String classLister = "";
             String classKurs = "";
             String classInnstillinger = "";
+            String classKalender = "";
             //Sjekker Hvilken link i navbar som skal være "active"
             if(active == "Forside"){
                 classForside = "class='active'";
@@ -88,6 +89,9 @@ public class Navbar {
             }
             else if(active == "Kurs"){
                 classKurs = "style='color:orange'";
+            }
+            else if(active == "Kalender"){
+                classKalender = "class='active'";
             }
             else if(active == "Innstillinger"){
                 classInnstillinger = "class='active'";
@@ -134,6 +138,9 @@ public class Navbar {
                 navArray.add("<a href='KursListe'>Legg til kurs</a>");
             }
             navArray.add("</div>");
+            navArray.add("<li class='dropdown'>");
+            navArray.add("<a "+classKalender+" href='Kalender'>Kalender</a>");
+            navArray.add("<div class='dropdown-content'>");
             navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
             navArray.add("<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>");
             navArray.add("</ul>");
