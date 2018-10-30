@@ -64,9 +64,10 @@ public class Navbar {
             out.println("<div class='leftSidebar'>");
             out.println("<ul>");
             out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
-            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"'>Personer</a></li>");
-            out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"'>Moduler</a></li>");
+            out.println("<li "+personer+" ><a href=\"BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false\">Personer</a></li>");
+            out.println("<li "+moduler+"><a href='ModulListe?kursId="+kursId+"'>Moduler</a></li>");
             out.println("<li "+grupper+"><a href='GruppeListe?kursId="+kursId+"'>Grupper</a></li>");
+
             out.println("</ul>");
             out.println("</div>");
         }
@@ -101,7 +102,6 @@ public class Navbar {
             navArray.add("<a href='javascript:void(0)' class='dropbtn'>Lister</a>");
             navArray.add("<div class='dropdown-content'>");
             navArray.add("<a href='BrukerListe'>Brukerliste</a>");
-            navArray.add("<a href='ModulListe'>Modulliste</a>");
             navArray.add("<a href='GruppeListe'>Gruppeliste</a>");
             navArray.add("</div>");
             navArray.add("<li class='dropdown'>");

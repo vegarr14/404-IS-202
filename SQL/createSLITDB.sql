@@ -11,6 +11,10 @@ drop table if exists Kurs;
 drop table if exists Foreleser;
 drop table if exists Student;
 drop table if exists Bruker;
+drop table if exists Gruppe;
+drop table if exists Gruppetilbruker;
+drop table if exists Gruppetilkurs;
+
 
 CREATE TABLE if not exists`Bruker` (
   `id` int(11) NOT null AUTO_INCREMENT,
@@ -61,10 +65,11 @@ CREATE TABLE if not exists `Modul` (
  CREATE TABLE if not exists `Innlevering` (
   `innlevId` int(11) NOT NULL AUTO_INCREMENT,
   `modulId` int (11) NOT NULL,
-  `modulNummer` int (11) NOT NULL,
+  `fileName` varchar(50),
+  `fileData` BLOB,
   `id` int (11) NOT NULL,
-  `innlevKommentar` varchar (250) NOT NULL,
-  `innlevPoeng` int NOT NULL,
+  `innlevKommentar` varchar (250),
+  `innlevPoeng` int,
   primary key(`innlevId`),
   Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `Modul` (`modulId`),
   Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
