@@ -79,14 +79,12 @@ public class Innlevering extends HttpServlet {
     //Viser en innlevering og gir mulighet til å laste ned fil som hører til innlevering
     public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-         
-            
         try {
             Query query = new Query();
             ResultSet rs = query.query("select fileName, innlevKommentar, innlevId from Innlevering where innlevId = "+request.getParameter("innlevId"));
             rs.next();
-            out.println(rs.getString(2)+"<br>");
-            out.println("<a href='Download?innlevId="+rs.getString(3)+"'>" +rs.getString(1)+ "</a>");
+            out.println("<a href='Download?innlevId="+rs.getString(3)+"'>" +rs.getString(1)+ "</a><br>");
+            out.println("Innleveringskommentar:<br>"+rs.getString(2)+"<br>");
             query.close();
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

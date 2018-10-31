@@ -52,7 +52,7 @@ public class Modul extends HttpServlet {
             if ((boolean)session.getAttribute("isForeleser")) {
                 isForeleser(request, response, session, out);
             } else {
-                isStudent(request, response, out);
+                isStudent(request, response, session, out);
             }
             try {
                 Navbar navbar = new Navbar();
@@ -105,20 +105,18 @@ public class Modul extends HttpServlet {
             
             out.println("</form>");
             if(modulId!= null) {
-                out.println("Innleveringer:<br>");
+                out.println("Alle innleveringer på denne modulen:<br>");
                 rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
+                out.println("<ul>");
                 try {
-                    out.println("<ul>");
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
-                    
+                        out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
                     }
-                    out.println("</ul>");
                     query.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+                out.println("</ul>");
             }
             
             
@@ -129,12 +127,14 @@ public class Modul extends HttpServlet {
         }
     
     //Student kan her levere enn modul
-    public void isStudent(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
+    public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         try {
+            String kursId = request.getParameter("kursId");
+            String modulId = request.getParameter("modulId");
             Query query = new Query();
             String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId from Foreleser join Modul\n" +
-                    "on Foreleser.id = Modul.foreleserId and modulId = " + request.getParameter("modulId");
+                    "on Foreleser.id = Modul.foreleserId and modulId = " + modulId;
             ResultSet rs = query.query(modul);
             rs.next();
             String oppgaveTekst = rs.getString(6);
@@ -147,6 +147,13 @@ public class Modul extends HttpServlet {
             out.println("<input type='submit' />");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("</form>");
+            out.println("</br>Mine innleveringer på denne modulen:</br>");
+            rs = query.query("select innlevId from Innlevering where modulId = "+modulId+" and id = "+(String)session.getAttribute("id"));
+            out.println("<ul>");
+            while (rs.next()) {
+                out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'> Innlevering </a></li>");
+            }
+            out.println("</ul>");
             query.close();
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
