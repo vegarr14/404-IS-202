@@ -114,13 +114,14 @@ public class Modul extends HttpServlet {
                     
                     }
                     out.println("</ul>");
+                    query.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             }
             
-            query.close();
+            
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -136,11 +137,13 @@ public class Modul extends HttpServlet {
                     "on Foreleser.id = Modul.foreleserId and modulId = " + request.getParameter("modulId");
             ResultSet rs = query.query(modul);
             rs.next();
+            String oppgaveTekst = rs.getString(6);
+            String oppgaveTekstBr = oppgaveTekst.replaceAll("\n", " </br>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
-            out.println(rs.getString(6)+"<br><br>");
+            out.println(oppgaveTekstBr+"</br></br></br>");
             out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
-            out.println("<input type='text' name='kommentar' />");
-            out.println("<input type='file' name='file' />");
+            out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
+            out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
             out.println("<input type='submit' />");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("</form>");
@@ -156,9 +159,9 @@ public class Modul extends HttpServlet {
         rs = query.query("SELECT kursId, kursNavn from Kurs");
         
         out.println("<label>kursId</label> <input type='text' name='kursId' value='"+kursId+"' readonly><br>");
-        out.println("<label>modulNummer</label> <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
+        out.println("<label>modulNummer</label> <input type='number' name='modulNummer' value='"+modulNummer+"'><br>");
         out.println("<label>foreleserId</label> <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
-        out.println("<label>oppgaveTekst</label> <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
+        out.println("</br> <label>oppgaveTekst</label> </br> <textarea cols='100' rows='10' name='oppgaveTekst'>"+oppgaveTekst+"</textarea><br>");
 
     }
     
