@@ -104,7 +104,8 @@ public class OppdaterBrukerKurs extends HttpServlet {
     private void closeAndRedirect(HttpServletResponse response, String kursId, Query query ) throws IOException{
         query.close();
         //Sender bruker tilbake til oversikt
-        response.sendRedirect("BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true");  
+        response.sendRedirect("BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true");
+        
     }
 
 
