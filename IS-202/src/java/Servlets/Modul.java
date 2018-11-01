@@ -108,8 +108,9 @@ public class Modul extends HttpServlet {
             out.println("</form>");
             if(modulId!= null) {
                 out.println("Innleveringer:<br>");
-                // Trenger en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
-                // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs. 
+                // Trenger kanskje en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
+                // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs.
+                // ^ ellers så kan uheldige ting skje
                 if (levereSomGruppe.equals("1")){
                     rs = query.query("select innlevId, gruppeNavn from Innlevering inner join Student inner join Gruppetilkurs inner join gruppe where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id and gruppe.gruppeId = gruppetilkurs.gruppeId");
                     try {
