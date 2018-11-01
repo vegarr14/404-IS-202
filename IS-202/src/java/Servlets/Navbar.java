@@ -135,7 +135,7 @@ public class Navbar {
             }
             navArray.add("</div>");
             navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
-            navArray.add("<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>");
+            navArray.add("<li style='float:right'><a "+classInnstillinger+" href='Innstillinger?edit=false'>Innstillinger</a></li>");
             navArray.add("</ul>");
             navArray.add("</div>");
             
