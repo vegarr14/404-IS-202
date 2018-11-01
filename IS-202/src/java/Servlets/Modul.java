@@ -72,6 +72,7 @@ public class Modul extends HttpServlet {
             String kursId = "";
             String foreleserId = "";
             String oppgaveTekst = "";
+            String levereSomGruppe = "";
             
             if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
@@ -84,9 +85,15 @@ public class Modul extends HttpServlet {
                 foreleserId = rs.getString(3);
                 modulNummer = rs.getString(4);
                 oppgaveTekst = rs.getString(5);
+                levereSomGruppe = rs.getString(6);
                 
                 out.println("Modulid <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                if (levereSomGruppe.equals("1")){
+                out.println("Oppgavetype: Gruppelevering<br>");
+                }   
+                else {out.println("Oppgavetype: Individuell levering<br>");         
+                }
                 out.println("<input type='submit' name='button' value='oppdater modul'>");
                 out.println("<input type='submit' name='button' value='slett modul'>");
             } else {
@@ -94,24 +101,39 @@ public class Modul extends HttpServlet {
                 kursId=request.getParameter("kursId");
                 foreleserId = (String)session.getAttribute("id");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                out.println("<input type='checkbox' name='oppgaveType' value='1'>Gruppelevering<br>");
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
             
             out.println("</form>");
             if(modulId!= null) {
                 out.println("Innleveringer:<br>");
-                rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
-                try {
-                    out.println("<ul>");
+                // Trenger en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
+                // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs. 
+                if (levereSomGruppe.equals("1")){
+                    rs = query.query("select innlevId, gruppeNavn from Innlevering inner join Student inner join Gruppetilkurs inner join gruppe where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id and gruppe.gruppeId = gruppetilkurs.gruppeId");
+                    try {
+                    out.println("<ul>"); 
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
-                    
+                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+ "</a></li>");
                     }
                     out.println("</ul>");
-                } catch (SQLException ex) {
+                    } catch (SQLException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+                }
+                }
+                else {
+                    rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
+                    try {
+                    out.println("<ul>");
+                    while (rs.next()) {
+                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
+                    }
+                    out.println("</ul>");
+                    } catch (SQLException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
             }
             out.println("</body>");
             out.println("</html>");
@@ -141,7 +163,7 @@ public class Modul extends HttpServlet {
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             Query query = new Query();
-            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId from Foreleser join Modul\n" +
+            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId, levereSomGruppe from Foreleser join Modul\n" +
                     "on Foreleser.id = Modul.foreleserId and modulId = " + request.getParameter("modulId");
             ResultSet rs = query.query(modul);
             rs.next();
@@ -155,6 +177,22 @@ public class Modul extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
             out.println(rs.getString(6)+"<br><br>");
+            String oppgaveType = rs.getString(8);
+            if (oppgaveType.equals("1")){
+            out.println("Oppgavetype: Gruppelevering");
+            rs = query.query("select gruppeNavn from Innlevering inner join Student inner join Gruppetilkurs inner join gruppe where Innlevering.modulId = "+request.getParameter("modulId")+" and Innlevering.id = Student.id and gruppe.gruppeId = gruppetilkurs.gruppeId");
+            try {
+                out.println("<ul>");
+                while (rs.next()) {
+                    out.println("<li>Gjeldende gruppe: " +rs.getString(1)+ "</a></li>");
+                    }
+                out.println("</ul>");
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+            else {out.println("Oppgavetype: Individuell levering");         
+            }
             out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
             out.println("<input type='text' name='kommentar' />");
             out.println("<input type='file' name='file' />");

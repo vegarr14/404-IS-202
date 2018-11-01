@@ -88,6 +88,7 @@ public class GruppeListe extends HttpServlet {
                         query.update("DELETE from gruppetilbruker where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from Gruppetilkurs where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from gruppe where gruppeId = "+request.getParameter("gruppeid"));
+                        query.update("DELETE from innleveringer where gruppeId = "+request.getParameter("gruppeid"));
                     }
                     
                     else if (request.getParameter("button").equals("bli medlem")) {    
@@ -118,8 +119,11 @@ public class GruppeListe extends HttpServlet {
             }
             
             out.println("<form name='OpprettGruppe' action='OpprettGruppe?kursId="+kursId+"' method='post'>");
-            out.println("<button type='submit'>Opprett ny gruppe</button>");
-            
+            if ((boolean)session.getAttribute("isForeleser")) { 
+            }
+            else {
+                out.println("<button type='submit'>Opprett ny gruppe</button>");
+            }
             out.println("</form>");
             out.println("</div>");
             out.println("</body>");

@@ -51,12 +51,37 @@ CREATE TABLE if not exists`Kurs` (
 primary key(`kursId`)
 );
 
+CREATE TABLE if not exists `Gruppe`(
+    `gruppeId` INT(11) NOT NULL auto_increment,
+    `gruppeNavn` VARCHAR(20) NOT NULL,
+    `gruppeSkaperId` INT(11) NOT NULL,
+    PRIMARY KEY (`gruppeId`),
+    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
+);
+
+CREATE TABLE if not exists `Gruppetilbruker`(
+    `id` INT(11),
+    `gruppeId` INT(11),
+    PRIMARY KEY (`id`,`gruppeId`),
+      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
+      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+);
+
+CREATE TABLE if not exists `Gruppetilkurs`(
+	`kursId` varchar(11) NOT NULL,
+    `gruppeId` INT(11) NOT NULL,
+    PRIMARY KEY (`kursId`,`gruppeId`),
+      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
+      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+);
+
 CREATE TABLE if not exists `Modul` (
  `modulId` int(11) not null auto_increment,
  `kursId` varchar(11) not null,
  `foreleserId` int(11) not null,
  `modulNummer` int(11) not null,
  `oppgaveTekst` text not null,
+ `levereSomGruppe` boolean,
  primary key(`modulId`),
  constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`kursId`),
  constraint `FK_Modul_Forelser` foreign key (`foreleserId`) references `Foreleser` (`id`)
@@ -68,11 +93,13 @@ CREATE TABLE if not exists `Modul` (
   `fileName` varchar(50),
   `fileData` BLOB,
   `id` int (11) NOT NULL,
+  `gruppeId` int (11),
   `innlevKommentar` varchar (250),
   `innlevPoeng` int,
   primary key(`innlevId`),
   Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `Modul` (`modulId`),
-  Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
+  Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`),
+  Constraint `FK_Gruppe_Innlevering` Foreign Key (`gruppeId`) references `Gruppe` (`gruppeId`)
   );
   
   CREATE TABLE if not exists `Kommentarer` (
@@ -101,26 +128,3 @@ CREATE TABLE `ForeleserKurs` (
   Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
 );
 
-CREATE TABLE if not exists `Gruppe`(
-    `gruppeId` INT(11) NOT NULL auto_increment,
-    `gruppeNavn` VARCHAR(20) NOT NULL,
-    `gruppeSkaperId` INT(11) NOT NULL,
-    PRIMARY KEY (`gruppeId`),
-    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
-);
-
-CREATE TABLE if not exists `Gruppetilbruker`(
-    `id` INT(11),
-    `gruppeId` INT(11),
-    PRIMARY KEY (`id`,`gruppeId`),
-      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
-      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
-);
-
-CREATE TABLE if not exists `Gruppetilkurs`(
-	`kursId` varchar(11) NOT NULL,
-    `gruppeId` INT(11) NOT NULL,
-    PRIMARY KEY (`kursId`,`gruppeId`),
-      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
-      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
-);

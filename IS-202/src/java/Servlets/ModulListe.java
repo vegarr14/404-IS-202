@@ -79,11 +79,17 @@ public class ModulListe extends HttpServlet {
                     String kursId = request.getParameter("kursId");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    String type1 = request.getParameter("oppgaveType");
+                    String type2 = "";
+                    if(type1 != null && !type1.isEmpty()) {
+                        type2 = "1";
+                    }   
+                    else {
+                        type2 = "0";        
+                    }
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny modul
-                        
-                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
-                        
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"')");                        
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         
