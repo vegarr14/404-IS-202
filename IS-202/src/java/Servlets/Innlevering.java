@@ -45,75 +45,74 @@ public class Innlevering extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         //Sjekker om det er foreleser eller student som er innlogget
         HttpSession session = request.getSession();
-        if ((boolean)session.getAttribute("isForeleser")) {
-            isForeleser(request, response, null);
-        } else {
-            isStudent(request, response, session);
+        try (PrintWriter out = response.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Innlevering</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<div class=mainContent>");
+            out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
+            if ((boolean)session.getAttribute("isForeleser")) {
+                isForeleser(request, response, null, out);
+            } else {
+                isStudent(request, response, session, out);
+            }
+            out.println("</div>");
+            try{
+                
+                Navbar navbar = new Navbar();
+                navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("</body>");
+            out.println("</html>");
         }
     }
     
     //Viser en innlevering og gir mulighet til å laste ned fil som hører til innlevering
-    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Innlevering</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
-            try {
-                Query query = new Query();
-                ResultSet rs = query.query("select * from Innlevering where innlevId = "+request.getParameter("innlevId"));
-                rs.next();
-                out.println(rs.getString(6)+"<br>");
-                out.println("<a href='Download?innlevId="+rs.getString(1)+"'>" +rs.getString(4)+ "</a>");
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            Query query = new Query();
+            ResultSet rs = query.query("select fileName, innlevKommentar, innlevId from Innlevering where innlevId = "+request.getParameter("innlevId"));
+            rs.next();
+            out.println("<a href='Download?innlevId="+rs.getString(3)+"'>" +rs.getString(1)+ "</a><br>");
+            out.println("Innleveringskommentar:<br>"+rs.getString(2)+"<br>");
+            query.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-            out.println("</body>");
-            out.println("</html>");
-        }
-        
-        
     }
     
+    
     //Legger inn innlevering i database
-    public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Innlevering</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
             
-            Query query = new Query();
-            
-            
-            for (Part part : request.getParts()) {
-                String name = part.getSubmittedFileName();
-                if (name != null && name.length() > 0) {
-                    // File data
-                    out.println(part.getSubmittedFileName()+ "</br>");
-                    out.println(part.getSize()+ "</br>");
-                    InputStream is = part.getInputStream();
-                    String insert = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar) values('"+name+"',?,"+request.getParameter("modulId")+","
-                            + (String)session.getAttribute("id")+",'"+request.getParameter("kommentar")+"')";
-                    query.insertFile(insert , is);
-                }   
-            }
-            query.close();
-            
-            out.println("</body>");
-            out.println("</html>");
+        Query query = new Query();
+                 
+        for (Part part : request.getParts()) {
+            String name = part.getSubmittedFileName();
+            if (name != null && name.length() > 0) {
+                // File data
+                out.println(part.getSubmittedFileName()+ "</br>");
+                out.println(part.getSize()+ "</br>");
+                InputStream is = part.getInputStream();
+                String insert = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar) values('"+name+"',?,"+request.getParameter("modulId")+","
+                        + (String)session.getAttribute("id")+",'"+request.getParameter("kommentar")+"')";
+                query.insertFile(insert , is);
+            }   
         }
+        query.close();
     }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

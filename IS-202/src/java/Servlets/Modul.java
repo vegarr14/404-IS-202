@@ -37,34 +37,41 @@ public class Modul extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         //Sjekker om det er foreleser eller student
         HttpSession session = request.getSession();
-        if ((boolean)session.getAttribute("isForeleser")) {
-            isForeleser(request, response, session);
-        } else {
-            isStudent(request, response);
-        }
-    }
-    
-    //Felter for redigering av modul og lister opp alle studenter som har levert modulen
-    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
-            throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
-            out.println("<title>Servlet Modul</title>");
+            out.println("<title>Modul</title>");
             out.println("</head>");
             out.println("<body>");
+            out.println("<div class=mainContent>");
+            if ((boolean)session.getAttribute("isForeleser")) {
+                isForeleser(request, response, session, out);
+            } else {
+                isStudent(request, response, session, out);
+            }
+            try {
+                Navbar navbar = new Navbar();
+                navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("</div>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+    
+    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
+            throws ServletException, IOException {
+        try {
             out.println("<h1>Servlet Modul at " + request.getContextPath() + "</h1>");
             out.println("<form name='ModulListe' action='ModulListe' id='Modul' method='post'>");
-            
-                /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-                /*out.println("<table name=modulListe>");
-                    query.skrivModulliste("SELECT * FROM modulListe", out);
-                out.println("</table>");*/
-                
             Query query = new Query();
             ResultSet rs = null;
             String modulId = request.getParameter("modulId");
@@ -72,7 +79,6 @@ public class Modul extends HttpServlet {
             String kursId = "";
             String foreleserId = "";
             String oppgaveTekst = "";
-            
             if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
                  * modul i ModulListe slik at informasjon om brukeren kommer opp i feltene
@@ -85,7 +91,7 @@ public class Modul extends HttpServlet {
                 modulNummer = rs.getString(4);
                 oppgaveTekst = rs.getString(5);
                 
-                out.println("Modulid <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
+                out.println("<label>Modulid</label> <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
                 out.println("<input type='submit' name='button' value='oppdater modul'>");
                 out.println("<input type='submit' name='button' value='slett modul'>");
@@ -99,70 +105,55 @@ public class Modul extends HttpServlet {
             
             out.println("</form>");
             if(modulId!= null) {
-                out.println("Innleveringer:<br>");
+                out.println("Alle innleveringer på denne modulen:<br>");
                 rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
+                out.println("<ul>");
                 try {
-                    out.println("<ul>");
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
-                    
+                        out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
                     }
-                    out.println("</ul>");
+                    query.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+                out.println("</ul>");
             }
-            out.println("</body>");
-            out.println("</html>");
-            query.close();
+            
+            
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-            /*    
-            out.println("<form name='Modul' action='Modul'>");
-            out.println("<input type='submit' value=Oppdater></input>");
-            
-            rs=null;
-            String id = request.getParameter("id");
-            
-            if (id!=null) {
-                String navnet = request.getParameter("id");
-                
-                rs = query.query("SELECT * from Foreleser WHERE id = "+id+" UNION SELECT * from Student WHERE id = "+id);
-                String modulNavn = request.getParameter("modul");
-                
-            }
-            */
+           
         }
     
     //Student kan her levere enn modul
-    public void isStudent(HttpServletRequest request, HttpServletResponse response)
+    public void isStudent(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
+        try {
+            String kursId = request.getParameter("kursId");
+            String modulId = request.getParameter("modulId");
             Query query = new Query();
             String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId from Foreleser join Modul\n" +
-                    "on Foreleser.id = Modul.foreleserId and modulId = " + request.getParameter("modulId");
+                    "on Foreleser.id = Modul.foreleserId and modulId = " + modulId;
             ResultSet rs = query.query(modul);
             rs.next();
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
-            out.println("<title>Modul "+rs.getString(5)+"</title>");
-            out.println("</head>");
-            out.println("<body>");
+            String oppgaveTekst = rs.getString(6);
+            String oppgaveTekstBr = oppgaveTekst.replaceAll("\n", " </br>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
-            out.println(rs.getString(6)+"<br><br>");
+            out.println(oppgaveTekstBr+"</br></br></br>");
             out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
-            out.println("<input type='text' name='kommentar' />");
-            out.println("<input type='file' name='file' />");
+            out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
+            out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
             out.println("<input type='submit' />");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("</form>");
-            out.println("</body>");
-            out.println("</html>");
+            out.println("</br>Mine innleveringer på denne modulen:</br>");
+            rs = query.query("select innlevId from Innlevering where modulId = "+modulId+" and id = "+(String)session.getAttribute("id"));
+            out.println("<ul>");
+            while (rs.next()) {
+                out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'> Innlevering </a></li>");
+            }
+            out.println("</ul>");
             query.close();
         } catch (SQLException ex){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,10 +165,10 @@ public class Modul extends HttpServlet {
         ResultSet rs = null;
         rs = query.query("SELECT kursId, kursNavn from Kurs");
         
-        out.println("kursId <input type='text' name='kursId' value='"+kursId+"' readonly><br>");
-        out.println("modulNummer <input type='text' name='modulNummer' value='"+modulNummer+"'><br>");
-        out.println("foreleserId <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
-        out.println("oppgaveTekst <input type='text' name='oppgaveTekst' value='"+oppgaveTekst+"'><br>");
+        out.println("<label>kursId</label> <input type='text' name='kursId' value='"+kursId+"' readonly><br>");
+        out.println("<label>modulNummer</label> <input type='number' name='modulNummer' value='"+modulNummer+"'><br>");
+        out.println("<label>foreleserId</label> <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
+        out.println("</br> <label>oppgaveTekst</label> </br> <textarea cols='100' rows='10' name='oppgaveTekst'>"+oppgaveTekst+"</textarea><br>");
 
     }
     

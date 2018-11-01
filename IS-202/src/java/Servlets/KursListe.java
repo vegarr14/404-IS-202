@@ -71,6 +71,7 @@ public class KursListe extends HttpServlet {
 
                     //Legger til kurs
                     query.update("INSERT INTO kurs (kursId, kursNavn, kursBilde, kursTekst) values('"+kursId+"', '"+kursNavn+"', '"+kursBilde+"','"+kursTekst+"')");
+                    query.update("INSERT INTO foreleserKurs (kursId, foreleserId) values('"+kursId+"','"+(String)session.getAttribute("id")+"')");
                 } else if (request.getParameter("button").equals("oppdater kurs")) {
                     //Oppdaterer Kurs
                     query.update("UPDATE kurs set kursId ='"+kursId+"',kursNavn ='"+kursNavn+"', kursBilde='"+kursBilde+"', kursTekst='"+kursTekst+"' where kursId='"+kursId+"'");
