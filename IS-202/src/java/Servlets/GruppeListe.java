@@ -89,7 +89,7 @@ public class GruppeListe extends HttpServlet {
                         query.update("DELETE from gruppetilbruker where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from Gruppetilkurs where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from gruppe where gruppeId = "+request.getParameter("gruppeid"));
-                        query.update("DELETE from innleveringer where gruppeId = "+request.getParameter("gruppeid"));
+                        query.update("DELETE from innlevering where gruppeId = "+request.getParameter("gruppeid"));
                     }
                     
                     else if (request.getParameter("button").equals("bli medlem")) {    

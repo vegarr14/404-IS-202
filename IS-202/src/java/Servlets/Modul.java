@@ -178,16 +178,17 @@ public class Modul extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
             out.println(rs.getString(6)+"<br><br>");
+            HttpSession session = request.getSession();
             String oppgaveType = rs.getString(8);
             if (oppgaveType.equals("1")){
-            out.println("Oppgavetype: Gruppelevering");
-            rs = query.query("select gruppeNavn from Innlevering inner join Student inner join Gruppetilkurs inner join gruppe where Innlevering.modulId = "+request.getParameter("modulId")+" and Innlevering.id = Student.id and gruppe.gruppeId = gruppetilkurs.gruppeId");
+            out.println("Oppgavetype: Gruppelevering<br>");
+            //VELGER DEN ELDSTE GRUPPA - DVS LAVESTE GRUPPEID DEN FINNER FOR STUDENTEN OG TILSVARENDE GRUPPENAVN
+            String gruppeNavn = "select gruppeNavn from gruppe inner join Student inner join tarkurs where student.id = "+String.valueOf(session.getAttribute("id"))+" and tarkurs.kursId = '"+rs.getString(4)+"'";
+            ResultSet rs2 = query.query(gruppeNavn);
             try {
-                out.println("<ul>");
-                while (rs.next()) {
-                    out.println("<li>Gjeldende gruppe: " +rs.getString(1)+ "</a></li>");
+                if (rs2.next()) {
+                    out.println("Gjeldende gruppe: "+rs2.getString(1)+"");
                     }
-                out.println("</ul>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }

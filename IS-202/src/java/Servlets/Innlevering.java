@@ -62,7 +62,6 @@ public class Innlevering extends HttpServlet {
             } 
             catch (SQLException ignore) {
             }
-            System.out.println(levereSomGruppe);
             if (levereSomGruppe==(1)){
             isStudentGruppe(request, response, session);
             }
