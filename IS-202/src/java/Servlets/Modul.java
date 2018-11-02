@@ -173,7 +173,6 @@ public class Modul extends HttpServlet {
             String oppgaveTekstBr = oppgaveTekst.replaceAll("\n", " </br>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
             out.println(oppgaveTekstBr+"</br></br></br>");
-            HttpSession session = request.getSession();
             String oppgaveType = rs.getString(8);
             if (oppgaveType.equals("1")){
             out.println("Oppgavetype: Gruppelevering<br>");

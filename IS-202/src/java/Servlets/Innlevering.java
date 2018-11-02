@@ -42,6 +42,7 @@ public class Innlevering extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
         response.setContentType("text/html;charset=UTF-8");
         //Sjekker om det er foreleser eller student som er innlogget
         HttpSession session = request.getSession();
@@ -49,7 +50,7 @@ public class Innlevering extends HttpServlet {
         ResultSet rs = null;
         Query query = new Query();
         if ((boolean)session.getAttribute("isForeleser")) {
-            isForeleser(request, response, null);
+            isForeleser(request, response, null, out);
         } 
         else {
             rs = query.query("SELECT Modul.levereSomGruppe FROM Modul WHERE Modul.modulId = "+request.getParameter("modulId")+"");
@@ -63,17 +64,18 @@ public class Innlevering extends HttpServlet {
             catch (SQLException ignore) {
             }
             if (levereSomGruppe==(1)){
-            isStudentGruppe(request, response, session);
+            isStudentGruppe(request, response, session, out);
             }
-            else isStudentIndividuell(request, response, session);
+            else isStudentIndividuell(request, response, session, out);
         }
       out.println("</div>");
+        }
     }
     
     //Viser en innlevering og gir mulighet til å laste ned fil som hører til innlevering
-    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
+         {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -87,10 +89,10 @@ public class Innlevering extends HttpServlet {
             out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
             try {
                 Query query = new Query();
-                ResultSet rs = query.query("select * from Innlevering where innlevId = "+request.getParameter("innlevId"));
+                ResultSet rs = query.query("select fileName, innlevId, innlevKommentar from Innlevering where innlevId = "+request.getParameter("innlevId"));
                 rs.next();
-                out.println(rs.getString(7)+"<br>");
-                out.println("<a href='Download?innlevId="+rs.getString(1)+"'>" +rs.getString(4)+ "</a>");
+                out.println(rs.getString(3)+"<br>");
+                out.println("<a href='Download?innlevId="+rs.getString(2)+"'>" +rs.getString(1)+ "</a>");
                 
 
                 
@@ -106,7 +108,7 @@ public class Innlevering extends HttpServlet {
     }
     
     //Legger inn innlevering i database
-    public void isStudentIndividuell(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    public void isStudentIndividuell(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         try {
             Query query = new Query();
@@ -134,12 +136,14 @@ public class Innlevering extends HttpServlet {
             out.println("Innleveringskommentar:<br>"+rs.getString(2)+"<br>");
             query.close();
 
-        }
+        } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
     
-    public void isStudentGruppe(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    public void isStudentGruppe(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
+        
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -183,9 +187,6 @@ public class Innlevering extends HttpServlet {
                 }   
             }
             query.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     
