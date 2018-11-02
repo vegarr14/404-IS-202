@@ -52,9 +52,17 @@ public class NotifikasjonsListe extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
             out.println("</head>");
             out.println("<body>");
+            out.println("<div class='titleBox'>");
             out.println("<h1>Alle Notifikasjoner</h1>");
-            printNotifikasjoner.printUleste(id, "PW", "notMiddle", null, out);
+            out.println("</div>");
             
+            //Prniter alle notifikasjoner
+            out.println("<div class='notifikasjoner' id='notMiddle'>");
+            printNotifikasjoner.printUleste(id, "PW", null, out);
+            printNotifikasjoner.printLeste(id, "PW", null, out);
+            out.println("</div>");
+            
+            //Printer navbar
             Navbar navbar = new Navbar();
             try {
                 navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
