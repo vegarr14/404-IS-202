@@ -108,6 +108,7 @@ public class Navbar {
             navArray.add("<div class='dropdown-content'>");
             navArray.add("<a href='BrukerListe'>Brukerliste</a>");
             navArray.add("<a href='GruppeListe'>Gruppeliste</a>");
+            navArray.add("<a href='NotifikasjonsListe'>NotifikasjonsListe</a>");
             navArray.add("</div>");
             navArray.add("<li class='dropdown'>");
             navArray.add("<a "+classKurs+" href='javascript:void(0)' class='dropbtn'>Kurs</a>");

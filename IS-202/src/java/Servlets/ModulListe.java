@@ -6,6 +6,8 @@
 package Servlets;
 
 import Database.*;
+import NotifikasjonSystem.Notifikasjon;
+import NotifikasjonSystem.subclasses.NyModulNotifikasjon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -51,6 +53,9 @@ public class ModulListe extends HttpServlet {
             Query query = new Query();
             ResultSet rs = null;
             
+            //Lager nytt notifikasjonobjekt
+            NyModulNotifikasjon notifikasjon = new NyModulNotifikasjon();
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -83,6 +88,7 @@ public class ModulListe extends HttpServlet {
                     }
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny modul
+<<<<<<< Upstream, based on origin/Dev
                         Timestamp timestamp = getTimestamp(frist);
                         String a = "";
                         String b = "";
@@ -91,6 +97,21 @@ public class ModulListe extends HttpServlet {
                             b = ",'"+timestamp+"'";
                         }
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
+=======
+                        
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
+                        
+                        rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
+                        try {
+                            rs.next();
+                            modulId = rs.getString(1);        
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                        notifikasjon.getAndSetNyModul(kursId, foreleserId, modulId);
+                        
+>>>>>>> 96c207d Notifikasjonsystem
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         Timestamp timestamp = getTimestamp(frist);
