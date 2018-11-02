@@ -109,8 +109,9 @@ public class Modul extends HttpServlet {
             if(modulId!= null) {
                 out.println("Innleveringer:<br>");
                 // Trenger kanskje en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
+                // ^ burde ikke kunne ha dupliserte innleveringer fordi defansiv programmering bla bla bla
                 // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs.
-                // ^ ellers så kan uheldige ting skje
+                // ^ ellers så det være forvirrende. eldste gruppa i faget for den brukeren som leverer kommer til å telle, ikke bra
                 if (levereSomGruppe.equals("1")){
                     rs = query.query(
                             "select innlevId, gruppeNavn\n" +"from Innlevering \n" +
