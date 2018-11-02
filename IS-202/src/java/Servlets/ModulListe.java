@@ -37,6 +37,7 @@ public class ModulListe extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
@@ -44,23 +45,20 @@ public class ModulListe extends HttpServlet {
             Query query = new Query();
             ResultSet rs = null;
             
+            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulListe</title>");
+            out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
-            try{
-                HttpSession session = request.getSession();
-                Navbar navbar = new Navbar();
-                navbar.printNavbar("ModulListe",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            out.println("<div class='velkommen'>");
-            out.println("<b> Moduler </b>");
+            String kursId = request.getParameter("kursId");
+            
+            out.println("<div class='mainContent'>");
+            out.println("<h2> Moduler i "+kursId+"</h2>");
             
             /*Velger alt fra modulListe-table fr>a MySQL og skriverModulliste. Se Query for mer.*/
             //out.println("<table name=modulListe>");
@@ -75,7 +73,6 @@ public class ModulListe extends HttpServlet {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
                     String modulId = request.getParameter("modulId");
                     String modulNummer = request.getParameter("modulNummer");
-                    String kursId = request.getParameter("kursId");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
                     if(request.getParameter("button").equals("legg til")) {
@@ -101,21 +98,33 @@ public class ModulListe extends HttpServlet {
             //}
             
             try {
-                rs = query.query("Select * from Modul");
+                rs = query.query("Select * from Modul where kursId = '"+kursId+"'");
+                //System.out.println(kursId);
                 out.println("<ul>");
                 while(rs.next()){
-                    out.println("<li> <a href ='LeggTilModul?modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
+                    out.println("<li> <a href ='Modul?kursId="+kursId+"&modulId="+rs.getString(1)+"'> Modul "+rs.getString(4)+"</a></li>");
                 }
                 out.println("</ul>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("<form name='LeggTilModul' action='LeggTilModul' method='post'>");
-            out.println("<button type='submit'>Legg Til Modul</button>");
+            out.println("<form name='Modul' action='Modul?kursId="+kursId+"' method='post'>");
+            if ((boolean)session.getAttribute("isForeleser")) {
+                out.println("<button type='submit'>Legg Til Modul</button>");
+            }
             out.println("</form>");
             out.println("</div>");
+            try{
+                
+                Navbar navbar = new Navbar();
+                navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
     }
 

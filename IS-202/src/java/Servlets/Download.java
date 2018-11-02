@@ -6,9 +6,12 @@
 package Servlets;
 
 import Database.Query;
-import java.sql.ResultSet;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.sql.Blob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,14 +20,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Erlend Thorsen
+ * @author vegar
  */
-@WebServlet(name = "Kurs", urlPatterns = {"/Kurs"})
-public class Kurs extends HttpServlet {
+@WebServlet(name = "Download", urlPatterns = {"/Download"})
+public class Download extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,54 +40,28 @@ public class Kurs extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try (OutputStream os = response.getOutputStream()) {
             
-            HttpSession session = request.getSession();
-            String kursId = request.getParameter("kursId");
-            String kursNavn  = null;
-          
             Query query = new Query();
-            ResultSet rs = null;
-           
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>SLIT - "+kursId+"</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
-            out.println("</head>");
-            out.println("<body>");
-            
-            try{
-                //Henter Kurs Data og plasserer disse i maincontent 
-                rs = query.query("Select kursBilde, kursTekst, kursNavn from Kurs where kursId='"+kursId+"'");
-                
-                if(rs.next()){
-                    kursNavn = rs.getString(3);
-                    out.println("<div class='mainContent'>");
-                    out.println("<h1>"+ kursId + " | " + kursNavn + "</h1>");
-                    out.println("<img id='kursImg' src='"+rs.getString(1)+"' alt='kursbilde'>");
-                    out.println("<h2>Kursbeskrivelse</h2>");
-                    out.println("<p>"+rs.getString(2)+"</p>");
-                }
-            }catch (SQLException ex){
-                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            out.println("</div>");
-            
-            //Printer navbar og sidebar
-            Navbar navbar = new Navbar();            
-            navbar.printLeftSidebar("Hjem", kursId, out);
+            ResultSet rs = query.query("select fileData,fileName from Innlevering where innlevId = "+request.getParameter("innlevId"));
             try {
-                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+                //Skriver innholdet i FileData til en outputstream, som en array av bytes, for å laste ned filen
+                rs.next();
+                Blob blob = rs.getBlob(1);
+                InputStream is = blob.getBinaryStream();     
+                
+                String headerKey = "Content-Disposition";
+                String headerValue = String.format("attachment; filename=\"%s\"", rs.getString(2));
+                response.setHeader(headerKey, headerValue);
+                byte[] buffer = new byte[4096];
+                int bytesRead = -1;
+         
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
             } catch (SQLException ex) {
-                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            out.println("</body>");
-            out.println("</html>");
-            
-            query.close();
         }
     }
 

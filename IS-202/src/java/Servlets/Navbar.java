@@ -47,6 +47,7 @@ public class Navbar {
             String hjem = "";
             String personer = "";
             String moduler = "";
+            String grupper = "";
             String activeStyle = "style='color:orange;'";
             if(active == "Hjem"){
                 hjem = activeStyle;
@@ -57,11 +58,16 @@ public class Navbar {
             else if(active == "Moduler"){
                 moduler = activeStyle;
             }
+            else if(active == "Grupper"){
+                grupper = activeStyle;
+            }           
             out.println("<div class='leftSidebar'>");
             out.println("<ul>");
             out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
-            out.println("<li "+personer+" ><a href='BrukerListeKurs?kursId="+kursId+"'>Personer</a></li>");
-            out.println("<li "+moduler+"><a href='ModulListeKurs?kursId="+kursId+"'>Moduler</a></li>");
+            out.println("<li "+personer+" ><a href=\"BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false\">Personer</a></li>");
+            out.println("<li "+moduler+"><a href='ModulListe?kursId="+kursId+"'>Moduler</a></li>");
+            out.println("<li "+grupper+"><a href='GruppeListe?kursId="+kursId+"'>Grupper</a></li>");
+
             out.println("</ul>");
             out.println("</div>");
         }
@@ -96,7 +102,7 @@ public class Navbar {
             navArray.add("<a href='javascript:void(0)' class='dropbtn'>Lister</a>");
             navArray.add("<div class='dropdown-content'>");
             navArray.add("<a href='BrukerListe'>Brukerliste</a>");
-            navArray.add("<a href='ModulListe'>Modulliste</a>");
+            navArray.add("<a href='GruppeListe'>Gruppeliste</a>");
             navArray.add("</div>");
             navArray.add("<li class='dropdown'>");
             navArray.add("<a "+classKurs+" href='javascript:void(0)' class='dropbtn'>Kurs</a>");
@@ -129,7 +135,7 @@ public class Navbar {
             }
             navArray.add("</div>");
             navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
-            navArray.add("<li "+classInnstillinger+" style='float:right'><a href='instillinger'>Innstillinger</a></li>");
+            navArray.add("<li style='float:right'><a "+classInnstillinger+" href='Innstillinger?edit=false'>Innstillinger</a></li>");
             navArray.add("</ul>");
             navArray.add("</div>");
             

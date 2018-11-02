@@ -25,6 +25,9 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "BrukerListeKurs", urlPatterns = {"/BrukerListeKurs"})
 public class BrukerListeKurs extends HttpServlet {
+    
+    ResultSet rs = null;
+    Query query = new Query();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,8 +42,7 @@ public class BrukerListeKurs extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            ResultSet rs = null;
-            Query query = new Query();
+
             BrukerListe bl = new BrukerListe();
             
             out.println("<!DOCTYPE html>");
@@ -50,31 +52,88 @@ public class BrukerListeKurs extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBrukereKurs.css'>");
             out.println("</head>");
             out.println("<body>");
             
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
+            boolean isForeleser = (boolean)session.getAttribute("isForeleser");
+            String redigerBrukere =  request.getParameter("redigerBrukere");
 
             
 
             out.println("<div class='mainContent'>");
             
-            
-            //Skriver ut liste over studenter og forelesere
-            String foreleser = ("SELECT A.fornavn, A.etterNavn, A.id from Foreleser A where  A.id in ( select B.foreleserId from ForeleserKurs B where B.kursId ='"+kursId+"')");
-            String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
-            
-            //Forelesere
-            out.println("<h2>Studenter og forelesere som tar " +kursId+ "</h2>");
-            out.println("<b>Forelesere:</b>");
+            if(!redigerBrukere.equals("true")){
+                //Skriver ut liste over studenter og forelesere
+                String foreleser = ("SELECT A.fornavn, A.etterNavn, A.id from Foreleser A where  A.id in ( select B.foreleserId from ForeleserKurs B where B.kursId ='"+kursId+"')");
+                String student = ("SELECT A.fornavn, A.etterNavn, A.id from Student A where  A.id in ( select B.studentId from TarKurs B where B.kursId ='"+kursId+"')");
 
-            bl.skrivListe(foreleser, rs, query, out);
-              
-            //Studenter
-            out.println("<b>Studenter:</b>");
-            bl.skrivListe(student, rs, query, out);
+                //Forelesere
+                out.println("<h2>Studenter og forelesere som tar " +kursId+ "</h2>");
+                out.println("<b>Forelesere:</b>");
+
+                bl.skrivListe(foreleser, rs, query, out);
+
+                //Studenter
+                out.println("<b>Studenter:</b>");
+                bl.skrivListe(student, rs, query, out);
+                if(isForeleser){
+                    out.println("<button type='submit' onclick=\"window.location.href='BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true'\">Legg til/Fjern brukere</button>");
+                }
+            } else{
+                out.println("<h2>Legg til eller fjern brukere fra "+kursId+"</h2>");
+                out.println("<div class='formBox'>");
+                out.println("<form action='OppdaterBrukerKurs?kursId="+kursId+"' method='POST'>");
+                out.println("<div class='studentDiv'>");
+                //Skriver UT select for alle studenter som ikke er i kurset
+                out.println("<div class='selectBrukere'>");
+                out.println("<label>Alle Studenter</label>");
+                out.println("<select name='studenterIkkeIKurs' size='15' multiple>");
+                printStudenterIkkeIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                //Skriver UT Knapper
+                out.println("<div class='buttonStack' id='studentButtons'>");
+                out.println("<input class='button' type='submit' name='leggTilStudenter' value='➜'>");
+                out.println("<input class='button' type='submit' name='fjernStudenter' style='-webkit-transform: rotate(-180deg);' value='➜'>");
+                out.println("</div>");
+                //Skriver UT select for alle studenter som er i kurset
+                out.println("<div class='selectBrukere'>");
+                out.println("<label>Studenter i Kurset</label>");
+                out.println("<select name='studenterIKurs' size='15' multiple>");
+                printStudenterIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                out.println("</div>");
+                //Skriver UT select for alle forelesere som ikke er i kurset
+                out.println("<div class='foreleserDiv'>");
+                out.println("<div class='selectBrukere'>");
+                out.println("<label>Alle Forelesere</label>");
+                out.println("<select name='forelesereIkkeIKurs' size='5' multiple>");
+                printForelesereIkkeIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                //Skriver ut knapper
+                out.println("<div class='buttonStack' id='foreleserButtons'>");
+                out.println("<input class='button' type='submit' name='leggTilForelesere' value='➜'>");
+                out.println("<input class='button' type='submit' name='fjernForelesere' style='-webkit-transform: rotate(-180deg);' value='➜'>");
+                out.println("</div>");                
+                //Skriver UT select for alle forelesere som  er i kurset
+                out.println("<div class='selectBrukere'>");
+                out.println("<label>Forelesere i Kurset</label>");
+                out.println("<select name='forelesereIKurs' size='5' multiple>");
+                printForelesereIKurs(kursId,out);
+                out.println("</select>");
+                out.println("</div>");
+                out.println("</div>");
+                out.println("</div>");
+                out.println("</form>");
+                out.println("<button type='submit' class='button' onclick=\"window.location.href='BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false'\">Gå tilbake</button>");
+                out.println("</div>");
+            }
            
 
             out.println("</div>");
@@ -87,8 +146,60 @@ public class BrukerListeKurs extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
+            
+            try {
+                if(rs.next()){
+                    query.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BrukerListeKurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                
         }
     }
+    
+    private void printStudenterIkkeIKurs(String kursId, PrintWriter out){
+        //Printer Alle studenter som ikke er i kurset til <option>
+        rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id NOT IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
+        printOption(out);      
+    }
+
+    private void printStudenterIKurs(String kursId, PrintWriter out){
+        //Printer Alle studenter som er i kurset til <option>
+        rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
+        printOption(out);        
+    }
+    
+    private void printForelesereIkkeIKurs(String kursId, PrintWriter out){
+        //Printer Alle forelesere som ikke er i kurset til en <option>
+        rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id NOT IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
+        printOption(out);
+    }
+    
+    private void printForelesereIKurs(String kursId, PrintWriter out){
+        //Printer Alle forelesere som er i kurset til en <option>
+        rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
+        printOption(out);       
+    }
+        
+    private void printOption(PrintWriter out){
+        //Skriver ut resultset til <option>
+        try {
+            String id = null;
+            String fornavn = null;
+            String etternavn = null;
+            
+            while(rs.next()){
+                id = rs.getString(1);
+                fornavn = rs.getString(2);
+                etternavn = rs.getString(3);            
+                out.println("<option value="+id+">"+fornavn+ " "+etternavn+"</option>");           
+           }
+        } catch (SQLException ex) {
+            Logger.getLogger(BrukerListeKurs.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
