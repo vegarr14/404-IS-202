@@ -79,6 +79,8 @@ public class Modul extends HttpServlet {
             String kursId = "";
             String foreleserId = "";
             String oppgaveTekst = "";
+            String levereSomGruppe = "";
+
             if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
                  * modul i ModulListe slik at informasjon om brukeren kommer opp i feltene
@@ -90,9 +92,15 @@ public class Modul extends HttpServlet {
                 foreleserId = rs.getString(3);
                 modulNummer = rs.getString(4);
                 oppgaveTekst = rs.getString(5);
+                levereSomGruppe = rs.getString(6);
                 
                 out.println("<label>Modulid</label> <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                if (levereSomGruppe.equals("1")){
+                out.println("Oppgavetype: Gruppelevering<br>");
+                }   
+                else {out.println("Oppgavetype: Individuell levering<br>");         
+                }
                 out.println("<input type='submit' name='button' value='oppdater modul'>");
                 out.println("<input type='submit' name='button' value='slett modul'>");
             } else {
@@ -100,23 +108,46 @@ public class Modul extends HttpServlet {
                 kursId=request.getParameter("kursId");
                 foreleserId = (String)session.getAttribute("id");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                out.println("<input type='checkbox' name='oppgaveType' value='1'>Gruppelevering<br>");
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
             
             out.println("</form>");
+            out.println("Alle innleveringer på denne modulen:<br>");
             if(modulId!= null) {
-                out.println("Alle innleveringer på denne modulen:<br>");
-                rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
-                out.println("<ul>");
-                try {
+                out.println("Innleveringer:<br>");
+                // Trenger kanskje en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
+                // ^ burde ikke kunne ha dupliserte innleveringer fordi defansiv programmering bla bla bla
+                // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs.
+                // ^ ellers så det være forvirrende. eldste gruppa i faget for den brukeren som leverer kommer til å telle, ikke bra
+                if (levereSomGruppe.equals("1")){
+                    rs = query.query(
+                            "select innlevId, gruppeNavn\n" +"from Innlevering \n" +
+                            "join gruppe \n" +
+                            "where Innlevering.modulId = "+modulId+" and Innlevering.gruppeId = gruppe.gruppeId");
+                    try {
+                    out.println("<ul>"); 
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");
+                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+ "</a></li>");
                     }
-                    query.close();
-                } catch (SQLException ex) {
+                    out.println("</ul>");
+                    } catch (SQLException ex) {
                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                out.println("</ul>");
+                }
+                }
+                else {
+                    rs = query.query("select innlevId, forNavn, etterNavn from Innlevering join Student where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id");
+                    try {
+                    out.println("<ul>");
+                    while (rs.next()) {
+                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
+                    }
+                    out.println("</ul>");
+                    query.close();
+                    } catch (SQLException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
             }
             
             
@@ -133,19 +164,46 @@ public class Modul extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String modulId = request.getParameter("modulId");
             Query query = new Query();
-            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId from Foreleser join Modul\n" +
+            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId, levereSomGruppe from Foreleser join Modul\n" +
                     "on Foreleser.id = Modul.foreleserId and modulId = " + modulId;
+
             ResultSet rs = query.query(modul);
             rs.next();
             String oppgaveTekst = rs.getString(6);
             String oppgaveTekstBr = oppgaveTekst.replaceAll("\n", " </br>");
             out.println("<h1>Modul "+rs.getString(5)+"</h1> Laget av "+rs.getString(1)+" "+rs.getString(2)+"<br>");
             out.println(oppgaveTekstBr+"</br></br></br>");
+            HttpSession session = request.getSession();
+            String oppgaveType = rs.getString(8);
+            if (oppgaveType.equals("1")){
+            out.println("Oppgavetype: Gruppelevering<br>");
+            //VELGER DEN ELDSTE GRUPPA - DVS LAVESTE GRUPPEID DEN FINNER FOR STUDENTEN OG TILSVARENDE GRUPPENAVN
+            //String gruppeNavn = "select gruppeNavn from gruppe inner join Student inner join tarkurs where student.id = "+String.valueOf(session.getAttribute("id"))+" and tarkurs.kursId = '"+rs.getString(4)+"'";
+            String gruppeNavn = 
+                    "select gruppeNavn from gruppe\n" +
+                    "inner join Gruppetilbruker ON gruppe.gruppeId = Gruppetilbruker.gruppeId\n" +
+                    "inner join Student ON Gruppetilbruker.id = Student.id\n" +
+                    "inner join gruppetilkurs ON gruppe.gruppeId = gruppetilkurs.gruppeId\n" +
+                    "where student.id = "+String.valueOf(session.getAttribute("id"))+" and gruppetilkurs.kursId = '"+rs.getString(4)+"'";
+            
+            ResultSet rs2 = query.query(gruppeNavn);
+            try {
+                if (rs2.next()) {
+                    out.println("Gjeldende gruppe: "+rs2.getString(1)+"");
+                    }
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+            else {out.println("Oppgavetype: Individuell levering");         
+            }
+
             out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
             out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
             out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
             out.println("<input type='submit' />");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
+            out.println("<input type='hidden' name='kursId' value ='"+rs.getString(4)+"'>");
             out.println("</form>");
             out.println("</br>Mine innleveringer på denne modulen:</br>");
             rs = query.query("select innlevId from Innlevering where modulId = "+modulId+" and id = "+(String)session.getAttribute("id"));
