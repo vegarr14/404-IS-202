@@ -7,7 +7,7 @@ package Servlets;
 
 import Database.*;
 import NotifikasjonSystem.Notifikasjon;
-import NotifikasjonSystem.subclasses.NyModulNotifikasjon;
+import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -54,7 +54,8 @@ public class ModulListe extends HttpServlet {
             ResultSet rs = null;
             
             //Lager nytt notifikasjonobjekt
-            NyModulNotifikasjon notifikasjon = new NyModulNotifikasjon();
+            NyModulNotifikasjon nyModNot = new NyModulNotifikasjon();
+            OppdatertModulNotifikasjon oppModNot = new OppdatertModulNotifikasjon();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -109,13 +110,17 @@ public class ModulListe extends HttpServlet {
                             Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         
-                        notifikasjon.getAndSetNyModul(kursId, foreleserId, modulId);
+                        //Lager notifikasjoner for alle studenter i kurset
+                        nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
                         
 >>>>>>> 96c207d Notifikasjonsystem
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         Timestamp timestamp = getTimestamp(frist);
                         query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"', maxPoeng ='"+maxPoeng+"', innleveringsFrist ="+timestamp+" where modulId ='"+modulId+"'");
+                        
+                        //Lager notifikasjoner for alle studenter i kurset
+                        oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
                         
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes

@@ -37,10 +37,12 @@
             <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
             
         </div>
+        <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner
                PrintNotifikasjoner printNotifikasjoner = new PrintNotifikasjoner();
               
-                printNotifikasjoner.printUleste(id,"JSP","notRight",out, null);
+                printNotifikasjoner.printUleste(id,"JSP",out, null);
             %> 
+        </div>
     </body>
 </html>
