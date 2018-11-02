@@ -112,7 +112,10 @@ public class Modul extends HttpServlet {
                 // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs.
                 // ^ ellers så kan uheldige ting skje
                 if (levereSomGruppe.equals("1")){
-                    rs = query.query("select innlevId, gruppeNavn from Innlevering inner join Student inner join Gruppetilkurs inner join gruppe where Innlevering.modulId = "+modulId+" and Innlevering.id = Student.id and gruppe.gruppeId = gruppetilkurs.gruppeId");
+                    rs = query.query(
+                            "select innlevId, gruppeNavn\n" +"from Innlevering \n" +
+                            "join gruppe \n" +
+                            "where Innlevering.modulId = "+modulId+" and Innlevering.gruppeId = gruppe.gruppeId");
                     try {
                     out.println("<ul>"); 
                     while (rs.next()) {
@@ -183,7 +186,14 @@ public class Modul extends HttpServlet {
             if (oppgaveType.equals("1")){
             out.println("Oppgavetype: Gruppelevering<br>");
             //VELGER DEN ELDSTE GRUPPA - DVS LAVESTE GRUPPEID DEN FINNER FOR STUDENTEN OG TILSVARENDE GRUPPENAVN
-            String gruppeNavn = "select gruppeNavn from gruppe inner join Student inner join tarkurs where student.id = "+String.valueOf(session.getAttribute("id"))+" and tarkurs.kursId = '"+rs.getString(4)+"'";
+            //String gruppeNavn = "select gruppeNavn from gruppe inner join Student inner join tarkurs where student.id = "+String.valueOf(session.getAttribute("id"))+" and tarkurs.kursId = '"+rs.getString(4)+"'";
+            String gruppeNavn = 
+                    "select gruppeNavn from gruppe\n" +
+                    "inner join Gruppetilbruker ON gruppe.gruppeId = Gruppetilbruker.gruppeId\n" +
+                    "inner join Student ON Gruppetilbruker.id = Student.id\n" +
+                    "inner join gruppetilkurs ON gruppe.gruppeId = gruppetilkurs.gruppeId\n" +
+                    "where student.id = "+String.valueOf(session.getAttribute("id"))+" and gruppetilkurs.kursId = '"+rs.getString(4)+"'";
+            
             ResultSet rs2 = query.query(gruppeNavn);
             try {
                 if (rs2.next()) {
@@ -200,6 +210,7 @@ public class Modul extends HttpServlet {
             out.println("<input type='file' name='file' />");
             out.println("<input type='submit' />");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
+            out.println("<input type='hidden' name='kursId' value ='"+rs.getString(4)+"'>");
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");

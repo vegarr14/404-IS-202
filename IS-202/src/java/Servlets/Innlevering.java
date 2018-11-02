@@ -142,9 +142,19 @@ public class Innlevering extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
             
+            System.out.println(request.getParameter("kursId"));
+            System.out.println(String.valueOf(session.getAttribute("id")));
+            
             Query query = new Query();
             
-            ResultSet rs = query.query("SELECT Gruppe.gruppeId FROM Gruppe INNER JOIN Gruppetilbruker ON Gruppetilbruker.gruppeId = Gruppe.gruppeId INNER JOIN Student ON Student.id = Gruppetilbruker.id WHERE Student.id = '"+session.getAttribute("id")+"'");
+            String finngruppeNavn =                     
+                    "select gruppe.gruppeId from gruppe\n" +
+                    "inner join Gruppetilbruker ON gruppe.gruppeId = Gruppetilbruker.gruppeId\n" +
+                    "inner join Student ON Gruppetilbruker.id = Student.id\n" +
+                    "inner join gruppetilkurs ON gruppe.gruppeId = gruppetilkurs.gruppeId\n" +
+                    "where student.id = "+String.valueOf(session.getAttribute("id"))+" and gruppetilkurs.kursId = '"+(request.getParameter("kursId"))+"'";
+            
+            ResultSet rs = query.query(finngruppeNavn);
             int gruppeId = 0;
             try {
             if (rs.next()){
