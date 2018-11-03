@@ -121,8 +121,13 @@ public class OpprettGruppe extends HttpServlet {
             
             else {
             printFelter(Gruppenavn,out);
-            out.println("<input type='submit' name='button' value='opprett'>");
+            if ((boolean)session.getAttribute("isForeleser")) { 
             }
+            else {
+                out.println("<input type='submit' name='button' value='opprett'>");
+            }
+            }
+                
             
             out.println("</form>");
             out.println("</body>");

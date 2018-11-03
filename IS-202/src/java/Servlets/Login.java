@@ -38,6 +38,7 @@ public class Login extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //Kobler til database
+        request.setCharacterEncoding("UTF8");
         Query query = new Query();
         ResultSet rs = null;
         

@@ -84,16 +84,20 @@ public class GruppeListe extends HttpServlet {
                         query.update("UPDATE gruppe set gruppeNavn ='"+Gruppenavn+"' where gruppeId ='"+gruppeid+"'");                       
                     } 
                     
+                    //muligens dårlig idè om man har aktive innleveringer, de slettes også
                     else if (request.getParameter("button").equals("slett gruppe")) {
                         query.update("DELETE from gruppetilbruker where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from Gruppetilkurs where gruppeId = "+request.getParameter("gruppeid"));
+                        query.update("DELETE from innlevering where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from gruppe where gruppeId = "+request.getParameter("gruppeid"));
+
                     }
                     
                     else if (request.getParameter("button").equals("bli medlem")) {    
                         query.update("INSERT INTO Gruppetilbruker (id,gruppeId) values ('"+session.getAttribute("id")+"','"+request.getParameter("gruppeid")+"')");
                     }
                     
+                    //gruppeskaper skal ikke kunne forlate gruppen, men NYI
                     else if (request.getParameter("button").equals("forlat gruppe")) {                      
                         query.update("DELETE FROM Gruppetilbruker WHERE id = "+session.getAttribute("id")+" AND gruppeId = "+request.getParameter("gruppeid")+""); 
                     }
@@ -118,8 +122,11 @@ public class GruppeListe extends HttpServlet {
             }
             
             out.println("<form name='OpprettGruppe' action='OpprettGruppe?kursId="+kursId+"' method='post'>");
-            out.println("<button type='submit'>Opprett ny gruppe</button>");
-            
+            if ((boolean)session.getAttribute("isForeleser")) { 
+            }
+            else {
+                out.println("<button type='submit'>Opprett ny gruppe</button>");
+            }
             out.println("</form>");
             out.println("</div>");
             out.println("</body>");
