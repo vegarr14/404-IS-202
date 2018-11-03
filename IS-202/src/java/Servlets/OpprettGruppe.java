@@ -102,8 +102,16 @@ public class OpprettGruppe extends HttpServlet {
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
-                        out.println("<input type='submit' name='button' value='forlat gruppe'>");
-                        rs = null;                
+                        rs = null;
+                        
+                        rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
+                        if (rs.next()){
+                            
+                            rs = null;  
+                        }   
+                        else {
+                            out.println("<input type='submit' name='button' value='forlat gruppe'>");
+                        }
                     }   
                     else {                
                     rs = query.query("SELECT tarkurs.kursId from Tarkurs INNER JOIN gruppetilkurs ON gruppetilkurs.kursId = tarkurs.kursId INNER JOIN student ON student.id = tarkurs.studentId INNER JOIN gruppe ON gruppe.gruppeId = gruppetilkurs.gruppeId WHERE id = "+session.getAttribute("id")+" AND gruppe.gruppeId = "+gruppeid+"");
@@ -116,7 +124,7 @@ public class OpprettGruppe extends HttpServlet {
                     }  
                     }
                 } catch (SQLException ignore) {
-                }                                                                     
+                }                                                                       
             } 
             
             else {
