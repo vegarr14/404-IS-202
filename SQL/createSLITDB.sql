@@ -127,6 +127,6 @@ CREATE TABLE `ForeleserKurs` (
   `foreleserId` int(11) not null,
   primary key(`kursId`,`foreleserId`),
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
-  Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
+  Constraint `FK_ForeleserKurs_Foreleser` foreign key (`foreleserId`) references `foreleser` (id) 
 );
 
