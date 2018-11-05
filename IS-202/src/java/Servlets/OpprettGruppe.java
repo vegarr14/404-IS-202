@@ -45,24 +45,41 @@ public class OpprettGruppe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            String kursId = request.getParameter("kursId");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<meta default-character-set='utf8'/>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");    
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");  
             out.println("<title>Opprett grupper</title>");            
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OpprettGruppe at " + request.getContextPath() + "</h1>");
+            
+            String kursId = request.getParameter("kursId");
+            Navbar navbar = new Navbar();
+            HttpSession session = request.getSession();
+
+            if (!kursId.equals("null")) {
+                out.println("<div class='mainContent'>");
+                navbar.printLeftSidebar("Grupper", kursId, out);           
+            }
+            else {
+                out.println("<div class='velkommen'>");  
+            }
+           
+            try {
+                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
             if (!kursId.equals("null")){
             out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
             }   
             else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
             }
             
-            HttpSession session = request.getSession();
             Query query = new Query();
             ResultSet rs = null;
             String Gruppenavn = "";
@@ -138,6 +155,7 @@ public class OpprettGruppe extends HttpServlet {
                 
             
             out.println("</form>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
             query.close();

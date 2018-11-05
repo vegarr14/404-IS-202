@@ -56,7 +56,11 @@ public class GruppeListe extends HttpServlet {
             Navbar navbar = new Navbar();
             
             if(kursId != null && !kursId.isEmpty()) {
+                out.println("<div class='mainContent'>");
                 navbar.printLeftSidebar("Grupper", kursId, out);
+            }
+            else {
+                out.println("<div class='velkommen'>");
             }
            
             try {
@@ -110,7 +114,6 @@ public class GruppeListe extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            out.println("<div class='velkommen'>");
             String gruppekurs = ("SELECT Gruppe.gruppeId,Gruppe.gruppeNavn FROM Gruppe INNER JOIN Gruppetilkurs ON Gruppe.gruppeId = Gruppetilkurs.gruppeId WHERE kursId = '"+kursId+"'");
             String gruppe = ("SELECT gruppeId,gruppeNavn FROM Gruppe");
             out.println("<b>Grupper</b>"); 
