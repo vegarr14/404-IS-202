@@ -3,6 +3,8 @@ drop schema slitdb;
 Create schema if not exists SLITDB;
 USE SLITDB;
 
+SET GLOBAL max_allowed_packet=1073741824;
+
 drop table if exists Kommentarer;
 drop table if exists Innlevering;
 drop table if exists ModulListe;
@@ -91,7 +93,7 @@ CREATE TABLE if not exists `Modul` (
   `innlevId` int(11) NOT NULL AUTO_INCREMENT,
   `modulId` int (11) NOT NULL,
   `fileName` varchar(50),
-  `fileData` BLOB,
+  `fileData` LONGBLOB,
   `id` int (11) NOT NULL,
   `gruppeId` int (11),
   `innlevKommentar` varchar (250),
