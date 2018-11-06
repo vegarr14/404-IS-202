@@ -136,6 +136,5 @@ CREATE TABLE `Kunngjøringer` (
   `dato` varchar(25) not null,
   primary key (`kunngjøringId`),
   Constraint `FK_Kunngjøringer_Foreleser` foreign key (`foreleserId`) references `foreleser` (id),
-  Constraint `FK_Kunngjøringer_Kurs` foreign key (`kursId`) references `tarkurs` (kursId) 
+  Constraint `FK_Kunngjøringer_Kurs` foreign key (`kursId`) references `kurs` (kursId) 
 );
-INSERT INTO Kunngjøringer (kunngjøring, kursId, foreleserId, dato) values ('HEIDU','IS-200',4,'11062018')
