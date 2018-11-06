@@ -23,9 +23,19 @@ body{
 .mainContent{
     top: 55px;
     text-align: center;
-    position: relative;
-    width: 85%;
     left: 15%;
+}
+
+.bokser{
+    position:relative;
+    margin: auto;
+    margin-top: 50px;
+    background-color: white;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    width: 80%;
+    padding: 10px;
+    text-align: center;
+    overflow: hidden;
 }
 
 .mainContent img{
@@ -68,4 +78,25 @@ li,ul  {
     list-style: none;
     padding:0px;
     margin:0px;
+}
+
+.lowerright {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+}
+
+.lowerleft {
+    position: absolute;
+    left: 10px;
+    bottom: 0;   
+}
+
+.middle {
+    width: 10%;
+    margin:auto;
+}
+
+#bottomInfo{
+    margin-top: 10px;
 }

@@ -42,6 +42,7 @@ public class Kunngjøringer extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -74,8 +75,8 @@ public class Kunngjøringer extends HttpServlet {
             
             if ((boolean)session.getAttribute("isForeleser")) { 
                 out.println("<form name='Kunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
-                out.println("Ny kunngjøring </br> <textarea cols='40' rows='5' name='kunngjoring' ></textarea></br>");
-                out.println("<input type='submit' name='button' value='Opprett'></br></br></br>");
+                out.println("Ny kunngjøring </br> <textarea cols='100' rows='10' name='kunngjoring' ></textarea></br>");
+                out.println("<input type='submit' name='button' value='Opprett'></br>");
                 out.println("</form>");        
             }
             
@@ -102,18 +103,22 @@ public class Kunngjøringer extends HttpServlet {
             rs = query.query(statement);
             out.println("<u1>");
             while(rs.next()){
-                out.println("<li> " + rs.getString(1) + " - " + rs.getString(2) + " " + rs.getString(3) +  " <br> Skrevet den " + rs.getString(4) + "</a></li>"); 
-                        out.println("</u1>");
+                out.println("<div class='bokser'>");
+                out.println("<li> " + rs.getString(1) + "</li><div id='bottomInfo'><div class='lowerleft'> <p> " + rs.getString(2) + " " + rs.getString(3) +  "</p></div><div class='lowerright'><p> Skrevet den " + rs.getString(4) + "</p></div></div>"); 
+                        
                         if ((boolean)session.getAttribute("isForeleser")) {              
                         out.println("<form name='SlettKunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
-                        out.println("<input type='submit' name='button' value='Slett'></br></br></br>");
+                        out.println("<div class='middle'> <input type='submit' name='button' value='Slett'></div>"); 
                         out.println("<input type='hidden' name='skjultKunngjoringId' value ='"+rs.getString(5)+"'>");
                         out.println("</form>");
                         }
                         else {
-                            out.println("</br></br></br>");
+                            out.println("</br></br>");
                         }
+                    out.println("</ul>");
+                    out.println("</div>");
             }
+
             rs = null;          
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
