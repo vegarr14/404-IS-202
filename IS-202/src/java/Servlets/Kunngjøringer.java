@@ -116,7 +116,7 @@ public class Kunngjøringer extends HttpServlet {
                         out.println("</form>");
                         }
                         else {
-                            out.println("</br></br>");
+                            out.println("</br>");
                         }
                     out.println("</ul>");
                     out.println("</div>");
