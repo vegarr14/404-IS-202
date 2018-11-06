@@ -23,6 +23,8 @@ body{
 .mainContent{
     top: 55px;
     text-align: center;
+    position: relative;
+    width: 85%;
     left: 15%;
 }
 

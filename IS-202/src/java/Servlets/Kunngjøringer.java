@@ -52,10 +52,9 @@ public class Kunngjøringer extends HttpServlet {
             out.println("<title>Servlet Kunngjøringer</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Kunngjøringer at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+     
             out.println("<div class='mainContent'>");
+            out.println("<h1>Kunngjøringer</h1>");
             
             Query query = new Query();
             ResultSet rs = null;
@@ -63,13 +62,7 @@ public class Kunngjøringer extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String skjultKunngjoringId = "";
             
-            try {
-                Navbar navbar = new Navbar();
-                navbar.printLeftSidebar("Kunngjøringer", request.getParameter("kursId"), out);
-                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out); 
-            } catch (SQLException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
             
             String dato = new SimpleDateFormat("dd-MM-yyyy' klokken 'HH:mm").format(Calendar.getInstance().getTime());
             
@@ -95,6 +88,16 @@ public class Kunngjøringer extends HttpServlet {
                     "INNER JOIN foreleser on kunngjøringer.foreleserId = foreleser.id WHERE kursId = '"+kursId+"'\n" +
                     "order by kunngjøringId DESC LIMIT 10 ");
             skrivKunngjøringListe(kunngjøringer, kursId, rs, query, session, out);
+            
+            try {
+                Navbar navbar = new Navbar();
+                navbar.printLeftSidebar("Kunngjøringer", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out); 
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.println("</body>");
+            out.println("</html>");
         }
     }
     
