@@ -50,7 +50,6 @@ public class GruppeListe extends HttpServlet {
             out.println("<title>Grupper</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OpprettGrupper at " + request.getContextPath() + "</h1>");
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();

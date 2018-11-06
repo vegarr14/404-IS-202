@@ -55,7 +55,6 @@ public class OpprettGruppe extends HttpServlet {
             out.println("<title>Opprett grupper</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OpprettGruppe at " + request.getContextPath() + "</h1>");
             
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
