@@ -105,7 +105,7 @@ public class Kunngjøringer extends HttpServlet {
                 out.println("<li> " + rs.getString(1) + " - " + rs.getString(2) + " " + rs.getString(3) +  " <br> Skrevet den " + rs.getString(4) + "</a></li>"); 
                         out.println("</u1>");
                         if ((boolean)session.getAttribute("isForeleser")) {              
-                        out.println("<form name='SlettKunngjøringer' action=Kunngjoringer?kursId="+kursId+"&?kunngjoringId="+rs.getString(5)+" method='post'>");
+                        out.println("<form name='SlettKunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
                         out.println("<input type='submit' name='button' value='Slett'></br></br></br>");
                         out.println("<input type='hidden' name='skjultKunngjoringId' value ='"+rs.getString(5)+"'>");
                         out.println("</form>");
