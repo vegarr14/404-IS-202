@@ -98,6 +98,7 @@ public class Kunngjøringer extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
     }
     

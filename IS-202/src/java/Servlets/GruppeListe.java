@@ -54,18 +54,13 @@ public class GruppeListe extends HttpServlet {
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
             
+            //Om kursId er null så er man i den gruppelisten som viser alle gruppene for alle kurs, og den skal ikke ha sidebar som kurs har.
             if(kursId != null && !kursId.isEmpty()) {
                 out.println("<div class='mainContent'>");
                 navbar.printLeftSidebar("Grupper", kursId, out);
             }
             else {
                 out.println("<div class='velkommen'>");
-            }
-           
-            try {
-                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
-            } catch (SQLException ex) {
-                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             try {
@@ -131,6 +126,11 @@ public class GruppeListe extends HttpServlet {
             }
             out.println("</form>");
             out.println("</div>");
+            try {
+                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
             query.close();
