@@ -18,8 +18,8 @@ insert into Kurs values('IS-200','Systemanalyse og systemutvikling','img/is-200.
 ('IS-201','Datamodellering og databasesystemer','img/is-201.jpg','Velkommen til IS-201<br>I dette kurset lærer vi om many to many og one to one.'),
 ('IS-202','Programmeringsprosjekt','img/is-202.jpg','Velkommen til IS-202<br>JAVA > html/css');
 
-INSERT INTO Modul values ('1','IS-202','4','1','You`re wondering who i am!'),
-('2','IS-202','4','2','machine or mannequin. With parts made in Japan, I am the modern man!');
+INSERT INTO Modul values ('1','IS-202','4','1','You`re wondering who i am!',false,1,null),
+('2','IS-202','4','2','machine or mannequin. With parts made in Japan, I am the modern man!',false,1,null);
 
 insert into TarKurs values('IS-200','1'),
 ('IS-201','1'),
