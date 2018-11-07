@@ -9,6 +9,8 @@ import Database.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -67,14 +70,15 @@ public class ModulListe extends HttpServlet {
             
             
             //out.println("<button href='Login' class='Tilbake'>Tilbake</button>");   
-                
-             //try {
+
                 if(request.getParameter("button") != null) {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
+                    String frist = request.getParameter("innleveringsFrist");
                     String modulId = request.getParameter("modulId");
                     String modulNummer = request.getParameter("modulNummer");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    String maxPoeng = request.getParameter("maxPoeng");
                     String type1 = request.getParameter("oppgaveType");
                     String type2 = "";
                     if(type1 != null && !type1.isEmpty()) {
@@ -84,12 +88,21 @@ public class ModulListe extends HttpServlet {
                         type2 = "0";        
                     }
                     if(request.getParameter("button").equals("legg til")) {
+                        Timestamp timestamp = getTimestamp(frist);
+                        String a = "";
+                        String b = "";
+                        if (timestamp!=null) {
+                            a = ", innleveringsFrist";
+                            b = ",'"+timestamp+"'";
+                        }
                         //Kjører hvis det skal legges til ny modul
-                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"')");                        
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
+                        Timestamp timestamp = getTimestamp(frist);
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"', maxPoeng ='"+maxPoeng+"', innleveringsFrist ="+timestamp+" where modulId ='"+modulId+"'");
                         
-                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                        
                         
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
@@ -99,9 +112,7 @@ public class ModulListe extends HttpServlet {
                     }
                     
                 }
-            //} //catch (SQLException ex) {
-                //Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            //}
+            
             
             try {
                 rs = query.query("Select * from Modul where kursId = '"+kursId+"'");
@@ -133,7 +144,18 @@ public class ModulListe extends HttpServlet {
             query.close();
         }
     }
-
+    
+    private Timestamp getTimestamp(String s) {
+        try {
+            String frist = s.replace("T"," ");
+            SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            Date date = simpleDate.parse(frist); 
+            Timestamp timestamp = new Timestamp(date.getTime());
+            return timestamp;
+        } catch (ParseException ignore) {
+            return null;
+        }
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

@@ -80,6 +80,7 @@ public class Modul extends HttpServlet {
             String foreleserId = "";
             String oppgaveTekst = "";
             String levereSomGruppe = "";
+            int maxPoeng = 0;
 
             if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
@@ -93,22 +94,29 @@ public class Modul extends HttpServlet {
                 modulNummer = rs.getString(4);
                 oppgaveTekst = rs.getString(5);
                 levereSomGruppe = rs.getString(6);
+                maxPoeng = rs.getInt(7);
+                String frist = rs.getString(8);
+                frist = frist.replace(" ","T");
+                frist = frist.substring(0, frist.length() - 3);
                 
                 out.println("<label>Modulid</label> <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
-                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,maxPoeng,out);
                 if (levereSomGruppe.equals("1")){
                 out.println("Oppgavetype: Gruppelevering<br>");
                 }   
                 else {out.println("Oppgavetype: Individuell levering<br>");         
                 }
+                
+                out.println("Innleveringsfrist <input type='datetime-local' name='innleveringsFrist' value='"+frist+"'><br>");
                 out.println("<input type='submit' name='button' value='oppdater modul'>");
                 out.println("<input type='submit' name='button' value='slett modul'>");
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
                 kursId=request.getParameter("kursId");
                 foreleserId = (String)session.getAttribute("id");
-                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,out);
+                printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,maxPoeng,out);
                 out.println("<input type='checkbox' name='oppgaveType' value='1'>Gruppelevering<br>");
+                out.println("Innleveringsfrist <input type='datetime-local' name='innleveringsFrist'><br>");
                 out.println("<input type='submit' name='button' value='legg til'>");
             }
             
@@ -164,7 +172,7 @@ public class Modul extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String modulId = request.getParameter("modulId");
             Query query = new Query();
-            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId, levereSomGruppe from Foreleser join Modul\n" +
+            String modul = "select forNavn, etterNavn, modulId, kursId, modulNummer, oppgaveTekst, foreleserId, levereSomGruppe, maxPoeng from Foreleser join Modul\n" +
                     "on Foreleser.id = Modul.foreleserId and modulId = " + modulId;
 
             ResultSet rs = query.query(modul);
@@ -200,7 +208,8 @@ public class Modul extends HttpServlet {
             out.println("<form action='Innlevering' method='post' enctype='multipart/form-data'>");
             out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
             out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
-            out.println("<input type='submit' />");
+            out.println("Maks antall oppnåelige poeng: "+rs.getString(9)+"<br>");
+            out.println("<input type='submit' name='button' value='Lever'/>");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("<input type='hidden' name='kursId' value ='"+rs.getString(4)+"'>");
             out.println("</form>");
@@ -217,15 +226,12 @@ public class Modul extends HttpServlet {
         }
     }
             
-    public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, PrintWriter out) {
-        Query query = new Query();
-        ResultSet rs = null;
-        rs = query.query("SELECT kursId, kursNavn from Kurs");
-        
+    public void printFelter (String kursId, String foreleserId, String modulNummer, String oppgaveTekst, int maxPoeng, PrintWriter out) {
         out.println("<label>kursId</label> <input type='text' name='kursId' value='"+kursId+"' readonly><br>");
         out.println("<label>modulNummer</label> <input type='number' name='modulNummer' value='"+modulNummer+"'><br>");
         out.println("<label>foreleserId</label> <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
         out.println("</br> <label>oppgaveTekst</label> </br> <textarea cols='100' rows='10' name='oppgaveTekst'>"+oppgaveTekst+"</textarea><br>");
+        out.println("<label>maks poeng</label> <input type= 'number' name='maxPoeng' value='"+maxPoeng+"'><br>");
 
     }
     
