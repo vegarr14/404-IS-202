@@ -45,24 +45,35 @@ public class OpprettGruppe extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            String kursId = request.getParameter("kursId");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<meta default-character-set='utf8'/>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");    
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");  
             out.println("<title>Opprett grupper</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OpprettGruppe at " + request.getContextPath() + "</h1>");
+            
+            String kursId = request.getParameter("kursId");
+            Navbar navbar = new Navbar();
+            HttpSession session = request.getSession();
+
+            if (!kursId.equals("null")) {
+                out.println("<div class='mainContent'>");
+                navbar.printLeftSidebar("Grupper", kursId, out);           
+            }
+            else {
+                out.println("<div class='velkommen'>");  
+            }
+
             if (!kursId.equals("null")){
             out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
             }   
             else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
             }
             
-            HttpSession session = request.getSession();
             Query query = new Query();
             ResultSet rs = null;
             String Gruppenavn = "";
@@ -102,8 +113,16 @@ public class OpprettGruppe extends HttpServlet {
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
-                        out.println("<input type='submit' name='button' value='forlat gruppe'>");
-                        rs = null;                
+                        rs = null;
+                        
+                        rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
+                        if (rs.next()){
+                            
+                            rs = null;  
+                        }   
+                        else {
+                            out.println("<input type='submit' name='button' value='forlat gruppe'>");
+                        }
                     }   
                     else {                
                     rs = query.query("SELECT tarkurs.kursId from Tarkurs INNER JOIN gruppetilkurs ON gruppetilkurs.kursId = tarkurs.kursId INNER JOIN student ON student.id = tarkurs.studentId INNER JOIN gruppe ON gruppe.gruppeId = gruppetilkurs.gruppeId WHERE id = "+session.getAttribute("id")+" AND gruppe.gruppeId = "+gruppeid+"");
@@ -116,7 +135,7 @@ public class OpprettGruppe extends HttpServlet {
                     }  
                     }
                 } catch (SQLException ignore) {
-                }                                                                     
+                }                                                                       
             } 
             
             else {
@@ -130,6 +149,12 @@ public class OpprettGruppe extends HttpServlet {
                 
             
             out.println("</form>");
+            out.println("</div>");     
+            try {
+                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
             query.close();

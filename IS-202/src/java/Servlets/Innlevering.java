@@ -151,10 +151,7 @@ public class Innlevering extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Innlevering at " + request.getContextPath() + "</h1>");
-            
-            System.out.println(request.getParameter("kursId"));
-            System.out.println(String.valueOf(session.getAttribute("id")));
-            
+
             Query query = new Query();
             
             String finngruppeNavn =                     

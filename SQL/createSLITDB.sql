@@ -130,3 +130,13 @@ CREATE TABLE `ForeleserKurs` (
   Constraint `FK_ForeleserKurs_Foreleser` foreign key (`foreleserId`) references `foreleser` (id) 
 );
 
+CREATE TABLE `Kunngjøringer` (
+  `kunngjøringId` int(11) not null AUTO_INCREMENT,
+  `kunngjøring` varchar(500) not null,
+  `kursId` varchar(11) not null,
+  `foreleserId` int(11) not null,
+  `dato` varchar(25) not null,
+  primary key (`kunngjøringId`),
+  Constraint `FK_Kunngjøringer_Foreleser` foreign key (`foreleserId`) references `foreleser` (id),
+  Constraint `FK_Kunngjøringer_Kurs` foreign key (`kursId`) references `kurs` (kursId) 
+);
