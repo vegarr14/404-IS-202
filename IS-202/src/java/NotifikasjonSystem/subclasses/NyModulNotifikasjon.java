@@ -26,7 +26,7 @@ public class NyModulNotifikasjon extends Notifikasjon {
         
         this.type = "nyModul";
         this.sender = Integer.parseInt(foreleserId);
-        this.refererer = Integer.parseInt(modulId);
+        this.refererer = modulId;
         this.opprettet = getTimestamp();
         
         rs = query.query("Select studentId from tarkurs WHERE kursId='"+kursId+"'");

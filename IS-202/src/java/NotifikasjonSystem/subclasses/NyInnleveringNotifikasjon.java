@@ -26,7 +26,7 @@ public class NyInnleveringNotifikasjon extends Notifikasjon {
         
         this.type = "nyInnlevering";
         this.sender = Integer.parseInt(studentId);
-        this.refererer = Integer.parseInt(innlevId);
+        this.refererer = innlevId;
         this.opprettet = getTimestamp();
         
         rs = query.query("Select foreleserId from foreleserKurs where kursId='"+kursId+"'");

@@ -56,6 +56,7 @@ public class ModulListe extends HttpServlet {
             //Lager nytt notifikasjonobjekt
             NyModulNotifikasjon nyModNot = new NyModulNotifikasjon();
             OppdatertModulNotifikasjon oppModNot = new OppdatertModulNotifikasjon();
+            SlettetModulNotifikasjon slettModNot = new SlettetModulNotifikasjon();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -78,6 +79,7 @@ public class ModulListe extends HttpServlet {
                     String modulNummer = request.getParameter("modulNummer");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    
                     String maxPoeng = request.getParameter("maxPoeng");
                     String type1 = request.getParameter("oppgaveType");
                     String type2 = "";
@@ -89,7 +91,6 @@ public class ModulListe extends HttpServlet {
                     }
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny modul
-<<<<<<< Upstream, based on origin/Dev
                         Timestamp timestamp = getTimestamp(frist);
                         String a = "";
                         String b = "";
@@ -98,7 +99,6 @@ public class ModulListe extends HttpServlet {
                             b = ",'"+timestamp+"'";
                         }
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
-=======
                         
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
                         
@@ -113,7 +113,6 @@ public class ModulListe extends HttpServlet {
                         //Lager notifikasjoner for alle studenter i kurset
                         nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
                         
->>>>>>> 96c207d Notifikasjonsystem
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         Timestamp timestamp = getTimestamp(frist);
@@ -124,9 +123,11 @@ public class ModulListe extends HttpServlet {
                         
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
+                        //Lager notifikasjoner før modul slettes for å kunne hente riktig info
+                        slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
                         
                         query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
-                        
+   
                     }
                     
                 }

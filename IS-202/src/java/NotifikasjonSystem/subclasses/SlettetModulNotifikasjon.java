@@ -16,19 +16,20 @@ import java.util.logging.Logger;
  *
  * @author Erlend Thorsen
  */
-public class OppdatertModulNotifikasjon extends Notifikasjon {
+public class SlettetModulNotifikasjon extends Notifikasjon {
     
     ResultSet rs = null;
     Query query = new Query();
     
     //Setter variabler og lager notifikasjon til alle som skal ha det
-    public void getAndSetOppdatertModul(String kursId, String foreleserId, String modulId){
+    public void getAndSetSlettetModul(String kursId, String foreleserId, String modulId){
         
-        this.type = "oppdatertModul";
+        this.type = "slettetModul";
         this.sender = Integer.parseInt(foreleserId);
         this.refererer = modulId;
         this.opprettet = getTimestamp();
         
+        //query for alle brukere som skal ta få notifikasjonen
         rs = query.query("Select studentId from tarkurs WHERE kursId='"+kursId+"'");
         
         try {
@@ -36,9 +37,15 @@ public class OppdatertModulNotifikasjon extends Notifikasjon {
                 this.mottaker = rs.getInt(1);
                 lagreNotifikasjon(this);
             }
+            
+            rs = query.query("Select notId from Notifikasjoner Where notType in ('nyModul', 'oppdatertModul') AND notReferererId ="+modulId+"");
+            while(rs.next()){
+                slettNotifikasjon(rs.getInt(1));
+            }
         } catch (SQLException ex) {
             Logger.getLogger(OppdatertModulNotifikasjon.class.getName()).log(Level.SEVERE, null, ex);
         }
         query.close();
     }
+    
 }

@@ -5,8 +5,14 @@
  */
 package Servlets;
 
+import Database.Query;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,12 +38,58 @@ public class NotifikasjonVideresender extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        ResultSet rs = null;
+        Query query = new Query();
+        
        String id = request.getParameter("id");
+       String notId = request.getParameter("notId");
        String notType = request.getParameter("notType");
        String notRefId = request.getParameter("notRefId");
        
+       String link = "";
        
        
+       try {
+       //Sender til riktig modul om typen er nyModul eller oppdatertModul eller slettetModul
+        if(notType.equals("nyModul") | notType.equals("oppdatertModul") | notType.equals("slettetModul")){
+
+            if(notType.equals("slettetModul")){
+             link = "#";
+            }else{
+                String kursId ="";
+
+                rs = query.query("Select kursId from modul where modulId="+notRefId+"");
+                rs.next();
+                kursId = rs.getString(1);
+
+
+                
+                 link = "Modul?kursId="+kursId+"&modulId="+notRefId+"";
+                
+            }
+        }
+        else if(notType.equals("nyInnlevering")){
+            link = "Innlevering?innlevId="+notRefId;
+        }
+        //sender en tom link altså fortsatt på samme side
+        else if(notType.equals("fjernetFraKurs")){
+            link = "#";
+        }
+        else if(notType.equals("lagtTilKurs")){
+            link = "Kurs?kursId=" +notRefId;
+        }
+        
+       } catch (SQLException ex) {
+             Logger.getLogger(NotifikasjonVideresender.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       
+       //Update notifikasjoner og Close query nice nice nice
+       //Setter notifikasjonen som lest
+       query.update("UPDATE notifikasjoner SET notUlest=0 WHERE notId="+notId+"");
+       query.close();
+       //Sender redirect
+       response.sendRedirect(link);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
