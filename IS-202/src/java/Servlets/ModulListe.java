@@ -101,15 +101,15 @@ public class ModulListe extends HttpServlet {
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
                         
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
-                        
+
                         rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
                         try {
                             rs.next();
-                            modulId = rs.getString(1);        
+                            modulId = rs.getString(1);
                         } catch (SQLException ex) {
                             Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
+
                         //Lager notifikasjoner for alle studenter i kurset
                         nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
                         
@@ -120,16 +120,16 @@ public class ModulListe extends HttpServlet {
                         
                         //Lager notifikasjoner for alle studenter i kurset
                         oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
-                        
+
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
                         //Lager notifikasjoner før modul slettes for å kunne hente riktig info
                         slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
-                        
+
                         query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
-   
+
                     }
-                    
+
                 }
             
             try {
