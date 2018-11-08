@@ -1,0 +1,236 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Servlets;
+
+import Database.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+/**
+ *
+ * @author Sondre
+ */
+@WebServlet(name = "ModulOversikt", urlPatterns = {"/ModulOversikt"})
+public class ModulOversikt extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF8");
+
+        HttpSession session = request.getSession();
+        try (PrintWriter out = response.getWriter()) {
+
+            /*Lage nytt Query-objekt, resultset ( = null*/
+            Query query = new Query();
+            ResultSet rs = null;
+
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ModulOversikt</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
+            if (request.getParameter("button") != null) {
+                //Lukker tidligere query og åpner ny i tilfelle 'legg til' aldri blir trykket på.
+                Query query2 = new Query();
+                //sjekker om en knapp med name button er trykket på for å åpne siden
+                String modulNummer = request.getParameter("modulNummer");
+                String kursId = request.getParameter("kursId");
+                String foreleserId = request.getParameter("foreleserId");
+                String oppgaveTekst = request.getParameter("oppgaveTekst");
+                if (request.getParameter("button").equals("legg til")) {
+                    //Kjører hvis det skal legges til ny modul
+                    query2.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('" + kursId + "','" + foreleserId + "','" + modulNummer + "','" + oppgaveTekst + "')");
+                }
+            }
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<div class='main-content'>");
+            out.println("<h1> Moduler </h1>");
+
+            out.println("</br>");
+            String kursId = request.getParameter("kursId");
+            //Trykk her for å legge til modul (som foreleser).
+
+            try {
+                //Henter moduler fra Modul-tablet i databasen
+                rs = query.query("select modulId, modulNummer from Modul where Modul.kursId='" + kursId + "' order by modulNummer ");
+                /*rs.last for å gå til siste raden i resultsettet, legger inn størrelsen på arrayet modulArray utifra 
+                    hvilken rad det siste resultatet er på.*/
+                rs.last();
+                int[] modulArray = null;
+                modulArray = new int[rs.getRow()];
+                rs.beforeFirst(); //setter den tilbake til original posisjon
+
+                int antModuler = 0;
+                out.println("<table name=modulOversikt>");
+                out.println("<tr>");
+                out.println("<th id='nostyle'></th>"); //en tom table header, den som er over student nr 1 og på venstre av modul nr 1
+
+                //Imens resultsettet fra Query har den neste:
+                //Print en link til modulen, koden hvis den blir trykket på er lengre ned i koden.
+                //Legger også inn modulIden i modulArray og sjekker antall moduler som blir lagt inn til senere bruk.
+                while (rs.next()) {
+                    out.println("<th> <a href ='Modul?kursId=" + kursId + "&modulId=" + rs.getString(1) + "'> Modul " + rs.getString(2) + "</a></th>");
+                    modulArray[antModuler] = rs.getInt(1);
+                    antModuler++;
+                }
+                out.println("</tr>");
+                /*rs henter innleveringene til studentene for moduler fra kurset brukeren er inne på (lagret i session).
+                    Altså alle innleveringer for modul 1, 2, 3 og 4 hvis de er i feks IS-202 og innleveringene med studentene som hører til innleveringene og kurset.*/
+                if ((boolean) session.getAttribute("isForeleser")) {
+                    rs = query.query("select id from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' order by etterNavn");
+                } else {
+                    rs = query.query("select id from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' and student.id = '" + (String) session.getAttribute("id") + "'order by etterNavn");
+                }
+                rs.last();
+                int[] studentArray;
+                studentArray = new int[rs.getRow()];
+                rs.beforeFirst();
+                int antStudenter = 0;
+                while (rs.next()) { //lager Studenter og Innleveringer (objekter).
+
+                    studentArray[antStudenter] = rs.getInt(1);
+                    antStudenter++;
+
+                }
+                if ((boolean) session.getAttribute("isForeleser")) {
+                    rs = query.query("select student.id, forNavn, etterNavn, innlevPoeng, innlevering.modulId from Student join Innlevering join Modul where Student.id = innlevering.id and '" + kursId + "'=modul.kursId and modul.modulId = innlevering.modulId order by etterNavn, modulNummer");
+                } else {
+                    rs = query.query("select student.id, forNavn, etterNavn, innlevPoeng, innlevering.modulId from Student join Innlevering join Modul where Student.id = innlevering.id and modul.kursId='" + kursId + "' and modul.modulId = innlevering.modulId and student.id = '" + (String) session.getAttribute("id") + "' order by etterNavn, modulNummer");
+                }
+                int teller1 = 0;
+
+                rs.beforeFirst();
+                int antRader = 0;
+                int antKolonner = 0;
+                if (rs.next()) {
+                    while (antRader < antStudenter) {
+                        out.println("<tr>");
+                        if (rs.isAfterLast() == false) {
+                            out.println("<th>" + rs.getString(3) + ", " + rs.getString(2) + "</th>");
+                            while (antKolonner < antModuler) {
+                                if (rs.isAfterLast() == true) {
+                                    out.println("<td></td>");
+                                } else if (rs.getInt(5) == modulArray[antKolonner] && rs.getInt(1) == studentArray[antRader]) {
+                                    out.println("<td>Poeng: " + rs.getInt(4) + "</td>");
+                                    rs.next();
+                                } else {
+                                    out.println("<td></td>");
+                                }
+                                antKolonner++;
+                            }
+                        }
+                        out.println("</tr>");
+                        antRader++;
+                        antKolonner = 0;
+                    }
+                } else if (!(boolean) session.getAttribute("isForeleser")){
+                    rs = query.query("select forNavn, etterNavn from Student where id = '"+(String)session.getAttribute("id")+"'");
+                    out.println("<tr>");
+                    boolean skrevetStudent=false;
+                    if (rs.last()==true && skrevetStudent==false) {
+                        out.println("<th>" + rs.getString(2) + ", " + rs.getString(1) + "</th>");
+                        skrevetStudent=true;
+                    }
+                    while (antRader < antStudenter) {
+                        while (antKolonner < antModuler) {
+                            out.println("<td></td>");
+                            antKolonner++;
+                        }
+                        out.println("</tr>");
+                    antRader++;
+                    antKolonner = 0;
+                    }
+                }
+                out.println("</table>");
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                query.close();
+            }
+            if ((boolean) session.getAttribute("isForeleser")) {
+                out.println("<form name='Modul' action='Modul?kursId=" + kursId + "' method='post'>");
+                out.println("<button type='submit'>Legg Til Modul</button>");
+                out.println("</form>");
+            }
+            out.println("<form name='Kurs' action='Kurs?kursId=" + kursId + "' method='post'>");
+            out.println("<button type='submit'>Tilbake</button>");
+            out.println("</form>");
+            out.println("</div>");
+            try {
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("ModulOversikt", (String) session.getAttribute("id"), (boolean) session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            out.println("</body>");
+            out.println("</html>");
+        }
+
+    }
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+}

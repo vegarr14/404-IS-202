@@ -68,7 +68,7 @@ public class LeggTilKurs extends HttpServlet {
             
             if(request.getParameter("KursId")!= null) {     
                 kursId = request.getParameter("KursId");
-                String dataString = ("select * from kurs where kursId = '"+kursId+"'");;
+                String dataString = ("select * from kurs where kursId = '"+kursId+"'");
                 rs = query.query(dataString);
                 rs.next();
 

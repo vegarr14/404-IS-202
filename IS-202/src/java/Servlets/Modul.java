@@ -58,12 +58,7 @@ public class Modul extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Modul at " + request.getContextPath() + "</h1>");
-            out.println("<form name='ModulListe' action='ModulListe' id='Modul' method='post'>");
-            
-                /*Velger alt fra modulListe-table fra MySQL og skriverModulliste. Se Query for mer.*/
-                /*out.println("<table name=modulListe>");
-                    query.skrivModulliste("SELECT * FROM modulListe", out);
-                out.println("</table>");*/
+            out.println("<form name='ModulOversikt' action='ModulOversikt' id='Modul' method='post'>");
                 
             Query query = new Query();
             ResultSet rs = null;
@@ -75,7 +70,7 @@ public class Modul extends HttpServlet {
             
             if(modulId!= null) {
                 /* Hvis id parameteren inneholder noe (ikke lik null) har det blitt trykket på en 
-                 * modul i ModulListe slik at informasjon om brukeren kommer opp i feltene
+                 * modul i ModulOversikt slik at informasjon om brukeren kommer opp i feltene
                  * + valg mellom oppdater modul og slett modul
                  */
                 rs = query.query("select * from Modul where modulId = "+modulId);

@@ -65,7 +65,7 @@ public class Navbar {
             out.println("<ul>");
             out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
             out.println("<li "+personer+" ><a href=\"BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false\">Personer</a></li>");
-            out.println("<li "+moduler+"><a href='ModulListe?kursId="+kursId+"'>Moduler</a></li>");
+            out.println("<li "+moduler+"><a href='ModulOversikt?kursId="+kursId+"'>Moduler</a></li>");
             out.println("<li "+grupper+"><a href='GruppeListe?kursId="+kursId+"'>Grupper</a></li>");
 
             out.println("</ul>");
