@@ -187,14 +187,14 @@ public class ModulListe extends HttpServlet {
                 out.println("</table>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                query.close();
-            }
+            } 
+            
             if ((boolean) session.getAttribute("isForeleser")) {
                 out.println("<form name='Modul' action='Modul?kursId=" + kursId + "' method='post'>");
                 out.println("<button type='submit'>Legg Til Modul</button>");
                 out.println("</form>");
             }
+            
             out.println("<form name='Kurs' action='Kurs?kursId=" + kursId + "' method='post'>");
             out.println("<button type='submit'>Tilbake</button>");
             out.println("</form>");
