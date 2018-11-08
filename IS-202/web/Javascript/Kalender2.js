@@ -6,6 +6,7 @@
 
 var nextOrPrev = 0;
 var addedYears = 0;
+
 function displayCalendar(){
  
  
@@ -13,32 +14,31 @@ function displayCalendar(){
  var FebNumberOfDays ="";
  var counter = 1;
  
- 
  var dateNow = new Date();
  var currentMonth = dateNow.getMonth() + nextOrPrev;
  
- var year = dateNow.getFullYear();
+ var year = dateNow.getFullYear() + addedYears;
 
 console.log(nextOrPrev);
- var dateThen = new Date(year+addedYears, currentMonth + nextOrPrev);
+ var dateThen = new Date(year, currentMonth);
  var month = dateThen.getMonth();
  
  console.log(month);  
  if(month > 11){
      month = 0; 
      addedYears++;
-     console.log("år" +addedYears);
+     console.log("år" + addedYears);
  }
  else if(month < 0){
      month = 11;
      addedYears--;
-     console.log("år"+addedYears);
+     console.log("år"+ addedYears);
  };
  var nextMonth = month;
 
  console.log(month);
  console.log(nextMonth);
-
+ console.log(addedYears);
    //Used to match up the current month with the correct start date.
  var prevMonth = month -1;
  var day = dateNow.getDate();
@@ -136,4 +136,4 @@ document.getElementById("prevMonthButton").onclick = function prevMonthFunc(){
     displayCalendar();
     console.log("Klikk prev");
 };
-}
+};
