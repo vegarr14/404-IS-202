@@ -52,9 +52,10 @@ public class LeggTilBruker extends HttpServlet {
             out.println("<meta default-character-set='utf8'/>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");            
-            out.println("<title>Legg til bruker</title>");            
+            out.println("<title>Bruker</title>");            
             out.println("</head>");
             out.println("<body>");
+            out.println("<div class=velkommen>");
             out.println("<form name='BrukerListe' action='BrukerListe' id='LeggTilBruker' method='post'>");
             
             //Query, resultset og variabler som skal brukes
@@ -71,6 +72,7 @@ public class LeggTilBruker extends HttpServlet {
                  * bruker i BrukerListe slik at informasjon om brukeren kommer opp i feltene
                  * + valg mellom oppdater bruker og slett bruker
                  */
+                out.println("<h1>Oppdater/slett bruker </h1>");
                 rs = query.query("select * from foreleser where id = "+id+" union select * from student where id = "+id);
                 rs.next();
                 fornavn = rs.getString(2);
@@ -89,6 +91,7 @@ public class LeggTilBruker extends HttpServlet {
 
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
+                out.println("<h1>Opprett ny bruker </h1>");
                 printFelter(fornavn,etternavn,email,tlf,out);
                 out.println("<input type='radio' name='brukerType' value='student' checked> Student<br>");
                 out.println("<input type='radio' name='brukerType' value='foreleser'> Foreleser<br>");
@@ -96,6 +99,15 @@ public class LeggTilBruker extends HttpServlet {
             }
             
             out.println("</form>");
+            out.println("</div>");
+            
+            try {
+                Navbar navbar = new Navbar();
+                navbar.printNavbar("Lister", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             out.println("</body>");
             out.println("</html>");
             query.close();

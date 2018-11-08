@@ -48,34 +48,53 @@ public class ModulListe extends HttpServlet {
             Query query = new Query();
             ResultSet rs = null;
 
+            
+            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModulOversikt</title>");
+            out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
-            if (request.getParameter("button") != null) {
-                //Lukker tidligere query og åpner ny i tilfelle 'legg til' aldri blir trykket på.
-                Query query2 = new Query();
-                //sjekker om en knapp med name button er trykket på for å åpne siden
-                String modulNummer = request.getParameter("modulNummer");
-                String kursId = request.getParameter("kursId");
-                String foreleserId = request.getParameter("foreleserId");
-                String oppgaveTekst = request.getParameter("oppgaveTekst");
-                if (request.getParameter("button").equals("legg til")) {
-                    //Kjører hvis det skal legges til ny modul
-                    query2.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('" + kursId + "','" + foreleserId + "','" + modulNummer + "','" + oppgaveTekst + "')");
-                }
-            }
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<div class='main-content'>");
-            out.println("<h1> Moduler </h1>");
-
-            out.println("</br>");
             String kursId = request.getParameter("kursId");
-            //Trykk her for å legge til modul (som foreleser).
+            
+            out.println("<div class='main-content'>");
+            out.println("<h1> Moduler i "+kursId+"</h1>");
 
+                if(request.getParameter("button") != null) {
+                    //sjekker om en knapp med name button er trykket på for å åpne siden
+                    String modulId = request.getParameter("modulId");
+                    String modulNummer = request.getParameter("modulNummer");
+                    String foreleserId = request.getParameter("foreleserId");
+                    String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    String type1 = request.getParameter("oppgaveType");
+                    String type2 = "";
+                    if(type1 != null && !type1.isEmpty()) {
+                        type2 = "1";
+                    }   
+                    else {
+                        type2 = "0";        
+                    }
+                    if(request.getParameter("button").equals("legg til")) {
+                        //Kjører hvis det skal legges til ny modul
+                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"')");                        
+                    } else if (request.getParameter("button").equals("oppdater modul")) {
+                        //kjører hvis en modul skal oppdateres
+                        
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                        
+                    } else if (request.getParameter("button").equals("slett modul")) {
+                        //kjører hvis en modul skal slettes
+                        
+                        query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
+                        
+                    }
+                    
+                }
+            
             try {
                 //Henter moduler fra Modul-tablet i databasen
                 rs = query.query("select modulId, modulNummer from Modul where Modul.kursId='" + kursId + "' order by modulNummer ");
@@ -182,15 +201,18 @@ public class ModulListe extends HttpServlet {
             out.println("<button type='submit'>Tilbake</button>");
             out.println("</form>");
             out.println("</div>");
+
             try {
                 Navbar navbar = new Navbar();
-                navbar.printNavbar("ModulListe", (String) session.getAttribute("id"), (boolean) session.getAttribute("isForeleser"), out);
+                navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+                navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             out.println("</body>");
             out.println("</html>");
+            query.close();
         }
 
     }

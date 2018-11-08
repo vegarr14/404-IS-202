@@ -3,6 +3,8 @@ drop schema slitdb;
 Create schema if not exists SLITDB;
 USE SLITDB;
 
+SET GLOBAL max_allowed_packet=1073741824;
+
 drop table if exists Kommentarer;
 drop table if exists Innlevering;
 drop table if exists ModulListe;
@@ -51,12 +53,37 @@ CREATE TABLE if not exists`Kurs` (
 primary key(`kursId`)
 );
 
+CREATE TABLE if not exists `Gruppe`(
+    `gruppeId` INT(11) NOT NULL auto_increment,
+    `gruppeNavn` VARCHAR(20) NOT NULL,
+    `gruppeSkaperId` INT(11) NOT NULL,
+    PRIMARY KEY (`gruppeId`),
+    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
+);
+
+CREATE TABLE if not exists `Gruppetilbruker`(
+    `id` INT(11),
+    `gruppeId` INT(11),
+    PRIMARY KEY (`id`,`gruppeId`),
+      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
+      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+);
+
+CREATE TABLE if not exists `Gruppetilkurs`(
+	`kursId` varchar(11) NOT NULL,
+    `gruppeId` INT(11) NOT NULL,
+    PRIMARY KEY (`kursId`,`gruppeId`),
+      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
+      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+);
+
 CREATE TABLE if not exists `Modul` (
  `modulId` int(11) not null auto_increment,
  `kursId` varchar(11) not null,
  `foreleserId` int(11) not null,
  `modulNummer` int(11) not null,
  `oppgaveTekst` text not null,
+ `levereSomGruppe` boolean,
  primary key(`modulId`),
  constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`kursId`),
  constraint `FK_Modul_Forelser` foreign key (`foreleserId`) references `Foreleser` (`id`)
@@ -66,13 +93,15 @@ CREATE TABLE if not exists `Modul` (
   `innlevId` int(11) NOT NULL AUTO_INCREMENT,
   `modulId` int (11) NOT NULL,
   `fileName` varchar(50),
-  `fileData` BLOB,
+  `fileData` LONGBLOB,
   `id` int (11) NOT NULL,
+  `gruppeId` int (11),
   `innlevKommentar` varchar (250),
   `innlevPoeng` int,
   primary key(`innlevId`),
   Constraint `FK_ModulListe_Innlevering` Foreign Key (`modulId`) references `Modul` (`modulId`),
-  Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`)
+  Constraint `FK_Bruker_Innlevering` Foreign Key (`id`) references `Bruker` (`id`),
+  Constraint `FK_Gruppe_Innlevering` Foreign Key (`gruppeId`) references `Gruppe` (`gruppeId`)
   );
   
   CREATE TABLE if not exists `Kommentarer` (
@@ -98,29 +127,16 @@ CREATE TABLE `ForeleserKurs` (
   `foreleserId` int(11) not null,
   primary key(`kursId`,`foreleserId`),
   Constraint `FK_ForeleserKurs_Kurs` foreign key (`kursId`) references `kurs` (`kursId`),
-  Constraint `FK_ForeleserKurs_Student` foreign key (`foreleserId`) references `foreleser` (id) 
+  Constraint `FK_ForeleserKurs_Foreleser` foreign key (`foreleserId`) references `foreleser` (id) 
 );
 
-CREATE TABLE if not exists `Gruppe`(
-    `gruppeId` INT(11) NOT NULL auto_increment,
-    `gruppeNavn` VARCHAR(20) NOT NULL,
-    `gruppeSkaperId` INT(11) NOT NULL,
-    PRIMARY KEY (`gruppeId`),
-    Constraint `FK_Gruppe_gruppedSkaperid` Foreign Key (`gruppeSkaperId`) references `bruker` (`id`)
-);
-
-CREATE TABLE if not exists `Gruppetilbruker`(
-    `id` INT(11),
-    `gruppeId` INT(11),
-    PRIMARY KEY (`id`,`gruppeId`),
-      Constraint `FK_Gruppetilbruker_Bruker` Foreign Key (`id`) references `bruker` (`id`),
-      Constraint `FK_Gruppetilbruker_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
-);
-
-CREATE TABLE if not exists `Gruppetilkurs`(
-	`kursId` varchar(11) NOT NULL,
-    `gruppeId` INT(11) NOT NULL,
-    PRIMARY KEY (`kursId`,`gruppeId`),
-      Constraint `FK_Gruppetilkurs_Kurs` Foreign Key (`kursId`) references `kurs` (`kursId`),
-      Constraint `FK_Gruppetilkurs_Gruppe` Foreign Key (`gruppeId`) references `gruppe` (`gruppeId`)
+CREATE TABLE `Kunngjøringer` (
+  `kunngjøringId` int(11) not null AUTO_INCREMENT,
+  `kunngjøring` varchar(500) not null,
+  `kursId` varchar(11) not null,
+  `foreleserId` int(11) not null,
+  `dato` varchar(25) not null,
+  primary key (`kunngjøringId`),
+  Constraint `FK_Kunngjøringer_Foreleser` foreign key (`foreleserId`) references `foreleser` (id),
+  Constraint `FK_Kunngjøringer_Kurs` foreign key (`kursId`) references `kurs` (kursId) 
 );
