@@ -84,6 +84,8 @@ CREATE TABLE if not exists `Modul` (
  `modulNummer` int(11) not null,
  `oppgaveTekst` text not null,
  `levereSomGruppe` boolean,
+ `maxPoeng` int,
+ `innleveringsFrist` timestamp default null,
  primary key(`modulId`),
  constraint `FK_Modul_Kurs` foreign key (`kursId`) references `Kurs` (`kursId`),
  constraint `FK_Modul_Forelser` foreign key (`foreleserId`) references `Foreleser` (`id`)

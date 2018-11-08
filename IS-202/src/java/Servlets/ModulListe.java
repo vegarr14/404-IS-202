@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -64,10 +67,12 @@ public class ModulListe extends HttpServlet {
 
                 if(request.getParameter("button") != null) {
                     //sjekker om en knapp med name button er trykket på for å åpne siden
+                    String frist = request.getParameter("innleveringsFrist");
                     String modulId = request.getParameter("modulId");
                     String modulNummer = request.getParameter("modulNummer");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    String maxPoeng = request.getParameter("maxPoeng");
                     String type1 = request.getParameter("oppgaveType");
                     String type2 = "";
                     if(type1 != null && !type1.isEmpty()) {
@@ -78,11 +83,18 @@ public class ModulListe extends HttpServlet {
                     }
                     if(request.getParameter("button").equals("legg til")) {
                         //Kjører hvis det skal legges til ny modul
-                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"')");                        
+                        Timestamp timestamp = getTimestamp(frist);
+                        String a = "";
+                        String b = "";
+                        if (timestamp!=null) {
+                            a = ", innleveringsFrist";
+                            b = ",'"+timestamp+"'";
+                        }
+                        query.update("query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
-                        
-                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"' where modulId ='"+modulId+"'");
+                        Timestamp timestamp = getTimestamp(frist);
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"', maxPoeng ='"+maxPoeng+"', innleveringsFrist ="+timestamp+" where modulId ='"+modulId+"'");
                         
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
@@ -214,6 +226,18 @@ public class ModulListe extends HttpServlet {
         }
 
     }
+    
+    private Timestamp getTimestamp(String s) {
+        try {
+            String frist = s.replace("T"," ");
+            SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            Date date = simpleDate.parse(frist); 
+            Timestamp timestamp = new Timestamp(date.getTime());
+            return timestamp;
+        } catch (ParseException ignore) {
+            return null;
+        }
+    }                                 
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
