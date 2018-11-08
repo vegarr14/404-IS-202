@@ -96,9 +96,10 @@ public class Modul extends HttpServlet {
                 levereSomGruppe = rs.getString(6);
                 maxPoeng = rs.getInt(7);
                 String frist = rs.getString(8);
-                frist = frist.replace(" ","T");
-                frist = frist.substring(0, frist.length() - 3);
-                
+                if (frist != null) {
+                    frist = frist.replace(" ","T");
+                    frist = frist.substring(0, frist.length() - 3);
+                }
                 out.println("<label>Modulid</label> <input type='text' name='modulId' value='"+modulId+"' readonly><br>");
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,maxPoeng,out);
                 if (levereSomGruppe.equals("1")){
@@ -121,9 +122,8 @@ public class Modul extends HttpServlet {
             }
             
             out.println("</form>");
-            out.println("Alle innleveringer på denne modulen:<br>");
             if(modulId!= null) {
-                out.println("Innleveringer:<br>");
+                out.println("Alle innleveringer på denne modulen:<br>");
                 // Trenger kanskje en unique composite av modul og gruppeID/ID i Innleveringstable for å unngå dupliserte innleveringer
                 // ^ burde ikke kunne ha dupliserte innleveringer fordi defansiv programmering bla bla bla
                 // Gruppesystemet trenger også en begrensning som gjør at man kan bare bli medlem i en gruppe per kurs.
