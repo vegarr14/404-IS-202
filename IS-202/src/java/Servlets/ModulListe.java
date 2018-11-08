@@ -24,8 +24,8 @@ import java.util.Arrays;
  *
  * @author Sondre
  */
-@WebServlet(name = "ModulOversikt", urlPatterns = {"/ModulOversikt"})
-public class ModulOversikt extends HttpServlet {
+@WebServlet(name = "ModulListe", urlPatterns = {"/ModulListe"})
+public class ModulListe extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -184,7 +184,7 @@ public class ModulOversikt extends HttpServlet {
             out.println("</div>");
             try {
                 Navbar navbar = new Navbar();
-                navbar.printNavbar("ModulOversikt", (String) session.getAttribute("id"), (boolean) session.getAttribute("isForeleser"), out);
+                navbar.printNavbar("ModulListe", (String) session.getAttribute("id"), (boolean) session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
