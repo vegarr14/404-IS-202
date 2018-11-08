@@ -47,9 +47,7 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null*/
             Query query = new Query();
             ResultSet rs = null;
-
             
-            request.setCharacterEncoding("utf8");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
