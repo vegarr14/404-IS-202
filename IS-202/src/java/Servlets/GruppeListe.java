@@ -50,19 +50,17 @@ public class GruppeListe extends HttpServlet {
             out.println("<title>Grupper</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OpprettGrupper at " + request.getContextPath() + "</h1>");
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
             
+            //Om kursId er null så er man i den gruppelisten som viser alle gruppene for alle kurs, og den skal ikke ha sidebar som kurs har.
             if(kursId != null && !kursId.isEmpty()) {
+                out.println("<div class='mainContent'>");
                 navbar.printLeftSidebar("Grupper", kursId, out);
             }
-           
-            try {
-                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
-            } catch (SQLException ex) {
-                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            else {
+                out.println("<div class='velkommen'>");
             }
             
             try {
@@ -110,7 +108,6 @@ public class GruppeListe extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            out.println("<div class='velkommen'>");
             String gruppekurs = ("SELECT Gruppe.gruppeId,Gruppe.gruppeNavn FROM Gruppe INNER JOIN Gruppetilkurs ON Gruppe.gruppeId = Gruppetilkurs.gruppeId WHERE kursId = '"+kursId+"'");
             String gruppe = ("SELECT gruppeId,gruppeNavn FROM Gruppe");
             out.println("<b>Grupper</b>"); 
@@ -129,6 +126,11 @@ public class GruppeListe extends HttpServlet {
             }
             out.println("</form>");
             out.println("</div>");
+            try {
+                navbar.printNavbar("Kurs",(String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+            } catch (SQLException ex) {
+                Logger.getLogger(Kurs.class.getName()).log(Level.SEVERE, null, ex);
+            }
             out.println("</body>");
             out.println("</html>");
             query.close();

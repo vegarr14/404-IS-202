@@ -188,6 +188,7 @@ public class Innlevering extends HttpServlet {
         int gruppeId = 0;
         try {
             if (rs.next()) {
+
                 gruppeId = rs.getInt(1);
                 rs = null;
             }

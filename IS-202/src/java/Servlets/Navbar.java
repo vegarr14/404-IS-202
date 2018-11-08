@@ -48,6 +48,7 @@ public class Navbar {
             String personer = "";
             String moduler = "";
             String grupper = "";
+            String kunngjøringer = "";
             String activeStyle = "style='color:orange;'";
             if(active == "Hjem"){
                 hjem = activeStyle;
@@ -61,9 +62,13 @@ public class Navbar {
             else if(active == "Grupper"){
                 grupper = activeStyle;
             }           
+            else if(active == "Kunngjøringer"){
+                kunngjøringer = activeStyle;
+            }  
             out.println("<div class='leftSidebar'>");
             out.println("<ul>");
             out.println("<li "+hjem+"><a href='Kurs?kursId="+kursId+"'>Hjem</a></li>");
+            out.println("<li "+kunngjøringer+"><a href='Kunngjoringer?kursId="+kursId+"'>Kunngjøringer</a></li>");
             out.println("<li "+personer+" ><a href=\"BrukerListeKurs?kursId="+kursId+"&redigerBrukere=false\">Personer</a></li>");
             out.println("<li "+moduler+"><a href='ModulListe?kursId="+kursId+"'>Moduler</a></li>");
             out.println("<li "+grupper+"><a href='GruppeListe?kursId="+kursId+"'>Grupper</a></li>");

@@ -1,0 +1,72 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 02.nov.2018, 14:29:25
+    Author     : Sondre
+*/
+
+.main-content   {
+    position: relative;
+    margin:auto;
+    margin-top: 150px;
+    font-family: "Trebuchet MS";
+    background-color: white;
+    width: 50%;
+    padding: 10px;
+    text-align: center;
+}
+
+table   {
+    display:block;
+    border-collapse: collapse;
+    width: 100%;
+    border-width: 2px;
+    text-align: center;
+}
+
+a   {
+    
+}
+
+th {
+    border: 1px solid #ddd;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align:left;
+    background-color: orange;
+    color: white;
+    text-align: center;
+}
+
+td  {
+    border:black;
+    border-width: 2px;
+    border-style: solid;
+    hover {background-color: appworkspace;}
+    text-align: center;
+    width: 100px;
+}
+
+#nostyle    {
+    background-color: white;
+    border-left:none;
+    border-top:none;
+}
+
+button{
+    background-color: orange;
+    color: white;
+    height: 30px;
+    border: none;
+    margin: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    position:relative;
+}
+button:hover{
+    background-color: gray;
+    box-shadow: 0px 0px 0px black;
+}
