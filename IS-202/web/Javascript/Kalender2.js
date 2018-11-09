@@ -6,6 +6,7 @@
 
 var nextOrPrev = 0;
 var addedYears = 0;
+var prevMonth = 0;
 
 function displayCalendar(){
  
@@ -17,30 +18,27 @@ function displayCalendar(){
  var dateNow = new Date();
  var currentMonth = dateNow.getMonth() + nextOrPrev;
  
- var year = dateNow.getFullYear() + addedYears;
+ var year = dateNow.getFullYear();
 
-console.log(nextOrPrev);
+
  var dateThen = new Date(year, currentMonth);
  var month = dateThen.getMonth();
  
- console.log(month);  
- if(month > 11){
-     month = 0; 
+ if(month == 0 && prevMonth == 11){
      addedYears++;
-     console.log("år" + addedYears);
- }
- else if(month < 0){
-     month = 11;
-     addedYears--;
-     console.log("år"+ addedYears);
- };
- var nextMonth = month;
 
- console.log(month);
- console.log(nextMonth);
- console.log(addedYears);
+ }else if(month == 11 && prevMonth == 0){
+     addedYears--;
+
+ };
+ 
+ year = year + addedYears;
+ 
+ prevMonth = month;
+
+ 
    //Used to match up the current month with the correct start date.
- var prevMonth = month -1;
+
  var day = dateNow.getDate();
 
  
@@ -56,14 +54,14 @@ console.log(nextOrPrev);
  
  
  // names of months and week days.
- var monthNames = ["January","February","March","April","May","June","July","August","September","October","November", "December"];
- var dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thrusday","Friday", "Saturday"];
+ var monthNames = ["Januar","Februar","Mars","April","Mai","Juni","Juli","August","September","Oktober","November", "Desember"];
+ var dayNames = ["Mandag","Tirsdag","Onsdag","Torsdag","Fedag","Lørdag", "Søndag"];
  var dayPerMonth = ["31", ""+FebNumberOfDays+"","31","30","31","30","31","31","30","31","30","31"];
  
  
  // days in previous month and next one , and day of week.
  var nextDate = new Date(year, month, 0);
- var weekdays= nextDate.getDay();
+ var weekdays = nextDate.getDay();
  var weekdays2 = weekdays;
  var numOfDays = dayPerMonth[month];
  /*var prevDate = new Date(prevMonth +' -1,' +year); 
@@ -100,7 +98,7 @@ console.log(nextOrPrev);
     // highlight current day using the CSS defined in header.
     if (counter == day){
         htmlContent +="<td class='dayNow'  onMouseOver='this.style.background=\"#FF0000\"; this.style.color=\"#FFFFFF\"' "+
-        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"brown\"'>"+counter+"</td>";
+        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"brown\"'>"+counter+"<br>test ting som skjer</td>";
     } else{
         htmlContent +="<td class='monthNow' onMouseOver='this.style.background=\"#FF0000\"'"+
         " onMouseOut='this.style.background=\"#FFFFFF\"'>"+counter+"</td>";    
@@ -123,17 +121,13 @@ console.log(nextOrPrev);
 }
 window.onload = function(){
     displayCalendar();
-document.getElementById("test").onclick =  function(){
-    console.log("test");
-};
+
 document.getElementById("nextMonthButton").onclick = function nextMonthFunc(){
     nextOrPrev = nextOrPrev + 1;
     displayCalendar();
-    console.log("Klikk next");
 };
 document.getElementById("prevMonthButton").onclick = function prevMonthFunc(){
     nextOrPrev = nextOrPrev - 1;
     displayCalendar();
-    console.log("Klikk prev");
 };
 };

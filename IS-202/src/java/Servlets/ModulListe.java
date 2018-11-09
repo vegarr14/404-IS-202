@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.*;
+import Database.KalenderHendelser.subclasses.InnleveringsfristHendelse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -50,6 +51,8 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null*/
             Query query = new Query();
             ResultSet rs = null;
+            
+            InnleveringsfristHendelse innlevHendelse = new InnleveringsfristHendelse();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
