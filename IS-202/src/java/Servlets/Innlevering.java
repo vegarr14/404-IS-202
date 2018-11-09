@@ -101,10 +101,10 @@ public class Innlevering extends HttpServlet {
                 if (rs.getString(1)!=null) {
                     out.println("<a href='Download?innlevId="+rs.getString(2)+"'>" +rs.getString(1)+ "</a>");
                 }
-                poeng(rs,out,(boolean)session.getAttribute("isForeleser"));
+                poeng(rs,out,(boolean)session.getAttribute("isForeleser"), request.getParameter("kursId"));
                 
                 
-                kommentarer(query, innlevId, out);
+                kommentarer(query, innlevId, out, request.getParameter("kursId"));
                 
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
@@ -117,11 +117,12 @@ public class Innlevering extends HttpServlet {
         }
     }
     //skriver ut poeng
-    public void poeng(ResultSet rs, PrintWriter out, boolean isForeleser) {
+    public void poeng(ResultSet rs, PrintWriter out, boolean isForeleser, String kursId) {
         try {
             if(isForeleser==true) {
                 out.println("<br><br><form action='Innlevering' method='POST'>");
                 out.println("<input type='hidden' name='innlevId' value='"+rs.getInt(2)+"'>");
+                out.println("<input type='hidden' name='kursId' value='"+kursId+"'>");
                 out.println("<input type='number' max='"+rs.getInt(5)+"' name='innlevPoeng' value='"+rs.getInt(4)+"'> av "+rs.getInt(5)+" mulige poeng");
                 out.println("<input type='submit' name='submit' value='oppdater'></form>");
             } else if(rs.getString(4)!=null) {
@@ -134,7 +135,7 @@ public class Innlevering extends HttpServlet {
         }
     }
     
-    public  void kommentarer(Query query, int innlevId, PrintWriter out) {
+    public  void kommentarer(Query query, int innlevId, PrintWriter out, String kursId) {
         out.println("Kommentarer: <br><br>");
         ResultSet rs = query.query("select komId, forNavn, etterNavn, komKommentar from Student A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId+" union "
                 + "select komId, forNavn, etterNavn, komKommentar from Foreleser A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId
@@ -146,6 +147,7 @@ public class Innlevering extends HttpServlet {
             out.println("<form action='Innlevering' method'post'>"
                     + "ny kommentar: <br>"
                     + "<input type='hidden' name='innlevId' value='"+innlevId+"'>"
+                    + "<input type='hidden' name='kursId' value='"+kursId+"'>"
                     + "<input type='text' name=kommentar>"
                     + "<input type='submit' name='submitKommentar' value='oppdater'> </form>");
         } catch (SQLException ex) {
