@@ -52,10 +52,11 @@ public class Query {
         return rs;
     }
     //Legger en fil inn i ett statement gjennom inputstream og legger inn i database
-    public void insertFile(String query, InputStream is) {
+    public void insertFile(String query, InputStream is, String name) {
         try {
             statement = con.prepareStatement(query);
-            statement.setBlob(1,is);
+            statement.setString(1, name);
+            statement.setBlob(2,is);
             statement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

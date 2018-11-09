@@ -50,11 +50,11 @@ public class Innlevering extends HttpServlet {
             ResultSet rs = null;
             Query query = new Query();
             int innlevId = 0;
-            System.out.println(request.getParameter("submit"));
-            System.out.println(request.getParameter("innlevPoeng"));
             if (request.getParameter("submit") != null) {
-                System.out.println("test");
                 query.update("update Innlevering set innlevPoeng='" + request.getParameter("innlevPoeng") + "' where innlevId='" + request.getParameter("innlevId") + "'");
+            }
+            if (request.getParameter("submitKommentar") != null) {
+                query.update("insert into Kommentarer(id, innlevId, komKommentar) values('"+(String)session.getAttribute("id")+"','"+request.getParameter("innlevId")+"','"+request.getParameter("kommentar")+"')");
             }
             if (request.getParameter("button") != null) {
                 rs = query.query("SELECT Modul.levereSomGruppe FROM Modul WHERE Modul.modulId = " + request.getParameter("modulId") + "");
@@ -104,7 +104,7 @@ public class Innlevering extends HttpServlet {
                 poeng(rs,out,(boolean)session.getAttribute("isForeleser"));
                 
                 
-
+                kommentarer(query, innlevId, out);
                 
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
@@ -123,8 +123,7 @@ public class Innlevering extends HttpServlet {
                 out.println("<br><br><form action='Innlevering' method='POST'>");
                 out.println("<input type='hidden' name='innlevId' value='"+rs.getInt(2)+"'>");
                 out.println("<input type='number' max='"+rs.getInt(5)+"' name='innlevPoeng' value='"+rs.getInt(4)+"'> av "+rs.getInt(5)+" mulige poeng");
-                out.println("<input type=submit name=submit value='oppdater'></form>");
-                //out.println("<button type='submit' name='submit' onclick=\"window.location.href='Innlevering?innlevId="+rs.getInt(2)+"'\"> oppdater </button>");
+                out.println("<input type='submit' name='submit' value='oppdater'></form>");
             } else if(rs.getString(4)!=null) {
                 out.println(rs.getString(4)+" av "+rs.getString(5)+" mulige poeng");
             } else {
@@ -135,38 +134,43 @@ public class Innlevering extends HttpServlet {
         }
     }
     
+    public  void kommentarer(Query query, int innlevId, PrintWriter out) {
+        out.println("Kommentarer: <br><br>");
+        ResultSet rs = query.query("select komId, forNavn, etterNavn, komKommentar from Student A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId+" union "
+                + "select komId, forNavn, etterNavn, komKommentar from Foreleser A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId
+                        + " order by komId");
+        try {
+            while (rs.next()) {
+                out.println(rs.getString(4)+"<br><br>");
+            }
+            out.println("<form action='Innlevering' method'post'>"
+                    + "ny kommentar: <br>"
+                    + "<input type='hidden' name='innlevId' value='"+innlevId+"'>"
+                    + "<input type='text' name=kommentar>"
+                    + "<input type='submit' name='submitKommentar' value='oppdater'> </form>");
+        } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+}
     
     //Legger inn innlevering i database
     public int innleveringIndividuell(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         Query query = new Query();
         ResultSet rs = null;
-        boolean file = false;
         int innlevId = 0;
+        rs = query.query("select innlevId from Innlevering where modulId = " + request.getParameter("modulId") + " and id = " + (String) session.getAttribute("id"));
         try {
-            for (Part part : request.getParts()) {
-                String name = part.getSubmittedFileName();
-                if (name != null && name.length() > 0) {
-                    // File data
-                    System.out.println("OMEGALUL OMEGALUL");
-                    InputStream is = part.getInputStream();
-                    String insert = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar) values('" + name + "',?," + request.getParameter("modulId") + ","
-                            + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "')";
-                    query.insertFile(insert, is);
-                    file = true;
-                    
-                }
+            if (rs.next() == true) {
+                query.update("delete * from Innlevering where innlevId = '" + rs.getInt(1) + "'");
             }
-            if (file == false) {
-                System.out.println("insert into Innlevering(modulId, id, innlevKommentar) values"
-                        + "("+request.getParameter("modulId")+","+(String)session.getAttribute("id")+",'"+request.getParameter("kommentar")+"')");
-                query.update("insert into Innlevering(modulId, id, innlevKommentar) values"
-                        + "("+request.getParameter("modulId")+","+(String)session.getAttribute("id")+",'"+request.getParameter("kommentar")+"')");
-            }
-            rs = query.query("select max(innlevId) from Innlevering");
-            rs.next();
-            innlevId = rs.getInt(1);
-        } catch (SQLException ignore) {}
+            String s = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar) values(?,?," + request.getParameter("modulId") + ","
+                    + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "')";
+            String u = "insert into Innlevering(modulId, id, innlevKommentar) values"
+                    + "(" + request.getParameter("modulId") + "," + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "')";
+            innlevId = partsToInput(query, request, response, s, u);
+        } catch (SQLException ignore) {
+        }
         query.close();
         return innlevId;
     }
@@ -175,7 +179,6 @@ public class Innlevering extends HttpServlet {
             throws ServletException, IOException {
         Query query = new Query();
         ResultSet rs = null;
-        boolean file = false;
         int innlevId = 0;
         String finngruppeNavn
                 = "select gruppe.gruppeId from gruppe\n"
@@ -192,33 +195,44 @@ public class Innlevering extends HttpServlet {
                 gruppeId = rs.getInt(1);
                 rs = null;
             }
+            rs = query.query("select innlevId from Innlevering where gruppeId = '"+gruppeId+"' and modulId = '"+request.getParameter("modulId")+"'");
+            if (rs.next()) {
+                innlevId = rs.getInt(1);
+                query.update("delete from Innlevering where innlevId='"+innlevId+"'");
+            }
+            String s = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar, gruppeId) values(?,?," + request.getParameter("modulId") + ","
+                    + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "','" + gruppeId + "')";
 
-            for (Part part : request.getParts()) {
-                String name = part.getSubmittedFileName();
-                if (name != null && name.length() > 0) {
-                    // File data
-                    out.println(part.getSubmittedFileName() + "</br>");
-                    out.println(part.getSize() + "</br>");
-                    InputStream is = part.getInputStream();
-                    String insert = "insert into Innlevering(fileName, fileData, modulId, id, innlevKommentar, gruppeId) values('" + name + "',?," + request.getParameter("modulId") + ","
-                            + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "','" + gruppeId + "')";
-                    query.insertFile(insert, is);
-                    file = true;
-                }
-            }
-            if (file == false) {
-                query.update("insert into Innlevering(modulId, id, innlevKommentar, gruppeId) values(" + request.getParameter("modulId") + ","
-                            + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "','" + gruppeId + "')");
-            }
-            rs = query.query("select max(innlevId) from Innlevering");
-            rs.next();
-            innlevId = rs.getInt(1);
+            String u = "insert into Innlevering(modulId, id, innlevKommentar, gruppeId) values(" + request.getParameter("modulId") + ","
+                    + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "','" + gruppeId + "')";
+
+            innlevId = partsToInput(query, request, response, s, u);
         } catch (SQLException ignore) {
         }
         query.close();
         return innlevId;
     }
 
+    public int partsToInput (Query query, HttpServletRequest request, HttpServletResponse response, String s, String u) 
+            throws ServletException, IOException, SQLException {
+        ResultSet rs;
+        boolean file = false;
+        for (Part part : request.getParts()) {
+            String name = part.getSubmittedFileName();
+            if (name != null && name.length() > 0) {
+                // File data
+                InputStream is = part.getInputStream();
+                query.insertFile(s, is, name);
+                file = true;
+            }
+        }
+        if (file == false) {
+            query.update(u);
+        }
+        rs = query.query("select max(innlevId) from Innlevering");
+        rs.next();
+        return rs.getInt(1);
+    }
     
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

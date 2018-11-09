@@ -148,7 +148,7 @@ public class Modul extends HttpServlet {
                     try {
                     out.println("<ul>");
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
+                        out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
                     }
                     out.println("</ul>");
                     query.close();
@@ -231,7 +231,7 @@ public class Modul extends HttpServlet {
         out.println("<label>modulNummer</label> <input type='number' name='modulNummer' value='"+modulNummer+"'><br>");
         out.println("<label>foreleserId</label> <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
         out.println("</br> <label>oppgaveTekst</label> </br> <textarea cols='100' rows='10' name='oppgaveTekst'>"+oppgaveTekst+"</textarea><br>");
-        out.println("<label>maks poeng</label> <input type= 'number' name='maxPoeng' value='"+maxPoeng+"'><br>");
+        out.println("<label>maks poeng</label> <input type='number' name='maxPoeng' value='"+maxPoeng+"'><br>");
 
     }
     
