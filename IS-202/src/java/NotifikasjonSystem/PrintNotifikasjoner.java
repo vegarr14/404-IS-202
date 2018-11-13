@@ -112,9 +112,8 @@ public class PrintNotifikasjoner {
                     notArray.add("<a href='NotifikasjonVideresender?id="+id+"&notId="+notId+"&notType="+notType+"&notRefId="+notReferererId+"'>"+melding+"</a>");
                     notArray.add("<p>Dette skjedde den <time>"+timestamp+"</time>.</p>");
                     notArray.add("</div>");
-                    notArray.add("<hr>");
                     notArray.add("</li>");
-                    
+                    notArray.add("<hr>");
                 }
                 notArray.add("</ul>");
             }
