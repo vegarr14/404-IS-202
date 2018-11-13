@@ -100,8 +100,6 @@ public class ModulListe extends HttpServlet {
                         }
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
                         
-                        query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst) values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"')");
-
                         rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
                         try {
                             rs.next();
