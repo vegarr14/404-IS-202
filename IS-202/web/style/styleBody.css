@@ -81,7 +81,46 @@ li,ul  {
     padding:0px;
     margin:0px;
 }
-
+.titleBox{
+    margin: auto;
+    margin-top: 100px;
+    background-color: white;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    width: 50%;
+    padding: 10px;
+    text-align: center;
+}
+.notifikasjoner{
+    background-color: #ffffff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    padding: 5px;
+    text-align: center;
+    
+}
+.notifikasjoner p{
+    color: #b4b4b4;
+}
+.notifikasjoner a{
+    color: black;
+    font-size: 24px;
+    text-decoration: none;
+}
+.notifikasjoner a:hover{
+    color: orange;
+}
+#notRight{
+    position: absolute;
+    right: 0;
+    margin-right: 25px;
+    top: 100px;
+    width: 400px;
+}
+#notMiddle{
+    padding: 10px;
+    margin: auto;
+    margin-top: 15px;
+    width: 50%;
+}
 .lowerright {
     position: absolute;
     right: 10px;
