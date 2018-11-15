@@ -155,7 +155,7 @@ public class PrintNotifikasjoner {
                 //henter navn til sender
                 senderNavn = getSenderName("foreleser", senderId);
                 if(notType.equals("slettetModul")){
-                    s = senderNavn + " har fjernet en modul. Vi vet desverre ikke hvilken siden den ble slettet #Irony";
+                    s = senderNavn + " har fjernet modul "+notReferererId+".";
                 }else{
                     //Finner modulnummer og kursid som hører til notifikasjonen
                     rs2 = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");

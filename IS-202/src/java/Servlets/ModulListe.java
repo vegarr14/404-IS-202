@@ -121,7 +121,7 @@ public class ModulListe extends HttpServlet {
 
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
-                        //Lager notifikasjoner før modul slettes for å kunne hente riktig info
+                        //Lager notifikasjoner for slettet modul. Sletter også alle notifikasjoner som refererer til denne modulen
                         slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
 
                         query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));

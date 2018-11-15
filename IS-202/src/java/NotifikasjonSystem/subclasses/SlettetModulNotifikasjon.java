@@ -26,7 +26,16 @@ public class SlettetModulNotifikasjon extends Notifikasjon {
         
         this.type = "slettetModul";
         this.sender = Integer.parseInt(foreleserId);
-        this.refererer = modulId;
+        
+        //Henter modulnummer for å kunne vise hvilken  modul som ble slettet
+        rs = query.query("Select modulNummer, kursId from modul where modulId="+modulId+"");
+        try{
+            rs.next();
+            this.refererer = rs.getString(1) + " i " + rs.getString(2);
+        } catch (SQLException ex) {
+            Logger.getLogger(OppdatertModulNotifikasjon.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         this.opprettet = getTimestamp();
         
         //query for alle brukere som skal ta få notifikasjonen
@@ -37,8 +46,8 @@ public class SlettetModulNotifikasjon extends Notifikasjon {
                 this.mottaker = rs.getInt(1);
                 lagreNotifikasjon(this);
             }
-            
-            rs = query.query("Select notId from Notifikasjoner Where notType in ('nyModul', 'oppdatertModul') AND notReferererId ="+modulId+"");
+            //sletter alle notifikasjoner som refererer til denne modulen
+            rs = query.query("Select notId from Notifikasjoner Where notType in ('nyModul', 'oppdatertModul') AND notReferererId ='"+modulId+"'");
             while(rs.next()){
                 slettNotifikasjon(rs.getInt(1));
             }
