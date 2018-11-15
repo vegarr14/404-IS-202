@@ -204,6 +204,12 @@ public class PrintNotifikasjoner {
                 modulNummer = rs2.getString(2);
                 s = "Modul " + modulNummer + " i " + kursId + " har mindre en 24 timer igjen av innleveringsfristen.<br>Du får denne notifikasjonen siden du ikke har levert enda.";
             }
+            //Notifikasjoner om det er blitt opprettet en ny kunngjøring
+            else if(notType.equals("nyKunngjoring")){
+                senderNavn = getSenderName("foreleser", senderId);
+                
+                s = senderNavn + " har skrevet en ny kunngjøring i " +notReferererId;
+            }
         } catch (SQLException ex) {
                 Logger.getLogger(PrintNotifikasjoner.class.getName()).log(Level.SEVERE, null, ex);
             }

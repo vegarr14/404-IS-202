@@ -77,6 +77,9 @@ public class NotifikasjonVideresender extends HttpServlet {
         else if(notType.equals("lagtTilKurs")){
             link = "Kurs?kursId=" +notRefId;
         }
+        else if(notType.equals("nyKunngjoring")){
+            link = "Kunngjoringer?kursId="+notRefId;
+        }
         
        } catch (SQLException ex) {
              Logger.getLogger(NotifikasjonVideresender.class.getName()).log(Level.SEVERE, null, ex);
