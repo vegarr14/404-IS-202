@@ -8,6 +8,7 @@ package Database;
 import NotifikasjonSystem.subclasses.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -25,7 +26,23 @@ public class TimerSystem implements javax.servlet.ServletContextListener {
         final TimerSystem ts = new TimerSystem();
         System.out.println("Pling plong ding dong timersystem startet");
         InnleveringsFristNotifikasjon innFristNot = new InnleveringsFristNotifikasjon();  
-        Timer timer = new Timer(); 
+        Timer timer = new Timer();
+        
+        ArrayList alleredeSendtNot = new ArrayList();
+        
+        Query query = new Query();
+        ResultSet rs = null;
+        //legger allerede sendte notifikasjoner i array listen.
+        rs = query.query("SELECT Distinct notReferererId from notifikasjoner where notType='24hInnlevFrist'");
+        try {
+            while(rs.next()){     
+                alleredeSendtNot.add(rs.getString(1));
+            }            
+        } catch (SQLException ex) {
+            Logger.getLogger(TimerSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        query.close();
         //kjører hver time
         TimerTask hourlyTask = new TimerTask () {            
         @Override
@@ -42,9 +59,15 @@ public class TimerSystem implements javax.servlet.ServletContextListener {
                     rs.beforeFirst();
                     while(rs.next()){
                         String modulId = rs.getString(1);
-                        String foreleserId = rs.getString(2);
-                        System.out.println("Modulen med id "+ modulId +" har innlevering innen 24 timer. oppretter notifiaksjon om det ikke er gjort før");
-                        innFristNot.getAndSetInnlevFrist(modulId, foreleserId);
+                        int foreleserId = rs.getInt(2);
+                        //sjekker om det allerede er sendt notifikasjon på denne modulen
+                        if(alleredeSendtNot.contains(modulId)){
+                            System.out.println("Notifikasjon allerede sendt for modulen med id " + modulId);
+                        }else{
+                            System.out.println("Modulen med id "+ modulId +" har innlevering innen 24 timer. Oppretter notifikasjon.");
+                            innFristNot.getAndSetInnlevFrist(modulId, foreleserId);
+                            alleredeSendtNot.add(modulId);
+                        }
                     }
                 }else{
                     System.out.println("Ingen moduler har innleveringsfrist innen 24 timer");
@@ -53,6 +76,7 @@ public class TimerSystem implements javax.servlet.ServletContextListener {
                 Logger.getLogger(TimerSystem.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.println("Avslutter timedlige oppgaver...");
+            query.close();
         }
         };// Kjører hver time
         timer.schedule(hourlyTask, 0l, 1000*60*60);

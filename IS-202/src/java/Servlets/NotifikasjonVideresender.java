@@ -52,7 +52,7 @@ public class NotifikasjonVideresender extends HttpServlet {
        
        try {
        //Sender til riktig modul om typen er nyModul eller oppdatertModul eller slettetModul
-        if(notType.equals("nyModul") | notType.equals("oppdatertModul") | notType.equals("slettetModul")){
+        if(notType.equals("nyModul") | notType.equals("oppdatertModul") | notType.equals("slettetModul") | notType.equals("24hInnlevFrist")){
 
             if(notType.equals("slettetModul")){
              link = "#";
@@ -62,9 +62,7 @@ public class NotifikasjonVideresender extends HttpServlet {
                 rs = query.query("Select kursId from modul where modulId="+notRefId+"");
                 rs.next();
                 kursId = rs.getString(1);
-
-
-                
+      
                  link = "Modul?kursId="+kursId+"&modulId="+notRefId+"";
                 
             }
