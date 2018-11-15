@@ -62,8 +62,8 @@
 .dropdown .dropbtn {
   padding: 14px 16px;
   background-color: inherit;
-  font-family: inherit; /* Important for vertical align on mobile phones */
-  margin: 0; /* Important for vertical align on mobile phones */
+  font-family: inherit; /* Viktig hvis en skal ha nettsiden vertikalt på mobil */
+  margin: 0; /* Viktig hvis en skal ha nettsiden vertikalt på mobil */
 }
 
 /* Dropdown content (hidden by default) */

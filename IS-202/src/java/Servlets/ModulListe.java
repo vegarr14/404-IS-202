@@ -56,8 +56,8 @@ public class ModulListe extends HttpServlet {
             out.println("<head>");
             out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
             out.println("</head>");
             out.println("<body>");
             String kursId = request.getParameter("kursId");
@@ -115,7 +115,7 @@ public class ModulListe extends HttpServlet {
                 rs.beforeFirst(); //setter den tilbake til original posisjon
 
                 int antModuler = 0;
-                out.println("<table name=modulOversikt>");
+                out.println("<table class='modulOversikt'>");
                 out.println("<tr>");
                 out.println("<th id='nostyle'></th>"); //en tom table header, den som er over student nr 1 og på venstre av modul nr 1
 
@@ -160,12 +160,12 @@ public class ModulListe extends HttpServlet {
                     while (antRader < antStudenter) {
                         out.println("<tr>");
                         if (rs.isAfterLast() == false) {
-                            out.println("<th>" + rs.getString(3) + ", " + rs.getString(2) + "</th>");
+                            out.println("<th class='rad'>" + rs.getString(3) + ", " + rs.getString(2) + "</th>");
                             while (antKolonner < antModuler) {
                                 if (rs.isAfterLast() == true) {
                                     out.println("<td></td>");
                                 } else if (rs.getInt(5) == modulArray[antKolonner] && rs.getInt(1) == studentArray[antRader]) {
-                                    out.println("<td> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(6)+"'> Poeng: " + rs.getInt(4) + "</a></td>");
+                                    out.println("<td class='rad'> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(6)+"'> Poeng: " + rs.getInt(4) + "</a></td>");
                                     rs.next();
                                 } else {
                                     out.println("<td></td>");
