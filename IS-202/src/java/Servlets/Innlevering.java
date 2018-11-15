@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -44,18 +45,21 @@ public class Innlevering extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            //Sjekker om det er foreleser eller student som er innlogget
             HttpSession session = request.getSession();
 
             ResultSet rs = null;
             Query query = new Query();
             int innlevId = 0;
+            //if setning for å oppdatere en innlevering med poeng
             if (request.getParameter("submit") != null) {
                 query.update("update Innlevering set innlevPoeng='" + request.getParameter("innlevPoeng") + "' where innlevId='" + request.getParameter("innlevId") + "'");
             }
+            //if setning for å legge inn ny kommentar
             if (request.getParameter("submitKommentar") != null) {
-                query.update("insert into Kommentarer(id, innlevId, komKommentar) values('"+(String)session.getAttribute("id")+"','"+request.getParameter("innlevId")+"','"+request.getParameter("kommentar")+"')");
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                query.update("insert into Kommentarer(id, innlevId, komKommentar, komTimestamp) values('"+(String)session.getAttribute("id")+"','"+request.getParameter("innlevId")+"','"+request.getParameter("kommentar")+"','"+timestamp+"')");
             }
+            //if setning for innlevering
             if (request.getParameter("button") != null) {
                 rs = query.query("SELECT Modul.levereSomGruppe FROM Modul WHERE Modul.modulId = " + request.getParameter("modulId") + "");
                 int levereSomGruppe = 0;
@@ -89,9 +93,11 @@ public class Innlevering extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleKommentarer.css'>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<div class=mainContent>");
+            out.println("<div class='mainContent'>");
+            out.println("<div class='modul'>");
             out.println("<h1>Innlevering</h1>");
             try {
                 Query query = new Query();
@@ -112,11 +118,13 @@ public class Innlevering extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+            out.println("</div>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }
     }
-    //skriver ut poeng
+    //skriver ut poeng og mulighet for å sette poengsum som foreleser
     public void poeng(ResultSet rs, PrintWriter out, boolean isForeleser, String kursId) {
         try {
             if(isForeleser==true) {
@@ -124,32 +132,37 @@ public class Innlevering extends HttpServlet {
                 out.println("<input type='hidden' name='innlevId' value='"+rs.getInt(2)+"'>");
                 out.println("<input type='hidden' name='kursId' value='"+kursId+"'>");
                 out.println("<input type='number' max='"+rs.getInt(5)+"' name='innlevPoeng' value='"+rs.getInt(4)+"'> av "+rs.getInt(5)+" mulige poeng");
-                out.println("<input type='submit' name='submit' value='oppdater'></form>");
+                out.println("<input type='submit' class='button' name='submit' value='oppdater'></form>");
             } else if(rs.getString(4)!=null) {
-                out.println(rs.getString(4)+" av "+rs.getString(5)+" mulige poeng");
+                out.println("<br>"+rs.getString(4)+" av "+rs.getString(5)+" mulige poeng <br>");
             } else {
-                out.println("<br>Ikke rettet enda");
+                out.println("<br>Ikke rettet enda <br>");
             }
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    //Skriver ut alle kommentarer og felt for å legge inn ny kommentar
     public  void kommentarer(Query query, int innlevId, PrintWriter out, String kursId) {
-        out.println("Kommentarer: <br><br>");
-        ResultSet rs = query.query("select komId, forNavn, etterNavn, komKommentar from Student A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId+" union "
-                + "select komId, forNavn, etterNavn, komKommentar from Foreleser A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId
-                        + " order by komId");
+        ResultSet rs = query.query("select komId, forNavn, etterNavn, komKommentar, komTimestamp from Student A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId+" union "
+                + "select komId, forNavn, etterNavn, komKommentar, komTimestamp from Foreleser A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId
+                        + " order by komId DESC");
         try {
-            while (rs.next()) {
-                out.println(rs.getString(4)+"<br><br>");
-            }
+            
             out.println("<form action='Innlevering' method'post'>"
                     + "ny kommentar: <br>"
                     + "<input type='hidden' name='innlevId' value='"+innlevId+"'>"
                     + "<input type='hidden' name='kursId' value='"+kursId+"'>"
-                    + "<input type='text' name=kommentar>"
-                    + "<input type='submit' name='submitKommentar' value='oppdater'> </form>");
+                    + "<textarea name='kommentar' rows='5'> </textarea><br>"
+                    + "<input type='submit' class='button' name='submitKommentar' value='oppdater'> <br></form>");
+            
+            out.println("Kommentarer: <br><br>");
+            while (rs.next()) {
+                out.println("<div class='kommentar'>"
+                        + rs.getString(4)+"<br>"
+                        +"<div class='lowerleft2'>"+ rs.getString(2)+" "+rs.getString(3)+"</div><div class='lowerright2'>"+rs.getString(5)+"</div></div>");
+            }
         } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -177,6 +190,7 @@ public class Innlevering extends HttpServlet {
         return innlevId;
     }
     
+    //Legger inn innlevering i database
     public int innleveringGruppe(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         Query query = new Query();
@@ -215,6 +229,7 @@ public class Innlevering extends HttpServlet {
         return innlevId;
     }
 
+    //Henter fil hvis den eksisterer og sender informasjon til en annen metode basert på om en fil eksisterer
     public int partsToInput (Query query, HttpServletRequest request, HttpServletResponse response, String s, String u) 
             throws ServletException, IOException, SQLException {
         ResultSet rs;
