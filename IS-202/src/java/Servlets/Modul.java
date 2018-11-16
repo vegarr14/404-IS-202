@@ -212,7 +212,7 @@ public class Modul extends HttpServlet {
             out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
             out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
             out.println("Maks antall oppnåelige poeng: "+rs.getString(9)+"<br>");
-            out.println("<input type='submit' name='button' value='Lever'/>");
+            out.println("<input type='submit' class='button' name='button' value='Lever'/>");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("<input type='hidden' name='kursId' value ='"+rs.getString(4)+"'>");
             out.println("</form>");
