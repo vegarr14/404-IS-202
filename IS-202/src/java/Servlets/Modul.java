@@ -73,7 +73,7 @@ public class Modul extends HttpServlet {
     public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         try {
-            out.println("<h1>Servlet Modul at " + request.getContextPath() + "</h1>");
+            out.println("<h1> Modul </h1>");
             out.println("<form name='ModulListe' action='ModulListe' id='Modul' method='post'>");
             Query query = new Query();
             ResultSet rs = null;
