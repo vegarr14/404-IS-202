@@ -196,13 +196,21 @@ public class PrintNotifikasjoner {
             }
             //Notifikasjon om det er mindre en 24 timer til innlevering av en modul
             else if(notType.equals("24hInnlevFrist")){
-                senderNavn = getSenderName("foreleser", senderId);
+                
                 //Finner modulnummer og kursid som hører til notifikasjonen
                 rs2 = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
                 rs2.next();
                 kursId = rs2.getString(1);
                 modulNummer = rs2.getString(2);
-                s = "Modul " + modulNummer + " i " + kursId + " har mindre en 24 timer igjen av innleveringsfristen.<br>Du får denne notifikasjonen siden du ikke har levert enda.";
+                
+                s = "Modul " + modulNummer + " i " + kursId + " har mindre en 24 timer igjen av innleveringsfristen.<br>Du får denne notifikasjonen siden du ikke har levert enda.";   
+            }else if(notType.equals("InnlevRettet")){
+                rs2 = query.query("Select kursId, modulNummer from Innlevering JOIN modul on Innlevering.modulId = modul.modulId where innlevId="+notReferererId);
+                rs2.next();
+                kursId = rs2.getString(1);
+                modulNummer = rs2.getString(2);
+                senderNavn = getSenderName("foreleser", senderId);
+                s = senderNavn + " har rettet din innlevering  til Modul " + modulNummer + " i " + kursId;
             }
             //Notifikasjoner om det er blitt opprettet en ny kunngjøring
             else if(notType.equals("nyKunngjoring")){

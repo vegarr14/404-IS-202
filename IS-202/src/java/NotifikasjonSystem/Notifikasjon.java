@@ -6,7 +6,6 @@
 package NotifikasjonSystem;
 
 import Database.Query;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 /**
@@ -15,7 +14,6 @@ import java.sql.Timestamp;
  */
 public class Notifikasjon {
     
-    ResultSet rs = null;
     Query query = new Query();
     
     //Felles variabler

@@ -67,7 +67,7 @@ public class NotifikasjonVideresender extends HttpServlet {
                 
             }
         }
-        else if(notType.equals("nyInnlevering")){
+        else if(notType.equals("nyInnlevering") | notType.equals("InnlevRettet")){
             link = "Innlevering?innlevId="+notRefId;
         }
         //sender en tom link altså fortsatt på samme side
