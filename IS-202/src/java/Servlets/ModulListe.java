@@ -89,11 +89,22 @@ public class ModulListe extends HttpServlet {
                         Timestamp timestamp = getTimestamp(frist);
                         String a = "";
                         String b = "";
+                                               
                         if (timestamp!=null) {
                             a = ", innleveringsFrist";
-                            b = ",'"+timestamp+"'";
+                            b = ",'"+timestamp+"'";                          
                         }
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
+                        rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
+                        try {
+                            rs.next();
+                            modulId = rs.getString(1);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if(timestamp !=null){
+                            innlevHendelse.getAndSetHendelse(modulId, timestamp);
+                        }
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         Timestamp timestamp = getTimestamp(frist);
