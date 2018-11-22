@@ -23,6 +23,29 @@
         <title>Forside</title>
         <link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>
         <link rel='stylesheet' type='text/css' href='style/styleBody.css'>
+        <%
+            String id = (String)session.getAttribute("id");
+            KalenderHendelse kh = new KalenderHendelse();
+            String kalenderArray[][] = kh.getArray(id);
+            if(kalenderArray != null){%>          
+            <script type='text/javascript'>
+                var i;
+                var kalenderHendelser = new Array();               
+                <%for(int i = 0; i < kalenderArray.length; i++){%>
+                   <%out.print("i = "+i+";");%>
+                   kalenderHendelser[i] = new Array(<%
+                    for(int k = 0; k <= 2; k++){
+                        out.print("\""+kalenderArray[i][k]+"\"");
+                        if(k+1 <= 2){
+                            out.print(",");
+                        }
+                    }%>);
+                    console.log(kalenderHendelser[i][i])
+                <%}%>
+            </script>
+            <%}%>
+        <link rel='stylesheet' type='text/css' href='style/styleKalender.css'>
+        <script type='text/javascript' src='Javascript/Kalender2.js'></script>
     </head>
     <body>
         <% 
