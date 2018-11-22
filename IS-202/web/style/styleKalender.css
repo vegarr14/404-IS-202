@@ -14,7 +14,8 @@ and open the template in the editor.
 }
 .monthNow{
  font-size: 160%;
- color: #000000;
+ border: 2px solid black;
+ color: #333333;
  text-align: center;
 }
 .dayNow{
