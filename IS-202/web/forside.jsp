@@ -4,7 +4,9 @@
     Author     : Erlend Thorsen
 --%>
 
+
 <%@page import="Database.KalenderHendelse"%>
+<%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
 
@@ -61,6 +63,14 @@
             <h1>Under Construction</h1>
             <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
             <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
+            
+        </div>
+        <div class='notifikasjoner' id='notRight'>    
+           <% //Printer uleste notifikasjoner
+               PrintNotifikasjoner printNotifikasjoner = new PrintNotifikasjoner();
+              
+                printNotifikasjoner.printUleste(id,"JSP",out, null);
+            %> 
         </div>
     </body>
 </html>

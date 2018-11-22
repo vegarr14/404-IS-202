@@ -7,6 +7,8 @@ package Servlets;
 
 import Database.*;
 import Database.KalenderHendelser.subclasses.InnleveringsfristHendelse;
+import NotifikasjonSystem.Notifikasjon;
+import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -53,6 +55,10 @@ public class ModulListe extends HttpServlet {
             ResultSet rs = null;
             
             InnleveringsfristHendelse innlevHendelse = new InnleveringsfristHendelse();
+            //Lager nytt notifikasjonobjekt
+            NyModulNotifikasjon nyModNot = new NyModulNotifikasjon();
+            OppdatertModulNotifikasjon oppModNot = new OppdatertModulNotifikasjon();
+            SlettetModulNotifikasjon slettModNot = new SlettetModulNotifikasjon();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -75,6 +81,7 @@ public class ModulListe extends HttpServlet {
                     String modulNummer = request.getParameter("modulNummer");
                     String foreleserId = request.getParameter("foreleserId");
                     String oppgaveTekst = request.getParameter("oppgaveTekst");
+                    
                     String maxPoeng = request.getParameter("maxPoeng");
                     String type1 = request.getParameter("oppgaveType");
                     String type2 = "";
@@ -95,6 +102,7 @@ public class ModulListe extends HttpServlet {
                             b = ",'"+timestamp+"'";                          
                         }
                         query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng"+a+") values('"+kursId+"','"+foreleserId+"','"+modulNummer+"','"+oppgaveTekst+"','"+type2+"','"+maxPoeng+"'"+b+")");
+
                         rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
                         try {
                             rs.next();
@@ -105,18 +113,26 @@ public class ModulListe extends HttpServlet {
                         if(timestamp !=null){
                             innlevHendelse.getAndSetHendelse(modulId, timestamp);
                         }
+                        //Lager notifikasjoner for alle studenter i kurset
+                        nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
+
                     } else if (request.getParameter("button").equals("oppdater modul")) {
                         //kjører hvis en modul skal oppdateres
                         Timestamp timestamp = getTimestamp(frist);
                         query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"', maxPoeng ='"+maxPoeng+"', innleveringsFrist ="+timestamp+" where modulId ='"+modulId+"'");
                         
+                        //Lager notifikasjoner for alle studenter i kurset
+                        oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
+
                     } else if (request.getParameter("button").equals("slett modul")) {
                         //kjører hvis en modul skal slettes
-                        
+                        //Lager notifikasjoner for slettet modul. Sletter også alle notifikasjoner som refererer til denne modulen
+                        slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
+
                         query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
-                        
+
                     }
-                    
+
                 }
             
             try {
