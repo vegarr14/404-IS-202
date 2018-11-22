@@ -7,7 +7,7 @@
 var nextOrPrev = 0;
 var addedYears = 0;
 var prevMonth = 0;
-
+var kalH;
 function displayCalendar(){
  
  
@@ -83,6 +83,8 @@ function displayCalendar(){
    
  }
  
+    
+   
  // loop to build the calander body.
  while (counter <= numOfDays){
      
@@ -91,17 +93,26 @@ function displayCalendar(){
         weekdays2 = 0;
         htmlContent += "</tr><tr>";
     }
- 
+    var i;
+    var event = "";
+    if(kalH != null){
+        for(i = 0; i < kalH.length;i++){
+            var khDato = new Date(kalH[i][1]);
+            if(counter == khDato.getDate() && khDato.getMonth() == month){
+                event = "<br>" + kalH[i][0];
+            }
+        }
+    }
  
  
     // if counter is current day.
     // highlight current day using the CSS defined in header.
     if (counter == day){
         htmlContent +="<td class='dayNow'  onMouseOver='this.style.background=\"#FF0000\"; this.style.color=\"#FFFFFF\"' "+
-        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"brown\"'>"+counter+"<br>test ting som skjer</td>";
+        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"brown\"'>"+counter + event+"</td>";
     } else{
         htmlContent +="<td class='monthNow' onMouseOver='this.style.background=\"#FF0000\"'"+
-        " onMouseOut='this.style.background=\"#FFFFFF\"'>"+counter+"</td>";    
+        " onMouseOut='this.style.background=\"#FFFFFF\"'>"+counter + event+"</td>";    
     }
     weekdays2++;
     counter++;
@@ -120,6 +131,7 @@ function displayCalendar(){
  document.getElementById("calendar").innerHTML=calendarBody;
 }
 window.onload = function(){
+    kalH = kalenderHendelser;
     displayCalendar();
 
 document.getElementById("nextMonthButton").onclick = function nextMonthFunc(){
