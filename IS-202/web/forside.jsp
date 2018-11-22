@@ -4,6 +4,7 @@
     Author     : Erlend Thorsen
 --%>
 
+<%@page import="Database.KalenderHendelse"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
 
@@ -22,14 +23,40 @@
         <title>Forside</title>
         <link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>
         <link rel='stylesheet' type='text/css' href='style/styleBody.css'>
+        <%
+            String id = (String)session.getAttribute("id");
+            KalenderHendelse kh = new KalenderHendelse();
+            String kalenderArray[][] = kh.getArray(id);
+            if(kalenderArray != null){%>          
+            <script type='text/javascript'>
+                var i;
+                var kalenderHendelser = new Array();               
+                <%for(int i = 0; i < kalenderArray.length; i++){%>
+                   <%out.print("i = "+i+";");%>
+                   kalenderHendelser[i] = new Array(<%
+                    for(int k = 0; k <= 2; k++){
+                        out.print("\""+kalenderArray[i][k]+"\"");
+                        if(k+1 <= 2){
+                            out.print(",");
+                        }
+                    }%>);
+                    console.log(kalenderHendelser[i][i])
+                <%}%>
+            </script>
+            <%}%>
+        <link rel='stylesheet' type='text/css' href='style/styleKalender.css'>
+        <script type='text/javascript' src='Javascript/Kalender2.js'></script>
     </head>
     <body>
         <% 
-            boolean isForeleser = (boolean) session.getAttribute("isForeleser");
-            String id = (String)session.getAttribute("id");
+            boolean isForeleser = (boolean) session.getAttribute("isForeleser");            
             Navbar navbar = new Servlets.Navbar();
             navbar.printNavbarJSP("Forside", id, isForeleser, out);
         %>
+
+        <input id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>
+        <input id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>
+        <div id='calendar'></div>
         <div class='velkommen'>
             <h1>Under Construction</h1>
             <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
