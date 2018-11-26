@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.Query;
+import NotifikasjonSystem.subclasses.NyKunngjoringNotifikasjon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -62,6 +63,7 @@ public class Kunngjøringer extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String skjultKunngjoringId = "";
             
+            NyKunngjoringNotifikasjon nyKunnNot = new NyKunngjoringNotifikasjon();
 
             
             String dato = new SimpleDateFormat("dd-MM-yyyy' klokken 'HH:mm").format(Calendar.getInstance().getTime());
@@ -76,7 +78,10 @@ public class Kunngjøringer extends HttpServlet {
             if(request.getParameter("button") != null) {
                 if(request.getParameter("button").equals("Opprett")) {
                     String kunngjøring = request.getParameter("kunngjoring");
-                    query.update("INSERT INTO Kunngjøringer (kunngjøring, kursId, foreleserId, dato) values ('"+kunngjøring+"','"+kursId+"','"+session.getAttribute("id")+"','"+dato+"')");
+                    String id = (String)session.getAttribute("id");
+                    query.update("INSERT INTO Kunngjøringer (kunngjøring, kursId, foreleserId, dato) values ('"+kunngjøring+"','"+kursId+"','"+id+"','"+dato+"')");
+                    //Skriver ny notifikasjon om det blir opprettt en kunngjøring
+                    nyKunnNot.getAndSetNyKungjoring(kursId, Integer.parseInt(id));
                 }
                 else if(request.getParameter("button").equals("Slett")) {
                     query.update("DELETE FROM Kunngjøringer WHERE kunngjøringId = '"+request.getParameter("skjultKunngjoringId")+"'");

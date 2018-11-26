@@ -16,6 +16,7 @@ drop table if exists Bruker;
 drop table if exists Gruppe;
 drop table if exists Gruppetilbruker;
 drop table if exists Gruppetilkurs;
+drop table if exists notifikasjoner;
 
 
 CREATE TABLE if not exists`Bruker` (
@@ -142,4 +143,16 @@ CREATE TABLE `Kunngjøringer` (
   primary key (`kunngjøringId`),
   Constraint `FK_Kunngjøringer_Foreleser` foreign key (`foreleserId`) references `foreleser` (id),
   Constraint `FK_Kunngjøringer_Kurs` foreign key (`kursId`) references `kurs` (kursId) 
+);
+
+CREATE TABLE if not exists `Notifikasjoner` (
+	`notId` int(11) NOT NULL AUTO_INCREMENT,
+    `mottakerId` int(11) NOT NULL,
+    `senderId` int(11) NOT NULL,
+    `notUlest` boolean default true NOT null,
+    `notType`	varchar(50) NOT null default '',
+    `notReferererId` varchar(50) NOT null,
+    `notOpprettet` timestamp Not Null,
+    primary key (`notId`),
+    constraint `FK_Notifikasjon_Bruker` foreign key(`mottakerId`) references `bruker`(`id`)
 );

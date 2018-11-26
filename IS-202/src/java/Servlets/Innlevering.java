@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.Query;
+import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -31,7 +32,8 @@ import javax.servlet.http.Part;
 @MultipartConfig
 public class Innlevering extends HttpServlet {
     byte[] barray;
-
+    NyInnleveringNotifikasjon nyInnlevNot = new NyInnleveringNotifikasjon();
+    InnleveringRettetNotifikasjon innlevRettet = new InnleveringRettetNotifikasjon();
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -53,6 +55,10 @@ public class Innlevering extends HttpServlet {
             //if setning for å oppdatere en innlevering med poeng
             if (request.getParameter("submit") != null) {
                 query.update("update Innlevering set innlevPoeng='" + request.getParameter("innlevPoeng") + "' where innlevId='" + request.getParameter("innlevId") + "'");
+                int foreleserId = Integer.parseInt((String)session.getAttribute("id"));
+                String sInnlevId = request.getParameter("innlevId");
+                //lager notifikasjon til om at innlevering er rettet
+                innlevRettet.getAndSetInnRettNot(sInnlevId, foreleserId);
             }
             //if setning for å legge inn ny kommentar
             if (request.getParameter("submitKommentar") != null) {
@@ -144,7 +150,7 @@ public class Innlevering extends HttpServlet {
     }
     
     //Skriver ut alle kommentarer og felt for å legge inn ny kommentar
-    public  void kommentarer(Query query, int innlevId, PrintWriter out, String kursId) {
+    public void kommentarer(Query query, int innlevId, PrintWriter out, String kursId) {
         ResultSet rs = query.query("select komId, forNavn, etterNavn, komKommentar, komTimestamp from Student A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId+" union "
                 + "select komId, forNavn, etterNavn, komKommentar, komTimestamp from Foreleser A join Kommentarer B where A.id = B.id and B.innlevId = "+innlevId
                         + " order by komId DESC");
@@ -174,6 +180,8 @@ public class Innlevering extends HttpServlet {
         Query query = new Query();
         ResultSet rs = null;
         int innlevId = 0;
+        String id = (String) session.getAttribute("id");
+        String modulId = request.getParameter("modulId");
         rs = query.query("select innlevId from Innlevering where modulId = " + request.getParameter("modulId") + " and id = " + (String) session.getAttribute("id"));
         try {
             if (rs.next() == true) {
@@ -184,6 +192,9 @@ public class Innlevering extends HttpServlet {
             String u = "insert into Innlevering(modulId, id, innlevKommentar) values"
                     + "(" + request.getParameter("modulId") + "," + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "')";
             innlevId = partsToInput(query, request, response, s, u);
+          
+            //lager notifikasjon
+            lagNotifikasjon(id,modulId);
         } catch (SQLException ignore) {
         }
         query.close();
@@ -196,6 +207,8 @@ public class Innlevering extends HttpServlet {
         Query query = new Query();
         ResultSet rs = null;
         int innlevId = 0;
+        String id = (String) session.getAttribute("id");
+        String modulId = request.getParameter("modulId");
         String finngruppeNavn
                 = "select gruppe.gruppeId from gruppe\n"
                 + "inner join Gruppetilbruker ON gruppe.gruppeId = Gruppetilbruker.gruppeId\n"
@@ -223,6 +236,9 @@ public class Innlevering extends HttpServlet {
                     + (String) session.getAttribute("id") + ",'" + request.getParameter("kommentar") + "','" + gruppeId + "')";
 
             innlevId = partsToInput(query, request, response, s, u);
+          
+            //lager notifikasjon
+            lagNotifikasjon(id,modulId);
         } catch (SQLException ignore) {
         }
         query.close();
@@ -250,7 +266,25 @@ public class Innlevering extends HttpServlet {
         rs.next();
         return rs.getInt(1);
     }
-    
+  
+    private void lagNotifikasjon(String id, String modulId){
+            //Spør etter kursid og innlevid til notifikasjon
+            ResultSet rs = null;
+            Query query = new Query();
+            
+            rs = query.query("Select kursId, innlevId from modul join innlevering on modul.modulId=innlevering.modulId where innlevering.id="+id+" and innlevering.modulId="+modulId+"");
+            try {
+                if(rs.next()){
+                    String kursId = rs.getString(1);
+                    String innlevIdS = rs.getString(2);
+                    //Lager notifikasjoner for alle forelesere i kurset
+                    nyInnlevNot.getAndSetnyInnlevering(kursId, id, innlevIdS);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Innlevering.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            query.close();
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

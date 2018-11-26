@@ -3,7 +3,8 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
-
+<%@page import="Servlets.Kjeks"%>
+<%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
 
@@ -29,11 +30,23 @@
             String id = (String)session.getAttribute("id");
             Navbar navbar = new Servlets.Navbar();
             navbar.printNavbarJSP("Forside", id, isForeleser, out);
+            
+            Kjeks kjeks = new Kjeks();
+            kjeks.emptyCookie(request, response);
+            kjeks.makeCookie(request, response);
         %>
         <div class='velkommen'>
             <h1>Under Construction</h1>
             <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
             <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
+            
+        </div>
+        <div class='notifikasjoner' id='notRight'>    
+           <% //Printer uleste notifikasjoner
+               PrintNotifikasjoner printNotifikasjoner = new PrintNotifikasjoner();
+              
+                printNotifikasjoner.printUleste(id,"JSP",out, null);
+            %> 
         </div>
     </body>
 </html>
