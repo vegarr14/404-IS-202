@@ -4,7 +4,6 @@
     Author     : Erlend Thorsen
 --%>
 <%@page import="Servlets.Kjeks"%>
-<%@page import="Servlets.Login"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
