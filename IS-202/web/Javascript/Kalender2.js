@@ -109,7 +109,7 @@ function displayCalendar(){
     // highlight current day using the CSS defined in header.
     if (counter == day){
         htmlContent +="<td class='dayNow'  onMouseOver='this.style.background=\"#FF0000\"; this.style.color=\"#FFFFFF\"' "+
-        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"brown\"'>"+counter + event+"</td>";
+        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"red\"'>"+counter + event+"</td>";
     } else{
         htmlContent +="<td class='monthNow' onMouseOver='this.style.background=\"#FF0000\"'"+
         " onMouseOut='this.style.background=\"#FFFFFF\"'>"+counter + event+"</td>";    
