@@ -6,6 +6,8 @@
 package Servlets;
 
 import Database.*;
+import NotifikasjonSystem.Notifikasjon;
+import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -50,6 +52,11 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null*/
             Query query = new Query();
             ResultSet rs = null;
+          
+            //Lager nytt notifikasjonobjekt
+            NyModulNotifikasjon nyModNot = new NyModulNotifikasjon();
+            OppdatertModulNotifikasjon oppModNot = new OppdatertModulNotifikasjon();
+            SlettetModulNotifikasjon slettModNot = new SlettetModulNotifikasjon();
 
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -90,13 +97,29 @@ public class ModulListe extends HttpServlet {
                         b = ",'" + timestamp + "'";
                     }
                     query.update("INSERT into Modul (kursId, foreleserId, modulNummer, oppgaveTekst, levereSomGruppe, maxPoeng" + a + ") values('" + kursId + "','" + foreleserId + "','" + modulNummer + "','" + oppgaveTekst + "','" + type2 + "','" + maxPoeng + "'" + b + ")");
+                    rs = query.query("Select modulId FROM modul WHERE kursId='"+kursId+"' AND foreleserId="+foreleserId+" AND modulNummer="+modulNummer+"");
+                        try {
+                            rs.next();
+                            modulId = rs.getString(1);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        //Lager notifikasjoner for alle studenter i kurset
+                        nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
+                        
                 } else if (request.getParameter("button").equals("oppdater modul")) {
                     //kjører hvis en modul skal oppdateres
                     Timestamp timestamp = getTimestamp(frist);
                     query.update("UPDATE Modul set kursId ='" + kursId + "',foreleserId='" + foreleserId + "',modulNummer ='" + modulNummer + "', oppgaveTekst ='" + oppgaveTekst + "', maxPoeng ='" + maxPoeng + "', innleveringsFrist =" + timestamp + " where modulId ='" + modulId + "'");
-
+                    
+                    //Lager notifikasjoner for alle studenter i kurset
+                    oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
+                  
                 } else if (request.getParameter("button").equals("slett modul")) {
                     //kjører hvis en modul skal slettes
+                  //Lager notifikasjoner for slettet modul. Sletter også alle notifikasjoner som refererer til denne modulen
+                        slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
 
                     query.update("DELETE from Modul where modulId = " + request.getParameter("modulId"));
 
@@ -115,9 +138,7 @@ public class ModulListe extends HttpServlet {
                 rs.beforeFirst(); //setter den tilbake til original posisjon
 
                 int antModuler = 0;
-
                 out.println("<table class='modulOversikt'>");
-
                 out.println("<tr>");
                 out.println("<th id='nostyle'></th>"); //en tom table header, den som er over student nr 1 og på venstre av modul nr 1
 
@@ -163,14 +184,11 @@ public class ModulListe extends HttpServlet {
                     while (antRader < antStudenter) {
                         out.println("<tr>");
                         if (rs.isAfterLast() == false) {
-
                             out.println("<th class='rad'>" + rs.getString(3) + ", " + rs.getString(2) + "</th>");
-
                             while (antKolonner < antModuler) {
                                 if (rs.isAfterLast() == true) {
                                     out.println("<td></td>");
                                 } else if (rs.getInt(5) == modulArray[antKolonner] && rs.getInt(1) == studentArray[antRader]) {
-
                                     out.println("<td class='rad'> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(6)+"'> Poeng: " + rs.getInt(4) + "</a></td>");
                                     rs.next();
                                 } else {

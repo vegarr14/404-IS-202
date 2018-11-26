@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.Query;
+import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,8 +37,12 @@ public class OppdaterBrukerKurs extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         Query query = new Query();
+        HttpSession session = request.getSession();
+        //notifikasjonsystem
+        FjernetFraKursNotifikasjon fjernetFraKursNot = new FjernetFraKursNotifikasjon();
         
         String kursId = request.getParameter("kursId");
+        String foreleserId = (String)session.getAttribute("id");
         String[] idArray;
         String values;
         //Legger til studenter i kurset            
@@ -62,6 +68,9 @@ public class OppdaterBrukerKurs extends HttpServlet {
                 idArray = request.getParameterValues("studenterIKurs");
 
                 values = String.join(", ", idArray);
+                //Lager notifikasjoner
+                fjernetFraKursNot.getAndSetFjernetFraKurs(kursId, foreleserId, idArray);
+                
                 query.update("DELETE FROM TarKurs where studentId in ("+values+") AND kursId='"+kursId+"'");
                 closeAndRedirect(response,kursId,query);
             }
@@ -76,7 +85,7 @@ public class OppdaterBrukerKurs extends HttpServlet {
                     idArray[i] = "('"+kursId+"', '"+idArray[i]+"')";
                 }
                 values = String.join(",", idArray);
-
+                
                 query.update("INSERT INTO ForeleserKurs values"+values+"");
                 closeAndRedirect(response,kursId,query);
             }
