@@ -3,7 +3,7 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
-
+<%@page import="Servlets.Kjeks"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
@@ -30,6 +30,10 @@
             String id = (String)session.getAttribute("id");
             Navbar navbar = new Servlets.Navbar();
             navbar.printNavbarJSP("Forside", id, isForeleser, out);
+            
+            Kjeks kjeks = new Kjeks();
+            kjeks.emptyCookie(request, response);
+            kjeks.makeCookie(request, response);
         %>
         <div class='velkommen'>
             <h1>Under Construction</h1>
