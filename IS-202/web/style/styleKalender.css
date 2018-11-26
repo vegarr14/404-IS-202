@@ -9,19 +9,21 @@ and open the template in the editor.
 */
 .monthPre{
  font-size: 160%;
- color: goldenrod;
+ color: white;
  text-align: center;
 }
 .monthNow{
  font-size: 160%;
- border: 2px solid black;
- color: #333333;
+ border: 1px solid black;
+ background-color: white;
+ color: black;
  text-align: center;
 }
 .dayNow{
  font-size: 160%;   
- border: 2px solid black;
- color: #FF0000;
+ border: 1px solid black;
+ background-color: white;
+ color: red;
  text-align: center;
 }
 .calendar td{
@@ -31,14 +33,14 @@ and open the template in the editor.
  text-align: center;
 }
 .monthNow th{
- background-color: #000000;
- color: #FFFFFF;
+ background-color: white;
+ color: orange;
  text-align: center;
 }
 .dayNames{
  font-size: 160%;
- background: #cccc00;
- color: #FF0000;
+ background: white;
+ color: orange;
  text-align: center;
 }
  
