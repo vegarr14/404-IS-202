@@ -29,6 +29,7 @@ public class Brukernavn {
     fornavn=request.getParameter("fornavn");
     etternavn=request.getParameter("etternavn");
     
+    //Lager selve brukernavnet
     if (fornavn.length() > 4)
             firstnamechars = fornavn.substring(0, 4);
     else firstnamechars = fornavn;
@@ -45,7 +46,7 @@ public class Brukernavn {
     public String getBrukernavn(){
         return brukernavn;
     }
-    
+    //Sjekker om brukernavnet eksisterer, og legger til et siffer om nødvendig.
     public void sjekkBrukernavn() {
         Query query = new Query();
         ResultSet rs = query.query("SELECT * FROM bruker where brukernavn like '"+brukernavn+"%'");

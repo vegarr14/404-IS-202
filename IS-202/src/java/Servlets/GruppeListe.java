@@ -62,10 +62,10 @@ public class GruppeListe extends HttpServlet {
             else {
                 out.println("<div class='velkommen'>");
             }
-            
+            //Sjekker om en knapp ved navn button er trykket på
             try {
                 if(request.getParameter("button") != null) {
-                    
+                    //Oppretter gruppe
                     if(request.getParameter("button").equals("opprett")) {                     
                         String Gruppenavn = request.getParameter("gruppenavn");
                         query.update("INSERT into Gruppe (gruppeNavn,gruppeSkaperId) Values ('"+Gruppenavn+"','"+session.getAttribute("id")+"')");
@@ -75,14 +75,14 @@ public class GruppeListe extends HttpServlet {
                         query.update("INSERT into Gruppetilkurs Values ('"+kursId+"',"+gruppeid+")");
                         query.update("INSERT INTO Gruppetilbruker (id,gruppeId) values ('"+session.getAttribute("id")+"','"+gruppeid+"')");
                         } 
-                    
+                    //Endrer gruppenavn
                     else if (request.getParameter("button").equals("endre gruppenavn")) {
                         String Gruppenavn = request.getParameter("gruppenavn");
                         String gruppeid = request.getParameter("gruppeid");
                         query.update("UPDATE gruppe set gruppeNavn ='"+Gruppenavn+"' where gruppeId ='"+gruppeid+"'");                       
                     } 
                     
-                    //muligens dårlig idè om man har aktive innleveringer, de slettes også
+                    //Sletter alt som har med gruppa og gjøre
                     else if (request.getParameter("button").equals("slett gruppe")) {
                         query.update("DELETE from gruppetilbruker where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from Gruppetilkurs where gruppeId = "+request.getParameter("gruppeid"));
@@ -90,16 +90,15 @@ public class GruppeListe extends HttpServlet {
                         query.update("DELETE from gruppe where gruppeId = "+request.getParameter("gruppeid"));
 
                     }
-                    
+                    //Legger til innlogget bruker i gruppe
                     else if (request.getParameter("button").equals("bli medlem")) {    
                         query.update("INSERT INTO Gruppetilbruker (id,gruppeId) values ('"+session.getAttribute("id")+"','"+request.getParameter("gruppeid")+"')");
                     }
-                    
-                    //gruppeskaper skal ikke kunne forlate gruppen, men NYI
+                    //Fjerner innlogget bruker fra gruppe
                     else if (request.getParameter("button").equals("forlat gruppe")) {                      
                         query.update("DELETE FROM Gruppetilbruker WHERE id = "+session.getAttribute("id")+" AND gruppeId = "+request.getParameter("gruppeid")+""); 
                     }
-                    
+                    //Kan legge til nytt kurs
                     else if (request.getParameter("button").equals("legg til kurs")) {                       
                         query.update("INSERT into Gruppetilkurs Values ('"+request.getParameter("kursIdfraListe")+"','"+request.getParameter("gruppeid")+"')");
                     }
@@ -107,18 +106,19 @@ public class GruppeListe extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            // Om gruppekurs hentes, så lister den bare gruppene som er tilknyttet kurset, gruppe lister alle grupper.
             String gruppekurs = ("SELECT Gruppe.gruppeId,Gruppe.gruppeNavn FROM Gruppe INNER JOIN Gruppetilkurs ON Gruppe.gruppeId = Gruppetilkurs.gruppeId WHERE kursId = '"+kursId+"'");
             String gruppe = ("SELECT gruppeId,gruppeNavn FROM Gruppe");
             out.println("<b>Grupper</b>"); 
+            // Om man ikke har en kursId så er man sannsynlig i gruppelister utenfor noe kurs, og alle grupper vises.
             if(kursId != null) {
                 skrivListe(gruppekurs, kursId, rs, query, out);
             }
             else{
                 skrivListe(gruppe, kursId, rs, query, out);
             }
-            
             out.println("<form name='OpprettGruppe' action='OpprettGruppe?kursId="+kursId+"' method='post'>");
+            //Permissions
             if ((boolean)session.getAttribute("isForeleser")) { 
             }
             else {
@@ -136,7 +136,7 @@ public class GruppeListe extends HttpServlet {
             query.close();
         }
     }
-    
+    //Skriver liste
     public void skrivListe(String statement, String kursId, ResultSet rs, Query query, PrintWriter out) {
         try {
             rs = query.query(statement);
