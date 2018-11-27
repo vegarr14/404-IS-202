@@ -53,6 +53,8 @@ public class GruppeListe extends HttpServlet {
             HttpSession session = request.getSession();
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
+           
+            String link = "";
             
             //Om kursId er null så er man i den gruppelisten som viser alle gruppene for alle kurs, og den skal ikke ha sidebar som kurs har.
             if(kursId != null && !kursId.isEmpty()) {
@@ -77,9 +79,10 @@ public class GruppeListe extends HttpServlet {
                         } 
                     
                     else if (request.getParameter("button").equals("endre gruppenavn")) {
-                        String Gruppenavn = request.getParameter("gruppenavn");
-                        String gruppeid = request.getParameter("gruppeid");
-                        query.update("UPDATE gruppe set gruppeNavn ='"+Gruppenavn+"' where gruppeId ='"+gruppeid+"'");                       
+                        query.update("UPDATE gruppe set gruppeNavn ='"+request.getParameter("gruppenavn")+"' where gruppeId ='"+request.getParameter("gruppeid")+"'");
+                        link = "OpprettGruppe?kursId="+kursId+"&gruppeid="+request.getParameter("gruppeid");
+                        response.sendRedirect(link);
+                        link = "";
                     } 
                     
                     //muligens dårlig idè om man har aktive innleveringer, de slettes også
@@ -88,20 +91,28 @@ public class GruppeListe extends HttpServlet {
                         query.update("DELETE from Gruppetilkurs where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from innlevering where gruppeId = "+request.getParameter("gruppeid"));
                         query.update("DELETE from gruppe where gruppeId = "+request.getParameter("gruppeid"));
-
                     }
                     
                     else if (request.getParameter("button").equals("bli medlem")) {    
                         query.update("INSERT INTO Gruppetilbruker (id,gruppeId) values ('"+session.getAttribute("id")+"','"+request.getParameter("gruppeid")+"')");
+                        link = "OpprettGruppe?kursId="+kursId+"&gruppeid="+request.getParameter("gruppeid");
+                        response.sendRedirect(link);
+                        link = "";
                     }
                     
                     //gruppeskaper skal ikke kunne forlate gruppen, men NYI
                     else if (request.getParameter("button").equals("forlat gruppe")) {                      
                         query.update("DELETE FROM Gruppetilbruker WHERE id = "+session.getAttribute("id")+" AND gruppeId = "+request.getParameter("gruppeid")+""); 
+                        link = "OpprettGruppe?kursId="+kursId+"&gruppeid="+request.getParameter("gruppeid");
+                        response.sendRedirect(link);
+                        link = "";
                     }
                     
                     else if (request.getParameter("button").equals("legg til kurs")) {                       
                         query.update("INSERT into Gruppetilkurs Values ('"+request.getParameter("kursIdfraListe")+"','"+request.getParameter("gruppeid")+"')");
+                        link = "OpprettGruppe?kursId="+kursId+"&gruppeid="+request.getParameter("gruppeid");
+                        response.sendRedirect(link);
+                        link = "";
                     }
                 }   
             } catch (SQLException ex) {
