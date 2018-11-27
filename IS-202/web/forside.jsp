@@ -53,7 +53,8 @@
     </head>
     <body>
         <% 
-            boolean isForeleser = (boolean) session.getAttribute("isForeleser");            
+            boolean isForeleser = (boolean) session.getAttribute("isForeleser");
+            String id = (String)session.getAttribute("id");
             Navbar navbar = new Servlets.Navbar();
             navbar.printNavbarJSP("Forside", id, isForeleser, out);
             
