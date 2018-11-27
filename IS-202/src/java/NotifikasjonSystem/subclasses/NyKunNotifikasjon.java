@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Erlend Thorsen
  */
-public class NyKunngjoringNotifikasjon extends Notifikasjon {
+public class NyKunNotifikasjon extends Notifikasjon {
     
     //Lager ny kunngjøring 
     public void getAndSetNyKungjoring(String kursId, int foreleserId){
@@ -36,7 +36,7 @@ public class NyKunngjoringNotifikasjon extends Notifikasjon {
                 lagreNotifikasjon(this);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(NyKunngjoringNotifikasjon.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NyKunNotifikasjon.class.getName()).log(Level.SEVERE, null, ex);
         }
         query.close();
     }
