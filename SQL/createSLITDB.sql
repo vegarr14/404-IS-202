@@ -156,3 +156,14 @@ CREATE TABLE if not exists `Notifikasjoner` (
     primary key (`notId`),
     constraint `FK_Notifikasjon_Bruker` foreign key(`mottakerId`) references `bruker`(`id`)
 );
+CREATE TABLE `KalenderHendelse`(
+	`hendelseId` int(11) not null auto_increment,
+    `mottakerId` int(11) not null,
+    `hendelseType` varchar(50) not null,
+    `hendelseRef` varchar(50) not null,
+    `hendelseTekst` varchar(200) not null,
+    `hendelseStartDato` timestamp not null,
+    `hendelseSluttDato` timestamp not null,
+    primary key(`hendelseID`),
+    constraint `FK_Kalenderhendelse_Bruker` foreign key(`mottakerId`) references `bruker` (`id`)
+);

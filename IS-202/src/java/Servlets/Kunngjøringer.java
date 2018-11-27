@@ -6,7 +6,7 @@
 package Servlets;
 
 import Database.Query;
-import NotifikasjonSystem.subclasses.NyKunngjoringNotifikasjon;
+import NotifikasjonSystem.subclasses.NyKunNotifikasjon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -64,7 +64,7 @@ public class Kunngjøringer extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String skjultKunngjoringId = "";
             
-            NyKunngjoringNotifikasjon nyKunnNot = new NyKunngjoringNotifikasjon();
+            NyKunNotifikasjon nyKunnNot = new NyKunNotifikasjon();
 
             
             String dato = new SimpleDateFormat("dd-MM-yyyy' klokken 'HH:mm").format(Calendar.getInstance().getTime());

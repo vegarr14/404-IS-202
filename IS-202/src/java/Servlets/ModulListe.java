@@ -6,6 +6,7 @@
 package Servlets;
 
 import Database.*;
+import Database.KalenderHendelser.subclasses.InnleveringsfristHendelse;
 import NotifikasjonSystem.Notifikasjon;
 import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
@@ -52,7 +53,9 @@ public class ModulListe extends HttpServlet {
             /*Lage nytt Query-objekt, resultset ( = null*/
             Query query = new Query();
             ResultSet rs = null;
-          
+
+            InnleveringsfristHendelse innlevHendelse = new InnleveringsfristHendelse();
+
             //Lager nytt notifikasjonobjekt
             NyModulNotifikasjon nyModNot = new NyModulNotifikasjon();
             OppdatertModulNotifikasjon oppModNot = new OppdatertModulNotifikasjon();
@@ -63,6 +66,7 @@ public class ModulListe extends HttpServlet {
             out.println("<head>");
             out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
+
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
             out.println("</head>");
@@ -105,27 +109,31 @@ public class ModulListe extends HttpServlet {
                             Logger.getLogger(ModulListe.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
+                        if(timestamp !=null){
+                            innlevHendelse.getAndSetHendelse(modulId, timestamp);
+                        }
                         //Lager notifikasjoner for alle studenter i kurset
                         nyModNot.getAndSetNyModul(kursId, foreleserId, modulId);
+
+                    } else if (request.getParameter("button").equals("oppdater modul")) {
+                        //kjører hvis en modul skal oppdateres
+                        Timestamp timestamp = getTimestamp(frist);
+                        query.update("UPDATE Modul set kursId ='"+kursId+"',foreleserId='"+foreleserId+"',modulNummer ='"+modulNummer+"', oppgaveTekst ='"+oppgaveTekst+"', maxPoeng ='"+maxPoeng+"', innleveringsFrist ="+timestamp+" where modulId ='"+modulId+"'");
                         
-                } else if (request.getParameter("button").equals("oppdater modul")) {
-                    //kjører hvis en modul skal oppdateres
-                    Timestamp timestamp = getTimestamp(frist);
-                    query.update("UPDATE Modul set kursId ='" + kursId + "',foreleserId='" + foreleserId + "',modulNummer ='" + modulNummer + "', oppgaveTekst ='" + oppgaveTekst + "', maxPoeng ='" + maxPoeng + "', innleveringsFrist =" + timestamp + " where modulId ='" + modulId + "'");
-                    
-                    //Lager notifikasjoner for alle studenter i kurset
-                    oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
-                  
-                } else if (request.getParameter("button").equals("slett modul")) {
-                    //kjører hvis en modul skal slettes
-                  //Lager notifikasjoner for slettet modul. Sletter også alle notifikasjoner som refererer til denne modulen
+                        //Lager notifikasjoner for alle studenter i kurset
+                        oppModNot.getAndSetOppdatertModul(kursId, foreleserId, modulId);
+
+                    } else if (request.getParameter("button").equals("slett modul")) {
+                        //kjører hvis en modul skal slettes
+                        //Lager notifikasjoner for slettet modul. Sletter også alle notifikasjoner som refererer til denne modulen
                         slettModNot.getAndSetSlettetModul(kursId, foreleserId, modulId);
 
-                    query.update("DELETE from Modul where modulId = " + request.getParameter("modulId"));
+                        query.update("DELETE from Modul where modulId = "+request.getParameter("modulId"));
+
+                    }
 
                 }
-
-            }
+            
 
             try {
                 //Henter moduler fra Modul-tablet i databasen
@@ -138,6 +146,7 @@ public class ModulListe extends HttpServlet {
                 rs.beforeFirst(); //setter den tilbake til original posisjon
 
                 int antModuler = 0;
+
                 out.println("<table class='modulOversikt'>");
                 out.println("<tr>");
                 out.println("<th id='nostyle'></th>"); //en tom table header, den som er over student nr 1 og på venstre av modul nr 1
@@ -173,6 +182,7 @@ public class ModulListe extends HttpServlet {
 
                 }
                 if ((boolean) session.getAttribute("isForeleser")) {
+
                     rs = query.query("select student.id, forNavn, etterNavn, innlevPoeng, innlevering.modulId, innlevId from Student join Innlevering join Modul where Student.id = innlevering.id and '" + kursId + "'=modul.kursId and modul.modulId = innlevering.modulId order by etterNavn, modulNummer");
                 } else {
                     rs = query.query("select student.id, forNavn, etterNavn, innlevPoeng, innlevering.modulId, innlevId from Student join Innlevering join Modul where Student.id = innlevering.id and modul.kursId='" + kursId + "' and modul.modulId = innlevering.modulId and student.id = '" + (String) session.getAttribute("id") + "' order by etterNavn, modulNummer");
@@ -188,12 +198,16 @@ public class ModulListe extends HttpServlet {
                     while (antRader < antStudenter) {
                         out.println("<tr>");
                         if (rs.isAfterLast() == false) {
+
                             out.println("<th class='rad'>" + nameArray[antRader] + "</th>");
+
                             while (antKolonner < antModuler) {
                                 if (rs.isAfterLast() == true) {
                                     out.println("<td></td>");
                                 } else if (rs.getInt(5) == modulArray[antKolonner] && rs.getInt(1) == studentArray[antRader]) {
+
                                     out.println("<td class='rad'> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(6)+"'> Poeng: " + rs.getInt(4) + "</a></td>");
+
                                     rs.next();
                                 } else {
                                     out.println("<td></td>");
@@ -205,6 +219,7 @@ public class ModulListe extends HttpServlet {
                         antRader++;
                         antKolonner = 0;
                     }
+
                 } else if (!(boolean) session.getAttribute("isForeleser")) {
                     rs = query.query("select forNavn, etterNavn from Student where id = '" + (String) session.getAttribute("id") + "'");
                     out.println("<tr>");
@@ -219,6 +234,7 @@ public class ModulListe extends HttpServlet {
                             antKolonner++;
                         }
                         out.println("</tr>");
+
                         antRader++;
                         antKolonner = 0;
                     }
@@ -226,6 +242,7 @@ public class ModulListe extends HttpServlet {
                 out.println("</table>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+
             }
 
             if ((boolean) session.getAttribute("isForeleser")) {
@@ -242,10 +259,12 @@ public class ModulListe extends HttpServlet {
             try {
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
+
                 navbar.printNavbar("Kurs", (String) session.getAttribute("id"), (boolean) session.getAttribute("isForeleser"), out);
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
+
             out.println("</body>");
             out.println("</html>");
             query.close();
@@ -254,17 +273,20 @@ public class ModulListe extends HttpServlet {
     }
 
 
+
     private Timestamp getTimestamp(String s) {
         try {
             String frist = s.replace("T", " ");
             SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             Date date = simpleDate.parse(frist);
 
+
             Timestamp timestamp = new Timestamp(date.getTime());
             return timestamp;
         } catch (ParseException ignore) {
             return null;
         }
+
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
