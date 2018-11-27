@@ -54,23 +54,18 @@
     <body>
         <% 
             boolean isForeleser = (boolean) session.getAttribute("isForeleser");
-            String id = (String)session.getAttribute("id");
-            Navbar navbar = new Servlets.Navbar();
-            navbar.printNavbarJSP("Forside", id, isForeleser, out);
             
             Kjeks kjeks = new Kjeks();
             kjeks.emptyCookie(request, response);
             kjeks.makeCookie(request, response);
         %>
-
-        <input id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>
-        <input id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>
-        <div id='calendar'></div>
-        <div class='velkommen'>
-            <h1>Under Construction</h1>
-            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
-            <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
-            
+        <div class='calDiv'>
+            <input id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>
+            <input id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>
+            <div id='calendar'></div>
+        </div>
+        <div class='titleBox'>
+            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn")+"</h1>");%>            
         </div>
         <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner
@@ -79,5 +74,9 @@
                 printNotifikasjoner.printUleste(id,"JSP",out, null);
             %> 
         </div>
+            <%
+                Navbar navbar = new Servlets.Navbar();
+                navbar.printNavbarJSP("Forside", id, isForeleser, out);
+            %>
     </body>
 </html>
