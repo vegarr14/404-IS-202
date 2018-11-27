@@ -144,8 +144,6 @@ public class Navbar {
                 navArray.add("<a href='KursListe'>Legg til kurs</a>");
             }
             navArray.add("</div>");
-            navArray.add("<li class='dropdown'>");
-            navArray.add("<a "+classKalender+" href='Kalender'>Kalender</a>");
             navArray.add("<div class='dropdown-content'>");
             navArray.add("<li style='float:right'><a href='LoggUt'>Logg ut</a><li>");
             navArray.add("<li style='float:right'><a "+classInnstillinger+" href='Innstillinger?edit=false'>Innstillinger</a></li>");
