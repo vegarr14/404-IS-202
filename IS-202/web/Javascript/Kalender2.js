@@ -75,7 +75,7 @@ function displayCalendar(){
  
  // this leave a white space for days of pervious month.
  while (weekdays>0){
-    htmlContent += "<td class='monthPre' onMouseOver='this.style.background=\"#FF0000\"'"+
+    htmlContent += "<td class='monthPre' onMouseOver='this.style.background=\"orange\"'"+
         " onMouseOut='this.style.background=\"#FFFFFF\"'></td>";
  
  // used in next loop.
@@ -107,11 +107,11 @@ function displayCalendar(){
  
     // if counter is current day.
     // highlight current day using the CSS defined in header.
-    if (counter == day){
-        htmlContent +="<td class='dayNow'  onMouseOver='this.style.background=\"#FF0000\"; this.style.color=\"#FFFFFF\"' "+
-        "onMouseOut='this.style.background=\"#FFFFFF\"; this.style.color=\"red\"'>"+counter + event+"</td>";
+    if (counter == day && nextOrPrev == 0){
+        htmlContent +="<td class='dayNow'  onMouseOver='this.style.background=\"black\"; this.style.color=\"white\"' "+
+        "onMouseOut='this.style.background=\"orange\"; this.style.color=\"white\"'>"+counter + event+"</td>";
     } else{
-        htmlContent +="<td class='monthNow' onMouseOver='this.style.background=\"#FF0000\"'"+
+        htmlContent +="<td class='monthNow' onMouseOver='this.style.background=\"orange\"'"+
         " onMouseOut='this.style.background=\"#FFFFFF\"'>"+counter + event+"</td>";    
     }
     weekdays2++;
