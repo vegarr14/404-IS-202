@@ -93,7 +93,7 @@ public class Innstillinger extends HttpServlet {
                         rs.next();
                         out.println("<form name='kontaktForm' action='EndreInnstillinger?endre=kontaktInfo' method='POST'>");
                         out.println("<label>E-post</label>");
-                        out.println("<input type='email' name='epost' value='"+rs.getString(1)+"'>");
+                        out.println("<input type='text' name='epost' value='"+rs.getString(1)+"'>");    //Bruker ikke type email fordi vi ønsker å kunne bruke æøå
                         out.println("<br>");
                         out.println("<label>Telefon nummer</label>");
                         out.println("<input type='number' name='tlf'value='"+rs.getString(2)+"'>");

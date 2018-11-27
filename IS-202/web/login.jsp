@@ -3,7 +3,7 @@
     Created on : 14.sep.2018, 09:42:45
     Author     : Erlend Thorsen
 --%>
-<%@page import="Servlets.Kjeks"%>
+<%@page import="Klasser.Kjeks"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

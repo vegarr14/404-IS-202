@@ -5,6 +5,7 @@
  */
 package Servlets;
 
+import Klasser.Kjeks;
 import Database.*;
 import java.io.IOException;
 import javax.servlet.ServletException;

@@ -3,7 +3,7 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
-<%@page import="Servlets.Kjeks"%>
+<%@page import="Klasser.Kjeks"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
