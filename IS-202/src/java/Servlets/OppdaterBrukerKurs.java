@@ -9,6 +9,7 @@ import Database.Query;
 import NotifikasjonSystem.subclasses.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -110,12 +111,12 @@ public class OppdaterBrukerKurs extends HttpServlet {
     
     private void nullValue(HttpServletResponse response, String kursId) throws IOException{
        System.out.println("requested value was null, sent redirect"); 
-       response.sendRedirect("BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true");
+       response.sendRedirect("BrukerListeKurs?kursId="+URLEncoder.encode(kursId, "UTF-8")+"&redigerBrukere=true");
     }
     private void closeAndRedirect(HttpServletResponse response, String kursId, Query query ) throws IOException{
         query.close();
         //Sender bruker tilbake til oversikt
-        response.sendRedirect("BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true");
+        response.sendRedirect("BrukerListeKurs?kursId="+URLEncoder.encode(kursId, "UTF-8")+"&redigerBrukere=true");
         
     }
 
