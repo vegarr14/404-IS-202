@@ -163,18 +163,21 @@ public class ModulListe extends HttpServlet {
                 /*rs henter innleveringene til studentene for moduler fra kurset brukeren er inne på (lagret i session).
                     Altså alle innleveringer for modul 1, 2, 3 og 4 hvis de er i feks IS-202 og innleveringene med studentene som hører til innleveringene og kurset.*/
                 if ((boolean) session.getAttribute("isForeleser")) {
-                    rs = query.query("select id from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' order by etterNavn");
+                    rs = query.query("select id, etterNavn, forNavn from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' order by etterNavn");
                 } else {
-                    rs = query.query("select id from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' and student.id = '" + (String) session.getAttribute("id") + "'order by etterNavn");
+                    rs = query.query("select id, etterNavn, forNavn from student join tarKurs on student.id = tarKurs.studentId and tarKurs.kursId = '" + kursId + "' and student.id = '" + (String) session.getAttribute("id") + "'order by etterNavn");
                 }
                 rs.last();
                 int[] studentArray;
+                String[] nameArray;
                 studentArray = new int[rs.getRow()];
+                nameArray = new String[rs.getRow()];
                 rs.beforeFirst();
                 int antStudenter = 0;
                 while (rs.next()) { //lager Studenter og Innleveringer (objekter).
 
                     studentArray[antStudenter] = rs.getInt(1);
+                    nameArray[antStudenter] = rs.getString(2)+", "+rs.getString(3);
                     antStudenter++;
 
                 }
@@ -190,12 +193,13 @@ public class ModulListe extends HttpServlet {
                 rs.beforeFirst();
                 int antRader = 0;
                 int antKolonner = 0;
+                out.println();
                 if (rs.next()) {
                     while (antRader < antStudenter) {
                         out.println("<tr>");
                         if (rs.isAfterLast() == false) {
 
-                            out.println("<th class='rad'>" + rs.getString(3) + ", " + rs.getString(2) + "</th>");
+                            out.println("<th class='rad'>" + nameArray[antRader] + "</th>");
 
                             while (antKolonner < antModuler) {
                                 if (rs.isAfterLast() == true) {
