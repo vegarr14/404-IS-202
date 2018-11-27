@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Erlend Thorsen
  */
-public class NyKunngjoringNotifikasjon extends Notifikasjon {
+public class nyKunngjoringNotifikasjon extends Notifikasjon {
     
     public void getAndSetNyKungjoring(String kursId, int foreleserId){
         ResultSet rs = null;
