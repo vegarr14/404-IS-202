@@ -7,8 +7,6 @@ package Servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,6 +32,7 @@ public class Kjeks extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -48,12 +47,10 @@ public class Kjeks extends HttpServlet {
         }
     }
     
-    public void makeCookie (HttpServletRequest request, HttpServletResponse response) 
-            throws UnsupportedEncodingException {
+    public void makeCookie (HttpServletRequest request, HttpServletResponse response)    {
         if (request.getParameter("huskMeg")!=null)   {
-            Cookie kjeks = new Cookie("kjeks", URLEncoder.encode(request.getParameter("brukernavn"), "UTF-8"));
+            Cookie kjeks = new Cookie("kjeks", request.getParameter("brukernavn"));
             kjeks.setMaxAge(24*60*60);  //Hvor lenge cookien blir lagret i sekunder (24*60*60 = 24 timer)
-            System.out.println(request.getParameter("brukernavn"));
             response.addCookie(kjeks);
             System.out.println("Kjeks 1: "+kjeks);
             System.out.println("KjeksGetName: "+kjeks.getName());
