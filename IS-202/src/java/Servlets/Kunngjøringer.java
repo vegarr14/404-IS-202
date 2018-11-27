@@ -65,16 +65,16 @@ public class Kunngjøringer extends HttpServlet {
             
             nyKunngjoringNotifikasjon nyKunnNot = new nyKunngjoringNotifikasjon();
 
-            
             String dato = new SimpleDateFormat("dd-MM-yyyy' klokken 'HH:mm").format(Calendar.getInstance().getTime());
             
+            //Permissions
             if ((boolean)session.getAttribute("isForeleser")) { 
                 out.println("<form name='Kunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
                 out.println("Ny kunngjøring </br> <textarea cols='100' rows='10' name='kunngjoring' ></textarea></br>");
                 out.println("<input type='submit' name='button' value='Opprett'></br>");
                 out.println("</form>");        
             }
-            
+            //Sjekker om knapp er trykket
             if(request.getParameter("button") != null) {
                 if(request.getParameter("button").equals("Opprett")) {
                     String kunngjøring = request.getParameter("kunngjoring");
@@ -107,6 +107,7 @@ public class Kunngjøringer extends HttpServlet {
         }
     }
     
+    //Viser kunngjøringer
     public void skrivKunngjøringListe(String statement, String kursId, ResultSet rs, Query query, HttpSession session, PrintWriter out) {
         try {
             rs = query.query(statement);

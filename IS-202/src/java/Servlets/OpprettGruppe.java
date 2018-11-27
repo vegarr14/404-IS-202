@@ -59,19 +59,17 @@ public class OpprettGruppe extends HttpServlet {
             String kursId = request.getParameter("kursId");
             Navbar navbar = new Navbar();
             HttpSession session = request.getSession();
-
+            
+            //Sjekker om man har kursID variabel, om den er NULL er det nok fordi man er i den globale gruppelisten.
             if (!kursId.equals("null")) {
                 out.println("<div class='mainContent'>");
-                navbar.printLeftSidebar("Grupper", kursId, out);           
+                navbar.printLeftSidebar("Grupper", kursId, out);  
+                out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
             }
             else {
                 out.println("<div class='velkommen'>");  
-            }
-
-            if (!kursId.equals("null")){
-            out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
-            }   
-            else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
+                out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");
+                
             }
             
             Query query = new Query();
@@ -79,7 +77,8 @@ public class OpprettGruppe extends HttpServlet {
             String Gruppenavn = "";
             String kursIdfraListe = "";
             String hardId = String.valueOf(session.getAttribute("id"));
-                      
+            
+            //Sjekker om en gruppe er trykket på         
             if(request.getParameter("gruppeid")!= null) {
                 String gruppeid = request.getParameter("gruppeid");
                 rs = query.query("select * from gruppe where gruppeId = "+gruppeid+"");
@@ -88,6 +87,7 @@ public class OpprettGruppe extends HttpServlet {
                 rs = null;
                 out.println("Gruppeid <input type='text' name='gruppeid' value='"+request.getParameter("gruppeid")+"' readonly><br>");
                 
+                //Sjekker om gruppeskaper er den som trykker på gruppa.
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppe ON Student.id = Gruppe.gruppeSkaperId WHERE gruppeId ="+gruppeid+" AND Gruppe.gruppeSkaperId = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
@@ -110,6 +110,8 @@ public class OpprettGruppe extends HttpServlet {
                 out.println("<b>Medlemmer:</b><br/>");
                 skrivMedlemsListe(medlemmer, rs, query, out); 
                 
+                //Sjekker om innlogget bruker er medlem av gruppen som vises. 
+                //kan bare bli medlem av gruppa om brukeren er medlem i et av kursene som gruppa er tilknyttet.
                 rs = query.query("SELECT Student.id FROM Student INNER JOIN Gruppetilbruker ON Student.id = Gruppetilbruker.id WHERE gruppeId ="+gruppeid+" AND Gruppetilbruker.id = "+session.getAttribute("id")+"");
                 try {
                     if (rs.next()){
@@ -140,14 +142,13 @@ public class OpprettGruppe extends HttpServlet {
             
             else {
             printFelter(Gruppenavn,out);
+            //Permissions
             if ((boolean)session.getAttribute("isForeleser")) { 
             }
             else {
                 out.println("<input type='submit' name='button' value='opprett'>");
             }
             }
-                
-            
             out.println("</form>");
             out.println("</div>");     
             try {
@@ -164,14 +165,15 @@ public class OpprettGruppe extends HttpServlet {
         }       
     }
     
+    //Viser gruppenavn som kan endres
     public void printFelter (String Gruppenavn, PrintWriter out) {
     out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'><br>");
     } 
-    
+    //Viser gruppenavn som er readyonly
     public void printFelterGruppenavnReadonly (String Gruppenavn, PrintWriter out) {
     out.println("Gruppenavn <input type='text' name='gruppenavn' value='"+Gruppenavn+"'readonly><br>");
     }
-    
+    //Dropdownliste for å legge til kurs
     public void printDropdownListe (String kursIdfraListe, String hardId, PrintWriter out) {
         try {
         Query query = new Query();
@@ -186,7 +188,7 @@ public class OpprettGruppe extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);         
         }
     }
-    
+    //Printer gruppemedlemmer
     public void skrivMedlemsListe(String statement, ResultSet rs, Query query, PrintWriter out) {
         try {
             rs = query.query(statement);
@@ -200,7 +202,7 @@ public class OpprettGruppe extends HttpServlet {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    //Liste over kurs som er tilknyttet gruppa
     public void skrivKursListe(String statement, ResultSet rs, Query query, PrintWriter out) {
         try {
             rs = query.query(statement);
