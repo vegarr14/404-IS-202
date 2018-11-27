@@ -120,7 +120,7 @@ public class LeggTilBruker extends HttpServlet {
     public void printFelter (String fornavn, String etternavn, String email, String tlf, PrintWriter out) {
         out.println("Fornavn <input type='text' name='fornavn' value='"+fornavn+"'><br>");
         out.println("Etternavn <input type='text' name='etternavn' value='"+etternavn+"'><br>");
-        out.println("Email <input type='text' name='email' value='"+email+"'><br>");
+        out.println("Email <input type='email' name='email' value='"+email+"'><br>");
         out.println("Tlf <input type='number' maxlength='8' name='tlf' Value='"+tlf+"'><br>");
     }
 

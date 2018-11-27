@@ -3,6 +3,7 @@
     Created on : 14.sep.2018, 09:42:45
     Author     : Erlend Thorsen
 --%>
+<%@page import="java.net.URLDecoder"%>
 <%@page import="Servlets.Kjeks"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -25,7 +26,7 @@
                         Cookie[] cookies = request.getCookies(); 
                         for(int i = 0; i < cookies.length; i++) { 
                             if (cookies[i].getName().equals("kjeks"))  {    //kjeks laget i 
-                                theKjeks = cookies[i].getValue();
+                                theKjeks = URLDecoder.decode((cookies[i].getValue()), "UTF-8");
                                 if (theKjeks!="")   {
                                     check = true;
                                 }}}}%>
