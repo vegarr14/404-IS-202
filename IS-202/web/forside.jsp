@@ -3,6 +3,10 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
+
+
+
+<%@page import="Database.KalenderHendelse"%>
 <%@page import="Servlets.Kjeks"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
@@ -23,23 +27,45 @@
         <title>Forside</title>
         <link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>
         <link rel='stylesheet' type='text/css' href='style/styleBody.css'>
+        <%
+            String id = (String)session.getAttribute("id");
+            KalenderHendelse kh = new KalenderHendelse();
+            String kalenderArray[][] = kh.getArray(id);
+            if(kalenderArray != null){%>          
+            <script type='text/javascript'>
+                var i;
+                var kalenderHendelser = new Array();               
+                <%for(int i = 0; i < kalenderArray.length; i++){%>
+                   <%out.print("i = "+i+";");%>
+                   kalenderHendelser[i] = new Array(<%
+                    for(int k = 0; k <= 2; k++){
+                        out.print("\""+kalenderArray[i][k]+"\"");
+                        if(k+1 <= 2){
+                            out.print(",");
+                        }
+                    }%>);
+                    console.log(kalenderHendelser[i][i])
+                <%}%>
+            </script>
+            <%}%>
+        <link rel='stylesheet' type='text/css' href='style/styleKalender.css'>
+        <script type='text/javascript' src='Javascript/Kalender2.js'></script>
     </head>
     <body>
         <% 
             boolean isForeleser = (boolean) session.getAttribute("isForeleser");
-            String id = (String)session.getAttribute("id");
-            Navbar navbar = new Servlets.Navbar();
-            navbar.printNavbarJSP("Forside", id, isForeleser, out);
             
             Kjeks kjeks = new Kjeks();
             kjeks.emptyCookie(request, response);
             kjeks.makeCookie(request, response);
         %>
-        <div class='velkommen'>
-            <h1>Under Construction</h1>
-            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
-            <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
-            
+        <div class='calDiv'>
+            <input class='button' id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>
+            <input class='button' id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>
+            <div id='calendar'></div>
+        </div>
+        <div class='titleBox'>
+            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn")+"</h1>");%>            
         </div>
         <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner
@@ -48,5 +74,9 @@
                 printNotifikasjoner.printUleste(id,"JSP",out, null);
             %> 
         </div>
+            <%
+                Navbar navbar = new Servlets.Navbar();
+                navbar.printNavbarJSP("Forside", id, isForeleser, out);
+            %>
     </body>
 </html>
