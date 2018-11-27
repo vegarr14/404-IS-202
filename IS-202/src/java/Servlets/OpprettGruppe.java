@@ -147,7 +147,7 @@ public class OpprettGruppe extends HttpServlet {
             }
             }
                 
-            
+            out.println("<button type='submit'>Tilbake</button>");
             out.println("</form>");
             out.println("</div>");     
             try {
