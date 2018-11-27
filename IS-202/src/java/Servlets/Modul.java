@@ -35,7 +35,6 @@ public class Modul extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        //Sjekker om det er foreleser eller student
         HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             
@@ -45,10 +44,13 @@ public class Modul extends HttpServlet {
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>"); 
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleKommentarer.css'>");
             out.println("<title>Modul</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<div class=mainContent>");
+            out.println("<div class='mainContent'>");
+            out.println("<div class='modul'>");
+            //Sjekker om det er foreleser eller student
             if ((boolean)session.getAttribute("isForeleser")) {
                 isForeleser(request, response, session, out);
             } else {
@@ -62,6 +64,7 @@ public class Modul extends HttpServlet {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             out.println("</div>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -70,7 +73,7 @@ public class Modul extends HttpServlet {
     public void isForeleser(HttpServletRequest request, HttpServletResponse response, HttpSession session, PrintWriter out)
             throws ServletException, IOException {
         try {
-            out.println("<h1>Servlet Modul at " + request.getContextPath() + "</h1>");
+            out.println("<h1> Modul </h1>");
             out.println("<form name='ModulListe' action='ModulListe' id='Modul' method='post'>");
             Query query = new Query();
             ResultSet rs = null;
@@ -109,8 +112,8 @@ public class Modul extends HttpServlet {
                 }
                 
                 out.println("Innleveringsfrist <input type='datetime-local' name='innleveringsFrist' value='"+frist+"'><br>");
-                out.println("<input type='submit' name='button' value='oppdater modul'>");
-                out.println("<input type='submit' name='button' value='slett modul'>");
+                out.println("<input type='submit' class='button' name='button' value='oppdater modul'>");
+                out.println("<input type='submit' class='button' name='button' value='slett modul'>");
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
                 kursId=request.getParameter("kursId");
@@ -118,7 +121,7 @@ public class Modul extends HttpServlet {
                 printFelter(kursId,foreleserId,modulNummer,oppgaveTekst,maxPoeng,out);
                 out.println("<input type='checkbox' name='oppgaveType' value='1'>Gruppelevering<br>");
                 out.println("Innleveringsfrist <input type='datetime-local' name='innleveringsFrist'><br>");
-                out.println("<input type='submit' name='button' value='legg til'>");
+                out.println("<input type='submit' class='button' name='button' value='legg til'>");
             }
             
             out.println("</form>");
@@ -148,7 +151,7 @@ public class Modul extends HttpServlet {
                     try {
                     out.println("<ul>");
                     while (rs.next()) {
-                        out.println("<li> <a href='Innlevering?innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
+                        out.println("<li> <a href='Innlevering?kursId="+kursId+"&innlevId="+rs.getString(1)+"'>" +rs.getString(2)+" "+rs.getString(3)+ "</a></li>");              
                     }
                     out.println("</ul>");
                     query.close();
@@ -209,7 +212,7 @@ public class Modul extends HttpServlet {
             out.println("Filopplasting</br><input type='file' name='file' /></br></br>");
             out.println("Kommentar </br> <textarea cols='50' rows='5' name='kommentar' ></textarea></br>");
             out.println("Maks antall oppnåelige poeng: "+rs.getString(9)+"<br>");
-            out.println("<input type='submit' name='button' value='Lever'/>");
+            out.println("<input type='submit' class='button' name='button' value='Lever'/>");
             out.println("<input type='hidden' name='modulId' value='"+rs.getString(3)+"'>");
             out.println("<input type='hidden' name='kursId' value ='"+rs.getString(4)+"'>");
             out.println("</form>");
@@ -231,7 +234,7 @@ public class Modul extends HttpServlet {
         out.println("<label>modulNummer</label> <input type='number' name='modulNummer' value='"+modulNummer+"'><br>");
         out.println("<label>foreleserId</label> <input type='text' name='foreleserId' value='"+foreleserId+"' readonly><br>");
         out.println("</br> <label>oppgaveTekst</label> </br> <textarea cols='100' rows='10' name='oppgaveTekst'>"+oppgaveTekst+"</textarea><br>");
-        out.println("<label>maks poeng</label> <input type= 'number' name='maxPoeng' value='"+maxPoeng+"'><br>");
+        out.println("<label>maks poeng</label> <input type='number' name='maxPoeng' value='"+maxPoeng+"'><br>");
 
     }
     

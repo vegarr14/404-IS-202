@@ -7,8 +7,6 @@ package Servlets;
 
 import Database.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -44,7 +42,7 @@ public class Login extends HttpServlet {
         
         String brukernavn = request.getParameter("brukernavn");
         String passord = request.getParameter("passord");
-        
+           
         try {
            
             rs = query.query("SELECT ID FROM bruker WHERE brukernavn ='" + brukernavn + "' AND passord = AES_ENCRYPT('" + passord + "', 'domo arigato mr.roboto') LIMIT 1");
@@ -135,7 +133,7 @@ public class Login extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
+    
     /**
      * Returns a short description of the servlet.
      *

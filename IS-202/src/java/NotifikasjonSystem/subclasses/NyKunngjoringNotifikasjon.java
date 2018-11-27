@@ -18,9 +18,11 @@ import java.util.logging.Logger;
  */
 public class NyKunngjoringNotifikasjon extends Notifikasjon {
     
+    //Lager ny kunngjøring 
     public void getAndSetNyKungjoring(String kursId, int foreleserId){
         ResultSet rs = null;
         Query query = new Query();
+ 
         
         this.sender = foreleserId;
         this.refererer = kursId;

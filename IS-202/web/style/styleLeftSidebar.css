@@ -19,7 +19,7 @@ and open the template in the editor.
     height: calc(100% - 55px);
     padding-top: 10px;
     border-right: orange 2px solid;
-    
+    font-family: "inherit";
 }
 .leftSidebar ul{
     list-style: none;

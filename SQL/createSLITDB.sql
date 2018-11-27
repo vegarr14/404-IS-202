@@ -111,7 +111,8 @@ CREATE TABLE if not exists `Modul` (
   `komId` int(11) NOT NULL AUTO_INCREMENT,
   `id` int (11) NOT NULL,
   `innlevId` int(11) NOT NULL,
-  `komKommentar` varchar (250) NOT NULL,
+  `komKommentar` varchar (500) NOT NULL,
+  `komTimestamp` timestamp NOT NULL,
   primary key(`komId`),
   Constraint `FK_Kommentarer_Bruker` Foreign Key (`id`) references `Bruker` (`id`),
   Constraint `FK_Kommentarer_Innlev` Foreign Key (`innlevId`) references `Innlevering` (`innlevId`)

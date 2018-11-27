@@ -5,7 +5,9 @@
 --%>
 
 
+
 <%@page import="Database.KalenderHendelse"%>
+<%@page import="Servlets.Kjeks"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
 <%@page import="javax.servlet.http.HttpSession"%>
@@ -54,6 +56,10 @@
             boolean isForeleser = (boolean) session.getAttribute("isForeleser");            
             Navbar navbar = new Servlets.Navbar();
             navbar.printNavbarJSP("Forside", id, isForeleser, out);
+            
+            Kjeks kjeks = new Kjeks();
+            kjeks.emptyCookie(request, response);
+            kjeks.makeCookie(request, response);
         %>
 
         <input id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>

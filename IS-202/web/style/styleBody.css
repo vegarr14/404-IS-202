@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 body{
     background-color: #fafafa;
-    font-family: Tahoma, Geneva, sans-serif;
+    font-family: "inherit";
 }
 .velkommen{
     margin: auto;
