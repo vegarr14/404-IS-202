@@ -18,9 +18,6 @@ import java.util.logging.Logger;
  */
 public class OppdatertModulNotifikasjon extends Notifikasjon {
     
-    ResultSet rs = null;
-    Query query = new Query();
-    
     //Setter variabler og lager notifikasjon til alle som skal ha det
     public void getAndSetOppdatertModul(String kursId, String foreleserId, String modulId){
         
@@ -29,6 +26,8 @@ public class OppdatertModulNotifikasjon extends Notifikasjon {
         this.refererer = modulId;
         this.opprettet = getTimestamp();
         
+        ResultSet rs = null;
+        Query query = new Query();
         rs = query.query("Select studentId from tarkurs WHERE kursId='"+kursId+"'");
         
         try {

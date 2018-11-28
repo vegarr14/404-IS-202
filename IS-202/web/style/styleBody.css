@@ -86,7 +86,7 @@ li,ul  {
     margin-top: 100px;
     background-color: white;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    width: 50%;
+    width: 46%;
     padding: 10px;
     text-align: center;
     color: orange;
@@ -144,6 +144,22 @@ li,ul  {
     margin-top: 10px;
 }
 
+.brukere a {
+    color: black;
+    text-decoration: none;
+}
+
+.brukere a:hover{
+    color: orange;
+}
+
+h2  {
+    color:orange;
+}
+
+b   {
+    color:orange;
+}
 .gjoremalDiv  {
     
     margin: auto;

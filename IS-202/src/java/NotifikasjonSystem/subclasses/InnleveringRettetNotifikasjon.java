@@ -20,15 +20,15 @@ public class InnleveringRettetNotifikasjon extends Notifikasjon{
     
     public void getAndSetInnRettNot(String innlevId, int foreleserId){
         ResultSet rs = null;
-        Query query = new Query();
         
         this.type = "InnlevRettet";
         this.sender = foreleserId;
         this.refererer = innlevId;
         this.opprettet = getTimestamp();
         
-        rs = query.query("SELECT id,gruppeId from innlevering where innlevId ="+innlevId);
         try{
+            Query query = new Query();
+            rs = query.query("SELECT id,gruppeId from innlevering where innlevId ="+innlevId);
                 rs.next();
                 //sjekker om det er en gruppeinnlevering
                 if(rs.getInt(2) != 0){
@@ -42,10 +42,9 @@ public class InnleveringRettetNotifikasjon extends Notifikasjon{
                     this.mottaker = rs.getInt(1);
                     lagreNotifikasjon(this);
                 }
-            
+            query.close();
         } catch (SQLException ex) {
             Logger.getLogger(InnleveringRettetNotifikasjon.class.getName()).log(Level.SEVERE, null, ex);
         }
-        query.close();
     }
 }

@@ -40,9 +40,9 @@ public class TimerSystem implements javax.servlet.ServletContextListener {
             }            
         } catch (SQLException ex) {
             Logger.getLogger(TimerSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }   finally {
+            query.close();
         }
-        
-        query.close();
         //kjører hver time
         TimerTask hourlyTask = new TimerTask () {            
         @Override

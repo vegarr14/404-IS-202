@@ -84,10 +84,10 @@ public class LeggTilBruker extends HttpServlet {
                 out.println("Brukerid <input type='text' name='id' value='"+id+"' readonly><br>");
                 printFelter(fornavn,etternavn,email,tlf,out);
                 if(isForeleser){
-                out.println("<input type='submit' name='button' value='Oppdater bruker'>");
-                out.println("<input type='submit' name='button' value='Slett bruker'>");
+                out.println("<input class='button' type='submit' name='button' value='Oppdater bruker'>");
+                out.println("<input class='button' type='submit' name='button' value='Slett bruker'>");
                 }
-                out.println("<input type='submit' name='button' value='Gå tilbake'>");
+                out.println("<input class='button' type='submit' name='button' value='Gå tilbake'>");
 
             } else {
                 //Hvis det er trykket på legg til bruker knappen skal tomme felter + radio knapper vises
@@ -95,7 +95,7 @@ public class LeggTilBruker extends HttpServlet {
                 printFelter(fornavn,etternavn,email,tlf,out);
                 out.println("<input type='radio' name='brukerType' value='student' checked> Student<br>");
                 out.println("<input type='radio' name='brukerType' value='foreleser'> Foreleser<br>");
-                out.println("<input type='submit' name='button' value='Legg til'>");
+                out.println("<input class='button' type='submit' name='button' value='Legg til'>");
             }
             
             out.println("</form>");
@@ -120,7 +120,7 @@ public class LeggTilBruker extends HttpServlet {
     public void printFelter (String fornavn, String etternavn, String email, String tlf, PrintWriter out) {
         out.println("Fornavn <input type='text' name='fornavn' value='"+fornavn+"'><br>");
         out.println("Etternavn <input type='text' name='etternavn' value='"+etternavn+"'><br>");
-        out.println("Email <input type='text' name='email' value='"+email+"'><br>");
+        out.println("Email <input type='email' name='email' value='"+email+"'><br>");
         out.println("Tlf <input type='number' maxlength='8' name='tlf' Value='"+tlf+"'><br>");
     }
 

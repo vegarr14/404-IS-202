@@ -37,11 +37,19 @@ public class Kalender extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Kalender</title>");            
+            out.println("<title>JavaScript calendar</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleKalender.css' />");
+            out.println("<script type='text/javascript' src='Javascript/Kalender2.js'></script>");
             out.println("</head>");
             out.println("<body>");
+            out.println("<input id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>");
+            out.println("<input id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>");
+            out.println("<div id=\"calendar\"></div>");
+            out.println("<input id='test' type='submit' value='test'/>");
+            
             out.println("</body>");
             out.println("</html>");
+            
         }
     }
 

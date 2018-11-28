@@ -6,7 +6,7 @@
 package Servlets;
 
 import Database.Query;
-import NotifikasjonSystem.subclasses.NyKunngjoringNotifikasjon;
+import NotifikasjonSystem.subclasses.NyKunNotifikasjon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -41,6 +41,7 @@ public class Kunngjøringer extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             
@@ -63,7 +64,7 @@ public class Kunngjøringer extends HttpServlet {
             String kursId = request.getParameter("kursId");
             String skjultKunngjoringId = "";
             
-            NyKunngjoringNotifikasjon nyKunnNot = new NyKunngjoringNotifikasjon();
+            NyKunNotifikasjon nyKunnNot = new NyKunNotifikasjon();
 
             
             String dato = new SimpleDateFormat("dd-MM-yyyy' klokken 'HH:mm").format(Calendar.getInstance().getTime());
@@ -71,7 +72,7 @@ public class Kunngjøringer extends HttpServlet {
             if ((boolean)session.getAttribute("isForeleser")) { 
                 out.println("<form name='Kunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
                 out.println("Ny kunngjøring </br> <textarea cols='100' rows='10' name='kunngjoring' ></textarea></br>");
-                out.println("<input type='submit' name='button' value='Opprett'></br>");
+                out.println("<input class='button' type='submit' name='button' value='Opprett'></br>");
                 out.println("</form>");        
             }
             
@@ -93,7 +94,7 @@ public class Kunngjøringer extends HttpServlet {
                     "INNER JOIN foreleser on kunngjøringer.foreleserId = foreleser.id WHERE kursId = '"+kursId+"'\n" +
                     "order by kunngjøringId DESC LIMIT 10 ");
             skrivKunngjøringListe(kunngjøringer, kursId, rs, query, session, out);
-            
+            query.close();
             try {
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Kunngjøringer", request.getParameter("kursId"), out);
@@ -103,7 +104,6 @@ public class Kunngjøringer extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-            query.close();
         }
     }
     
@@ -128,7 +128,7 @@ public class Kunngjøringer extends HttpServlet {
                     out.println("</div>");
             }
 
-            rs = null;          
+            rs = null;
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }

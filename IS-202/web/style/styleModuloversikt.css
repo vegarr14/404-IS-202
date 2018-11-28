@@ -9,7 +9,6 @@ and open the template in the editor.
 */
 h1  {
     margin: auto;
-    background-color: white;
     width: 50%;
     padding: 10px;
     text-align: center;
@@ -63,7 +62,7 @@ td  {
 }
 
 #nostyle    {
-    background-color: white;
+    background-color: #fafafa;
     border-left:none;
     border-top:none;
 }
