@@ -103,6 +103,7 @@ public class Innstillinger extends HttpServlet {
                     } catch (SQLException ex) {
                         Logger.getLogger(Innstillinger.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    query.close();
                       
                 }
                 //legges til på alle innstillingene
@@ -120,8 +121,6 @@ public class Innstillinger extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-            
-            query.close();
         }
     }
 
