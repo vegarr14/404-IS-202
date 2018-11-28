@@ -66,9 +66,9 @@ public class ModulListe extends HttpServlet {
             out.println("<head>");
             out.println("<title>Moduler</title>");
             out.println("<link rel='stylesheet' type='text/css' href='style/styleNavbar.css'>");
-
             out.println("<link rel='stylesheet' type='text/css' href='style/styleLeftSidebar.css'>");
-            out.println("<link rel='stylesheet' type='text/css' href='style/moduloversikt.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleBody.css'>");
+            out.println("<link rel='stylesheet' type='text/css' href='style/styleModuloversikt.css'>");
             out.println("</head>");
             out.println("<body>");
             String kursId = request.getParameter("kursId");
@@ -242,9 +242,10 @@ public class ModulListe extends HttpServlet {
                 out.println("</table>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-
+            }   finally {
+                query.close();
             }
-
+            
             if ((boolean) session.getAttribute("isForeleser")) {
                 out.println("<form name='Modul' action='Modul?kursId=" + kursId + "' method='post'>");
                 out.println("<button type='submit'>Legg Til Modul</button>");
@@ -267,7 +268,6 @@ public class ModulListe extends HttpServlet {
 
             out.println("</body>");
             out.println("</html>");
-            query.close();
         }
 
     }

@@ -18,15 +18,13 @@ import java.util.logging.Logger;
  */
 public class SlettetModulNotifikasjon extends Notifikasjon {
     
-    ResultSet rs = null;
-    Query query = new Query();
-    
     //Setter variabler og lager notifikasjon til alle som skal ha det
     public void getAndSetSlettetModul(String kursId, String foreleserId, String modulId){
         
         this.type = "slettetModul";
         this.sender = Integer.parseInt(foreleserId);
-        
+        ResultSet rs = null;
+        Query query = new Query();
         //Henter modulnummer for å kunne vise hvilken  modul som ble slettet
         rs = query.query("Select modulNummer, kursId from modul where modulId="+modulId+"");
         try{
@@ -56,5 +54,4 @@ public class SlettetModulNotifikasjon extends Notifikasjon {
         }
         query.close();
     }
-    
 }

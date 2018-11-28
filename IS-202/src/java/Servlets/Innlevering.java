@@ -86,6 +86,7 @@ public class Innlevering extends HttpServlet {
             }
             printInnlevering(request, response, session, out, innlevId);
             out.println("</div>");
+            query.close();
         }
     }
     
@@ -116,12 +117,12 @@ public class Innlevering extends HttpServlet {
                 }
                 poeng(rs,out,(boolean)session.getAttribute("isForeleser"), request.getParameter("kursId"));
                 
-                
                 kommentarer(query, innlevId, out, request.getParameter("kursId"));
                 
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
                 navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+                query.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -161,7 +162,7 @@ public class Innlevering extends HttpServlet {
                     + "ny kommentar: <br>"
                     + "<input type='hidden' name='innlevId' value='"+innlevId+"'>"
                     + "<input type='hidden' name='kursId' value='"+kursId+"'>"
-                    + "<textarea name='kommentar' rows='5'> </textarea><br>"
+                    + "<textarea name='kommentar' rows='5'></textarea><br>"
                     + "<input type='submit' class='button' name='submitKommentar' value='oppdater'> <br></form>");
             
             out.println("Kommentarer: <br><br>");

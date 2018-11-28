@@ -57,8 +57,8 @@
             kjeks.makeCookie(request, response);
         %>
         <div class='calDiv'>
-            <input class='button' id='prevMonthButton' type='submit' name='prevMonthButton' value='prev Month'/>
-            <input class='button' id='nextMonthButton' type='submit' name='nextMonthButton' value='next Month'/>
+            <input class='button' id='prevMonthButton' type='submit' name='prevMonthButton' value='Forrige måned'/>
+            <input class='button' id='nextMonthButton' type='submit' name='nextMonthButton' value='Neste måned'/>
             <div id='calendar'></div>
         </div>
         <div class='titleBox'>

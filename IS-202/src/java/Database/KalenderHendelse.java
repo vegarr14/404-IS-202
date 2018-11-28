@@ -16,9 +16,6 @@ import java.util.logging.Logger;
  * @author Josef
  */
 public class KalenderHendelse {
-        
-    Query query = new Query();
-    ResultSet rs = null;
     
     protected int mottaker;
     protected String type;
@@ -29,12 +26,17 @@ public class KalenderHendelse {
     
     //Lagrer kalenderhendelse
     public void lagreHendelse(KalenderHendelse kalenderHendelse){
+        Query query = new Query();
+        ResultSet rs = null;
         query.update("INSERT INTO KalenderHendelse (mottakerId, hendelseType, hendelseRef, hendelseTekst, hendelseStartDato, hendelseSluttDato) Values ("+this.mottaker+",'"+this.type+"','"+this.refererer+"','"+this.tekst+"','"+this.startDato+"','"+this.sluttDato+"')");
+        query.close();
     }
     
     public String[][] getArray(String id){
         System.out.println("metodeStart");
         String [][] kalenderArray = null;
+        Query query = new Query();
+        ResultSet rs = null;
         try {
             rs = query.query("Select * from KalenderHendelse where mottakerId = "+ id);
             rs.last();
@@ -53,9 +55,11 @@ public class KalenderHendelse {
                 
                 i++;
                 
-            } 
+            }
         } catch (SQLException ex) {
             Logger.getLogger(KalenderHendelse.class.getName()).log(Level.SEVERE, null, ex);
+        }   finally {
+            query.close();
         }
         System.out.println("før return");
         return kalenderArray;

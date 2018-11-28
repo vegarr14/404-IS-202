@@ -19,11 +19,6 @@ import java.util.logging.Logger;
  * @author Josef
  */
 public class InnleveringsfristHendelse extends KalenderHendelse {
-        
-        Query query = new Query();
-        ResultSet rs = null;
-    
- 
     
     public void getAndSetHendelse(String modulId, Timestamp dato){
         
@@ -45,6 +40,9 @@ public class InnleveringsfristHendelse extends KalenderHendelse {
         
         String modulnr = null;
         String kursId = null;
+        
+        Query query = new Query();
+        ResultSet rs = null;
         try {
         rs = query.query("Select modulNummer, kursId from modul where modulId="+modulId);
         
@@ -63,6 +61,8 @@ public class InnleveringsfristHendelse extends KalenderHendelse {
        
         } catch (SQLException ex) {
              Logger.getLogger(InnleveringsfristHendelse.class.getName()).log(Level.SEVERE, null, ex);
+        } finally   {
+            query.close();
         }
     }
 }

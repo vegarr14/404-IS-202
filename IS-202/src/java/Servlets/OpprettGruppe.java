@@ -92,9 +92,9 @@ public class OpprettGruppe extends HttpServlet {
                 try {
                     if (rs.next()){
                         printFelter(Gruppenavn,out);
-                        out.println("<input type='submit' name='button' value='endre gruppenavn'>");
-                        out.println("<input type='submit' name='button' value='slett gruppe'>");
-                        out.println("<input type='submit' name='button' value='legg til kurs'>");
+                        out.println("<input class='button' type='submit' name='button' value='endre gruppenavn'>");
+                        out.println("<input class='button' type='submit' name='button' value='slett gruppe'>");
+                        out.println("<input class='button' type='submit' name='button' value='legg til kurs'>");
                         printDropdownListe(kursIdfraListe,hardId, out);
                         rs = null;
                     }
@@ -121,14 +121,14 @@ public class OpprettGruppe extends HttpServlet {
                             rs = null;  
                         }   
                         else {
-                            out.println("<input type='submit' name='button' value='forlat gruppe'>");
+                            out.println("<input class='button' type='submit' name='button' value='forlat gruppe'>");
                         }
                     }   
                     else {                
                     rs = query.query("SELECT tarkurs.kursId from Tarkurs INNER JOIN gruppetilkurs ON gruppetilkurs.kursId = tarkurs.kursId INNER JOIN student ON student.id = tarkurs.studentId INNER JOIN gruppe ON gruppe.gruppeId = gruppetilkurs.gruppeId WHERE id = "+session.getAttribute("id")+" AND gruppe.gruppeId = "+gruppeid+"");
                     try {
                         if (rs.next()){
-                            out.println("<input type='submit' name='button' value='bli medlem'>");
+                            out.println("<input class='button' type='submit' name='button' value='bli medlem'>");
                             rs = null;                
                         }               
                     } catch (SQLException ignore) {
@@ -143,11 +143,11 @@ public class OpprettGruppe extends HttpServlet {
             if ((boolean)session.getAttribute("isForeleser")) { 
             }
             else {
-                out.println("<input type='submit' name='button' value='opprett'>");
+                out.println("<input class='button' type='submit' name='button' value='opprett'>");
             }
             }
                 
-            out.println("<button type='submit'>Tilbake</button>");
+            out.println("<button class='button' type='submit'>Tilbake</button>");
             out.println("</form>");
             out.println("</div>");     
             try {
