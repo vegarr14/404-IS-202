@@ -163,9 +163,9 @@ public class PrintNotifikasjoner {
                     s = senderNavn + " har fjernet modul "+notReferererId+".";
                 }else{
                     //Finner modulnummer og kursid som hører til notifikasjonen
-                    rs2 = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
-                    rs2.next();
-                    kursId = rs2.getString(1);
+                    rs = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
+                    rs.next();
+                    kursId = rs.getString(1);
                     modulNummer = rs2.getString(2);
 
                     if(notType.equals("nyModul")){
@@ -181,10 +181,10 @@ public class PrintNotifikasjoner {
                 //henter navn til sender
                 senderNavn = getSenderName("student", senderId);
                 //Finner modulnummer og kursid som hører til notifikasjonen
-                rs2 = query.query("Select kursId, modulNummer from modul where modulId in(select modulId from innlevering where innlevId="+notReferererId+")");
-                rs2.next();
-                kursId = rs2.getString(1);
-                modulNummer = rs2.getString(2);
+                rs = query.query("Select kursId, modulNummer from modul where modulId in(select modulId from innlevering where innlevId="+notReferererId+")");
+                rs.next();
+                kursId = rs.getString(1);
+                modulNummer = rs.getString(2);
                 
                 s = senderNavn + " har levert modul " + modulNummer + " i " + kursId;
             }            
@@ -203,17 +203,17 @@ public class PrintNotifikasjoner {
             else if(notType.equals("24hInnlevFrist")){
                 
                 //Finner modulnummer og kursid som hører til notifikasjonen
-                rs2 = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
-                rs2.next();
-                kursId = rs2.getString(1);
-                modulNummer = rs2.getString(2);
+                rs = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
+                rs.next();
+                kursId = rs.getString(1);
+                modulNummer = rs.getString(2);
                 
                 s = "Modul " + modulNummer + " i " + kursId + " har mindre en 24 timer igjen av innleveringsfristen.<br>Du får denne notifikasjonen siden du ikke har levert enda.";   
             }else if(notType.equals("InnlevRettet")){
-                rs2 = query.query("Select kursId, modulNummer from Innlevering JOIN modul on Innlevering.modulId = modul.modulId where innlevId="+notReferererId);
-                rs2.next();
-                kursId = rs2.getString(1);
-                modulNummer = rs2.getString(2);
+                rs = query.query("Select kursId, modulNummer from Innlevering JOIN modul on Innlevering.modulId = modul.modulId where innlevId="+notReferererId);
+                rs.next();
+                kursId = rs.getString(1);
+                modulNummer = rs.getString(2);
                 senderNavn = getSenderName("foreleser", senderId);
                 s = senderNavn + " har rettet din innlevering  til Modul " + modulNummer + " i " + kursId;
             }
@@ -225,18 +225,21 @@ public class PrintNotifikasjoner {
             }
         } catch (SQLException ex) {
                 Logger.getLogger(PrintNotifikasjoner.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }   finally {
+            query.close();
+        }
         
             return s;
     }
     // Henter fornavn og etternavn til sender
     private String getSenderName(String table, int senderId) throws SQLException{
-        ResultSet rs2 = null;
+        ResultSet rs = null;
         Query query = new Query();
         
-        rs2 = query.query("Select forNavn, etterNavn from "+table+" where id="+senderId+"");
-        rs2.next();
-        String s = rs2.getString(1) + " " + rs2.getString(2);
+        rs = query.query("Select forNavn, etterNavn from "+table+" where id="+senderId+"");
+        rs.next();
+        String s = rs.getString(1) + " " + rs.getString(2);
+        query.close();
         return s;
     }
 }
