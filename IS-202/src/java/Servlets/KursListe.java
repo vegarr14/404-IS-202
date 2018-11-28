@@ -103,7 +103,7 @@ public class KursListe extends HttpServlet {
             }
   
             out.println("<form name='LeggTilKurs' action='LeggTilKurs' method='post'>");
-            out.println("<button type='submit'>Legg til kurs</button>");
+            out.println("<button class='button' type='submit'>Legg til kurs</button>");
             out.println("</form>");
             out.println("</div>");
             
