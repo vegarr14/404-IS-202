@@ -197,7 +197,7 @@ public class ModulListe extends HttpServlet {
                 if (rs.next()) {
                     while (antRader < antStudenter) {
                         out.println("<tr>");
-                        if (rs.isAfterLast() == false) {
+                        if (rs.isAfterLast() == false || antRader<nameArray.length) {
 
                             out.println("<th class='rad'>" + nameArray[antRader] + "</th>");
 
@@ -220,25 +220,24 @@ public class ModulListe extends HttpServlet {
                         antKolonner = 0;
                     }
 
-                } else if (!(boolean) session.getAttribute("isForeleser")) {
-                    rs = query.query("select forNavn, etterNavn from Student where id = '" + (String) session.getAttribute("id") + "'");
-                    out.println("<tr>");
-                    boolean skrevetStudent = false;
-                    if (rs.last() == true && skrevetStudent == false) {
-                        out.println("<th>" + rs.getString(2) + ", " + rs.getString(1) + "</th>");
-                        skrevetStudent = true;
-                    }
+                } else {
                     while (antRader < antStudenter) {
-                        while (antKolonner < antModuler) {
-                            out.println("<td></td>");
-                            antKolonner++;
+                        out.println("<tr>");
+                        if (antRader<nameArray.length) {
+
+                            out.println("<th class='rad'>" + nameArray[antRader] + "</th>");
+
+                            while (antKolonner < antModuler) {
+                                out.println("<td></td>");
+                                antKolonner++;
+                            
                         }
                         out.println("</tr>");
-
                         antRader++;
                         antKolonner = 0;
                     }
                 }
+            }
                 out.println("</table>");
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
