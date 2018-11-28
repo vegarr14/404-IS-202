@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 public class NyInnleveringNotifikasjon extends Notifikasjon {
     
     ResultSet rs = null;
-    Query query = new Query();
     
     //Setter variabler og lager notifikasjon til alle som skal ha det
     public void getAndSetnyInnlevering(String kursId, String studentId, String innlevId){
@@ -29,6 +28,7 @@ public class NyInnleveringNotifikasjon extends Notifikasjon {
         this.refererer = innlevId;
         this.opprettet = getTimestamp();
         
+        Query query = new Query();
         rs = query.query("Select foreleserId from foreleserKurs where kursId='"+kursId+"'");
         
         try {

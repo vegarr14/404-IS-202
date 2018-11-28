@@ -68,7 +68,7 @@ public class EndreInnstillinger extends HttpServlet {
                 
             request.getRequestDispatcher("Innstillinger?edit=false").forward(request, response);
         }
-
+        query.close();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

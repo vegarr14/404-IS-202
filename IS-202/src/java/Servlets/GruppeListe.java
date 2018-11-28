@@ -121,7 +121,7 @@ public class GruppeListe extends HttpServlet {
             
             String gruppekurs = ("SELECT Gruppe.gruppeId,Gruppe.gruppeNavn FROM Gruppe INNER JOIN Gruppetilkurs ON Gruppe.gruppeId = Gruppetilkurs.gruppeId WHERE kursId = '"+kursId+"'");
             String gruppe = ("SELECT gruppeId,gruppeNavn FROM Gruppe");
-            out.println("<b>Grupper</b>"); 
+            out.println("<h2>Grupper</h2>"); 
             if(kursId != null) {
                 skrivListe(gruppekurs, kursId, rs, query, out);
             }
@@ -133,7 +133,7 @@ public class GruppeListe extends HttpServlet {
             if ((boolean)session.getAttribute("isForeleser")) { 
             }
             else {
-                out.println("<button type='submit'>Opprett ny gruppe</button>");
+                out.println("<button type='submit' class='button'>Opprett ny gruppe</button>");
             }
             out.println("</form>");
             out.println("</div>");
@@ -151,11 +151,11 @@ public class GruppeListe extends HttpServlet {
     public void skrivListe(String statement, String kursId, ResultSet rs, Query query, PrintWriter out) {
         try {
             rs = query.query(statement);
-            out.println("<u1>");
+            out.println("<ul>");
             while(rs.next()){
-                out.println("<li> <a href ='OpprettGruppe?kursId="+kursId+"&gruppeid="+rs.getString(1)+"'>" + rs.getString(2) + "</a></li>");
+                out.println("<li class='brukere'> <a href ='OpprettGruppe?kursId="+kursId+"&gruppeid="+rs.getString(1)+"'>" + rs.getString(2) + "</a></li>");
             }
-            out.println("</u1>");
+            out.println("</u1></br>");
             rs = null;          
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

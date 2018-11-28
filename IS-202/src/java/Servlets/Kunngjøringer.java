@@ -72,7 +72,7 @@ public class Kunngjøringer extends HttpServlet {
             if ((boolean)session.getAttribute("isForeleser")) { 
                 out.println("<form name='Kunngjøringer' action=Kunngjoringer?kursId="+kursId+" method='post'>");
                 out.println("Ny kunngjøring </br> <textarea cols='100' rows='10' name='kunngjoring' ></textarea></br>");
-                out.println("<input type='submit' name='button' value='Opprett'></br>");
+                out.println("<input class='button' type='submit' name='button' value='Opprett'></br>");
                 out.println("</form>");        
             }
             
@@ -94,7 +94,7 @@ public class Kunngjøringer extends HttpServlet {
                     "INNER JOIN foreleser on kunngjøringer.foreleserId = foreleser.id WHERE kursId = '"+kursId+"'\n" +
                     "order by kunngjøringId DESC LIMIT 10 ");
             skrivKunngjøringListe(kunngjøringer, kursId, rs, query, session, out);
-            
+            query.close();
             try {
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Kunngjøringer", request.getParameter("kursId"), out);
@@ -104,7 +104,6 @@ public class Kunngjøringer extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-            query.close();
         }
     }
     
@@ -129,7 +128,7 @@ public class Kunngjøringer extends HttpServlet {
                     out.println("</div>");
             }
 
-            rs = null;          
+            rs = null;
         } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }

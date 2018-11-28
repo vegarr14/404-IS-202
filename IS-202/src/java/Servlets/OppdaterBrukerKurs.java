@@ -51,7 +51,7 @@ public class OppdaterBrukerKurs extends HttpServlet {
         //Legger til studenter i kurset            
         if(request.getParameter("leggTilStudenter") != null){
             if(request.getParameterValues("studenterIkkeIKurs") == null){
-                nullValue(response,kursId);
+                System.out.println("Value was null abort!");
             }else{          
                 idArray = request.getParameterValues("studenterIkkeIKurs");
                 for (int i = 0; i < idArray.length; i++){
@@ -59,14 +59,14 @@ public class OppdaterBrukerKurs extends HttpServlet {
                 }
                 values = String.join(",", idArray);
 
-                query.update("INSERT INTO TarKurs values"+values+"");
-                closeAndRedirect(response,kursId,query);
+                query.update("INSERT INTO TarKurs values"+values+"");        
             }
+            closeAndRedirect(response,kursId,query);
         }
         //fjerner studenter i kurset
         else if(request.getParameter("fjernStudenter") != null){
             if(request.getParameterValues("studenterIKurs") == null){
-                nullValue(response,kursId);
+                System.out.println("Value was null abort!");
             }else{ 
                 idArray = request.getParameterValues("studenterIKurs");
 
@@ -74,14 +74,14 @@ public class OppdaterBrukerKurs extends HttpServlet {
                 //Lager notifikasjoner
                 fjernetFraKursNot.getAndSetFjernetFraKurs(kursId, foreleserId, idArray);
                 
-                query.update("DELETE FROM TarKurs where studentId in ("+values+") AND kursId='"+kursId+"'");
-                closeAndRedirect(response,kursId,query);
+                query.update("DELETE FROM TarKurs where studentId in ("+values+") AND kursId='"+kursId+"'");          
             }
+            closeAndRedirect(response,kursId,query);
         }
         //Legger til forelesere i kurset
         else if(request.getParameter("leggTilForelesere") != null){
             if(request.getParameterValues("forelesereIkkeIKurs") == null){
-                nullValue(response,kursId);
+                System.out.println("Value was null abort!");
             }else{ 
                 idArray = request.getParameterValues("forelesereIkkeIKurs");
                 for (int i = 0; i < idArray.length; i++){
@@ -90,34 +90,29 @@ public class OppdaterBrukerKurs extends HttpServlet {
                 values = String.join(",", idArray);
                 
                 query.update("INSERT INTO ForeleserKurs values"+values+"");
-                closeAndRedirect(response,kursId,query);
             }
+            closeAndRedirect(response,kursId,query);
         }
         //Fjerner forelesere i kurset
         else if(request.getParameter("fjernForelesere") != null){
             if(request.getParameterValues("forelesereIKurs") == null){
-                nullValue(response,kursId);
+                System.out.println("Value was null abort!");
             }else{ 
                 idArray = request.getParameterValues("forelesereIKurs");
 
                 values = String.join(", ", idArray);
-                query.update("DELETE FROM ForeleserKurs where foreleserId in ("+values+") AND kursId='"+kursId+"'");
-                
-                closeAndRedirect(response,kursId,query);
+                query.update("DELETE FROM ForeleserKurs where foreleserId in ("+values+") AND kursId='"+kursId+"'");                        
             }
+            closeAndRedirect(response,kursId,query);
         }
-         
+        
+        query.close();
     }
     
-    private void nullValue(HttpServletResponse response, String kursId) throws IOException{
-       System.out.println("requested value was null, sent redirect"); 
-       response.sendRedirect("BrukerListeKurs?kursId="+URLEncoder.encode(kursId, "UTF-8")+"&redigerBrukere=true");
-    }
     private void closeAndRedirect(HttpServletResponse response, String kursId, Query query ) throws IOException{
-        query.close();
+
         //Sender bruker tilbake til oversikt
-        response.sendRedirect("BrukerListeKurs?kursId="+URLEncoder.encode(kursId, "UTF-8")+"&redigerBrukere=true");
-        
+        response.sendRedirect("BrukerListeKurs?kursId="+URLEncoder.encode(kursId, "UTF-8")+"&redigerBrukere=true");       
     }
 
 
