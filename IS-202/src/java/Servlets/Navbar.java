@@ -122,7 +122,6 @@ public class Navbar {
                 //Databasetilkobling
                 Query query = new Query();
                 ResultSet rs = null;
-                ResultSet rs2 = null;
                 
                 //velger tabell baser på om personen er student eller foreleser 
                 if(isForeleser){

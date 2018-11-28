@@ -68,7 +68,9 @@ public class Query {
             if (rs != null) {
                 rs.close();
             }
-            statement.close();
+            if (statement != null){
+                statement.close();
+            } 
             con.close();
             ctd.destroy();
         } catch (SQLException ex) {
