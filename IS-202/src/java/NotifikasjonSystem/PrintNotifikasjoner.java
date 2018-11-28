@@ -21,16 +21,14 @@ import javax.servlet.jsp.JspWriter;
  */
 public class PrintNotifikasjoner {
     
-    ResultSet rs = null;
-    Query query = new Query();
-    
     private String melding;
     private String timestamp;
 
     //Printer alle uleste notifikasjoner for den enkelte bruker
     public void printUleste(String id, String type, JspWriter JW, PrintWriter PW) throws IOException{
-        
-         ArrayList<String> notArray = new ArrayList<String>();
+        Query query = new Query();
+        ResultSet rs = null;
+        ArrayList<String> notArray = new ArrayList<String>();
         rs = query.query("Select * from notifikasjoner WHERE mottakerId="+id+" AND notUlest=1 order by notOpprettet desc");
      
         try {
@@ -65,6 +63,8 @@ public class PrintNotifikasjoner {
             
         } catch (SQLException ex) {
             Logger.getLogger(PrintNotifikasjoner.class.getName()).log(Level.SEVERE, null, ex);
+        }   finally {
+            query.close();
         }
         
         //velger type Writer og skriver ut navbar
@@ -84,8 +84,9 @@ public class PrintNotifikasjoner {
         
     }
     public void printLeste(String id, String type, JspWriter JW, PrintWriter PW) throws IOException{
-        
-         ArrayList<String> notArray = new ArrayList<String>();
+        ResultSet rs = null;
+        Query query = new Query();
+        ArrayList<String> notArray = new ArrayList<String>();
         rs = query.query("Select * from notifikasjoner WHERE mottakerId="+id+" AND notUlest=0 order by notOpprettet desc");
         
         try {          
@@ -120,6 +121,8 @@ public class PrintNotifikasjoner {
             
         } catch (SQLException ex) {
             Logger.getLogger(PrintNotifikasjoner.class.getName()).log(Level.SEVERE, null, ex);
+        }   finally {
+            query.close();
         }
         
         //velger type Writer og skriver ut navbar
@@ -148,6 +151,8 @@ public class PrintNotifikasjoner {
         String modulNummer;
         
         String s = "Error et eller annet";
+        Query query = new Query();
+        ResultSet rs = null;
         try {
             //notifikasjoner til modul
             if(notType.equals("nyModul") | notType.equals("oppdatertModul" ) | notType.equals("slettetModul")){
@@ -227,6 +232,7 @@ public class PrintNotifikasjoner {
     // Henter fornavn og etternavn til sender
     private String getSenderName(String table, int senderId) throws SQLException{
         ResultSet rs2 = null;
+        Query query = new Query();
         
         rs2 = query.query("Select forNavn, etterNavn from "+table+" where id="+senderId+"");
         rs2.next();

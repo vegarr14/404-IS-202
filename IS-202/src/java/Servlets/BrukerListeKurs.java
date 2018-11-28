@@ -82,7 +82,7 @@ public class BrukerListeKurs extends HttpServlet {
                 out.println("<b>Studenter:</b>");
                 bl.skrivListe(student, rs, query, out);
                 if(isForeleser){
-                    out.println("<button type='submit' onclick=\"window.location.href='BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true'\">Legg til/Fjern brukere</button>");
+                    out.println("<button class='button' type='submit' onclick=\"window.location.href='BrukerListeKurs?kursId="+kursId+"&redigerBrukere=true'\">Legg til/Fjern brukere</button>");
                 }
             } else{
                 out.println("<h2>Legg til eller fjern brukere fra "+kursId+"</h2>");

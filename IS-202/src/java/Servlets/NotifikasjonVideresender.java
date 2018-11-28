@@ -39,8 +39,6 @@ public class NotifikasjonVideresender extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        ResultSet rs = null;
-        Query query = new Query();
         
        String id = request.getParameter("id");
        String notId = request.getParameter("notId");
@@ -52,6 +50,8 @@ public class NotifikasjonVideresender extends HttpServlet {
        
        try {
        //Sender til riktig modul om typen er nyModul eller oppdatertModul eller slettetModul
+        ResultSet rs = null;
+        Query query = new Query();
         if(notType.equals("nyModul") | notType.equals("oppdatertModul") | notType.equals("slettetModul") | notType.equals("24hInnlevFrist")){
 
             if(notType.equals("slettetModul")){
@@ -80,15 +80,13 @@ public class NotifikasjonVideresender extends HttpServlet {
         else if(notType.equals("nyKunngjoring")){
             link = "Kunngjoringer?kursId="+notRefId;
         }
+        query.update("UPDATE notifikasjoner SET notUlest=0 WHERE notId="+notId+"");
+        query.close();
         
        } catch (SQLException ex) {
              Logger.getLogger(NotifikasjonVideresender.class.getName()).log(Level.SEVERE, null, ex);
        }
        
-       //Update notifikasjoner og Close query nice nice nice
-       //Setter notifikasjonen som lest
-       query.update("UPDATE notifikasjoner SET notUlest=0 WHERE notId="+notId+"");
-       query.close();
        //Sender redirect
        response.sendRedirect(link);
     }

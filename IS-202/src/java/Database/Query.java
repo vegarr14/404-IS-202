@@ -7,7 +7,6 @@ package Database;
 
 import Servlets.Login;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.sql.*;
 import java.sql.SQLException;
 import java.util.logging.Level;

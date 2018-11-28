@@ -147,14 +147,12 @@ public class BrukerListe extends HttpServlet {
             //Forelesere
             out.println("<b>Forelesere:</b>"); 
             skrivListe(foreleser, rs, query, out);
-              
             //Srudenter
             out.println("<b>Studenter:</b>");
             skrivListe(student, rs, query, out);
-
             out.println("<form name='LeggTilBruker' action='LeggTilBruker' method='post'>");
             if(isForeleser){
-                out.println("<button type='submit'>Legg til bruker</button>");
+                out.println("<button class='button' type='submit'>Legg til bruker</button>");
             }
             out.println("</form>");
             out.println("</div>");
@@ -167,12 +165,12 @@ public class BrukerListe extends HttpServlet {
     public void skrivListe(String statement, ResultSet rs, Query query, PrintWriter out) {
         try {
             rs = query.query(statement);
-            out.println("<u1>");
+            out.println("<u1><hr>");
             //Skriver ut felt en og to for hver rad i query + setter et felt lik id til bruker som sendes videre hvis noen skal endre informasjonen om en bruker
             while(rs.next()){
-                out.println("<li> <a href ='LeggTilBruker?id="+rs.getString(3)+"'>" + rs.getString(3) +". "+ rs.getString(1) + " " + rs.getString(2) + "</a></li>");
+                out.println("<li class='brukere'> <a href ='LeggTilBruker?id="+rs.getString(3)+"'>" + rs.getString(3) +". "+ rs.getString(1) + " " + rs.getString(2) + "</a></li>");
             }
-            out.println("</u1>");
+            out.println("</u1></br>");
             rs = null;
             
         } catch (SQLException ex) {
