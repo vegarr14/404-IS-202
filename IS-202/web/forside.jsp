@@ -3,6 +3,7 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
+<%@page import="Klasser.Gjoremaal"%>
 <%@page import="Klasser.Kjeks"%>
 <%@page import="Database.KalenderHendelse"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
@@ -56,13 +57,22 @@
             kjeks.emptyCookie(request, response);
             kjeks.makeCookie(request, response);
         %>
+        <div class='titleBox'>
+            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn")+"</h1>");%> 
+        </div>
+
         <div class='calDiv'>
             <input class='button' id='prevMonthButton' type='submit' name='prevMonthButton' value='Forrige måned'/>
             <input class='button' id='nextMonthButton' type='submit' name='nextMonthButton' value='Neste måned'/>
             <div id='calendar'></div>
         </div>
-        <div class='titleBox'>
-            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn")+"</h1>");%>            
+                <div class='gjoremalDiv'>
+            <h2>Dine gjøremål</h2>
+            <hr>
+            <% 
+              Gjoremaal gm = new Gjoremaal();
+              gm.printGjoremaal(id, out);
+            %>
         </div>
         <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner
