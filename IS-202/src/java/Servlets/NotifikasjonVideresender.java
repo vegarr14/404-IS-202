@@ -80,6 +80,8 @@ public class NotifikasjonVideresender extends HttpServlet {
         else if(notType.equals("nyKunngjoring")){
             link = "Kunngjoringer?kursId="+notRefId;
         }
+       //Update notifikasjoner og Close query nice nice nice
+       //Setter notifikasjonen som lest
         query.update("UPDATE notifikasjoner SET notUlest=0 WHERE notId="+notId+"");
         query.close();
         
