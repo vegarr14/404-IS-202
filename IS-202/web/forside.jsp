@@ -62,11 +62,17 @@
         </div>
 
         <div class='calDiv'>
+            <div class="buttonsDiv">
             <input class='button' id='prevMonthButton' type='submit' name='prevMonthButton' value='Forrige måned'/>
+            <h2>Kalender</h2>
             <input class='button' id='nextMonthButton' type='submit' name='nextMonthButton' value='Neste måned'/>
+            </div>
             <div id='calendar'></div>
         </div>
-                <div class='gjoremalDiv'>
+        <%
+         if(!isForeleser){          
+         %>
+        <div class='gjoremalDiv'>
             <h2>Dine gjøremål</h2>
             <hr>
             <% 
@@ -74,6 +80,7 @@
               gm.printGjoremaal(id, out);
             %>
         </div>
+        <%}%>
         <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner
                PrintNotifikasjoner printNotifikasjoner = new PrintNotifikasjoner();

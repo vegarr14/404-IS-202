@@ -89,7 +89,6 @@ li,ul  {
     width: 46%;
     padding: 10px;
     text-align: center;
-    color: orange;
 }
 .notifikasjoner{
     background-color: #ffffff;
@@ -114,8 +113,10 @@ li,ul  {
     position: absolute;
     right: 0;
     margin-right: 25px;
-    top: 100px;
-    width: 400px;
+    top: 220px;
+    width: 500px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 #notMiddle{
     padding: 10px;
@@ -168,7 +169,7 @@ b   {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     padding: 5px;
     text-align: center;
-    width: 300px;
+    width: 400px;
 }
 
 .gjoremalDiv a{
