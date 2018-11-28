@@ -68,7 +68,12 @@ public class NotifikasjonVideresender extends HttpServlet {
             }
         }
         else if(notType.equals("nyInnlevering") | notType.equals("InnlevRettet")){
-            link = "Innlevering?innlevId="+notRefId;
+            
+            String kursId = "";
+            rs = query.query("Select kursId from modul where modulId in (select modulId from innlevering where innlevId="+notRefId+")");
+            rs.next();
+            kursId = rs.getString(1);
+            link = "Innlevering?innlevId="+notRefId+"&kursId="+kursId;
         }
         //sender en tom link altså fortsatt på samme side
         else if(notType.equals("fjernetFraKurs")){
