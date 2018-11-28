@@ -3,6 +3,7 @@
     Created on : 26.sep.2018, 09:34:54
     Author     : Erlend Thorsen
 --%>
+<%@page import="Klasser.Gjoremaal"%>
 <%@page import="Servlets.Kjeks"%>
 <%@page import="NotifikasjonSystem.PrintNotifikasjoner"%>
 <%@page import="Servlets.Navbar"%>
@@ -35,11 +36,16 @@
             kjeks.emptyCookie(request, response);
             kjeks.makeCookie(request, response);
         %>
-        <div class='velkommen'>
-            <h1>Under Construction</h1>
-            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn") + " din id: " + id +"</h1>");%>
-            <h2>Her kommmer det snart mye gøy<br>Vennligst sjekk igjen senere</h2>
-            
+        <div class='titleBox'>
+            <% out.println("<h1>Velkommen " + session.getAttribute("fornavn") + " " + session.getAttribute("etternavn")+"</h1>");%> 
+        </div>
+        <div class='gjoremalDiv'>
+            <h2>Dine gjøremål</h2>
+            <hr>
+            <% 
+              Gjoremaal gm = new Gjoremaal();
+              gm.printGjoremaal(id, out);
+            %>
         </div>
         <div class='notifikasjoner' id='notRight'>    
            <% //Printer uleste notifikasjoner

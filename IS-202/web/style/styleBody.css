@@ -89,12 +89,14 @@ li,ul  {
     width: 50%;
     padding: 10px;
     text-align: center;
+    color: orange;
 }
 .notifikasjoner{
     background-color: #ffffff;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     padding: 5px;
     text-align: center;
+    color: orange;
     
 }
 .notifikasjoner p{
@@ -140,4 +142,29 @@ li,ul  {
 
 #bottomInfo{
     margin-top: 10px;
+}
+
+.gjoremalDiv  {
+    
+    margin: auto;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    padding: 5px;
+    text-align: center;
+    width: 300px;
+}
+
+.gjoremalDiv a{
+    color: black;
+    font-size: 20px;
+    text-decoration: none;
+}
+.gjoremalDiv a:hover{
+    color: orange;
+}
+
+.gjoremalDiv h2 {
+    color: orange;
+    
 }
