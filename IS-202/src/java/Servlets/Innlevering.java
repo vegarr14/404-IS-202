@@ -86,6 +86,7 @@ public class Innlevering extends HttpServlet {
             }
             printInnlevering(request, response, session, out, innlevId);
             out.println("</div>");
+            query.close();
         }
     }
     
@@ -161,7 +162,7 @@ public class Innlevering extends HttpServlet {
                     + "ny kommentar: <br>"
                     + "<input type='hidden' name='innlevId' value='"+innlevId+"'>"
                     + "<input type='hidden' name='kursId' value='"+kursId+"'>"
-                    + "<textarea name='kommentar' rows='5'> </textarea><br>"
+                    + "<textarea name='kommentar' rows='5'></textarea><br>"
                     + "<input type='submit' class='button' name='submitKommentar' value='oppdater'> <br></form>");
             
             out.println("Kommentarer: <br><br>");
