@@ -145,14 +145,14 @@ public class PrintNotifikasjoner {
     //Produserer melding basert på type, sender og hvor den blir referert til
     private String produserMelding(String notType, int senderId, String notReferererId){
         
-        ResultSet rs2 = null;
+        ResultSet rs = null;
         String senderNavn;
         String kursId;
         String modulNummer;
         
         String s = "Error et eller annet";
         Query query = new Query();
-        ResultSet rs = null;
+        rs = null;
         try {
             //notifikasjoner til modul
             if(notType.equals("nyModul") | notType.equals("oppdatertModul" ) | notType.equals("slettetModul")){
@@ -166,7 +166,7 @@ public class PrintNotifikasjoner {
                     rs = query.query("Select kursId, modulNummer from modul where modulId="+notReferererId+"");
                     rs.next();
                     kursId = rs.getString(1);
-                    modulNummer = rs2.getString(2);
+                    modulNummer = rs.getString(2);
 
                     if(notType.equals("nyModul")){
                         s = senderNavn + " har opprettet en ny modul i " + kursId + "<br> Modul " + modulNummer;
