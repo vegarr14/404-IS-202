@@ -39,8 +39,6 @@ public class Innstillinger extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            ResultSet rs = null;
-            Query query = new Query();
             
             Navbar navbar = new Navbar();
             HttpSession session = request.getSession();
@@ -82,6 +80,8 @@ public class Innstillinger extends HttpServlet {
                 }
                 //endrer kontaktinformasjon Kjører sql query
                 else if(request.getParameter("endreKontaktInfo") != null){
+                    ResultSet rs = null;
+                    Query query = new Query();
                     String table = "student";
                     if(isForeleser){
                         table = "foreleser";
