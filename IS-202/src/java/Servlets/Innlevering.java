@@ -117,12 +117,12 @@ public class Innlevering extends HttpServlet {
                 }
                 poeng(rs,out,(boolean)session.getAttribute("isForeleser"), request.getParameter("kursId"));
                 
-                
                 kommentarer(query, innlevId, out, request.getParameter("kursId"));
                 
                 Navbar navbar = new Navbar();
                 navbar.printLeftSidebar("Moduler", request.getParameter("kursId"), out);
                 navbar.printNavbar("Kurs", (String)session.getAttribute("id"),(boolean)session.getAttribute("isForeleser"), out);
+                query.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
