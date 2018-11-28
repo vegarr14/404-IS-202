@@ -67,7 +67,7 @@ public class Query {
             if (rs != null) {
                 rs.close();
             }
-            if  (statement!=null)  {
+            if  (statement != null)  {
                 statement.close();
             }
             con.close();

@@ -26,8 +26,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "BrukerListeKurs", urlPatterns = {"/BrukerListeKurs"})
 public class BrukerListeKurs extends HttpServlet {
     
-    ResultSet rs = null;
-    Query query = new Query();
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,6 +44,9 @@ public class BrukerListeKurs extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             BrukerListe bl = new BrukerListe();
+            
+            ResultSet rs = null;
+            Query query = new Query();
             
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -93,7 +95,7 @@ public class BrukerListeKurs extends HttpServlet {
                 out.println("<div class='selectBrukere'>");
                 out.println("<label>Alle Studenter</label>");
                 out.println("<select name='studenterIkkeIKurs' size='15' multiple>");
-                printStudenterIkkeIKurs(kursId,out);
+                printStudenterIkkeIKurs(kursId,out,rs,query);
                 out.println("</select>");
                 out.println("</div>");
                 //Skriver UT Knapper
@@ -105,7 +107,7 @@ public class BrukerListeKurs extends HttpServlet {
                 out.println("<div class='selectBrukere'>");
                 out.println("<label>Studenter i Kurset</label>");
                 out.println("<select name='studenterIKurs' size='15' multiple>");
-                printStudenterIKurs(kursId,out);
+                printStudenterIKurs(kursId,out,rs,query);
                 out.println("</select>");
                 out.println("</div>");
                 out.println("</div>");
@@ -114,7 +116,7 @@ public class BrukerListeKurs extends HttpServlet {
                 out.println("<div class='selectBrukere'>");
                 out.println("<label>Alle Forelesere</label>");
                 out.println("<select name='forelesereIkkeIKurs' size='5' multiple>");
-                printForelesereIkkeIKurs(kursId,out);
+                printForelesereIkkeIKurs(kursId,out,rs,query);
                 out.println("</select>");
                 out.println("</div>");
                 //Skriver ut knapper
@@ -126,7 +128,7 @@ public class BrukerListeKurs extends HttpServlet {
                 out.println("<div class='selectBrukere'>");
                 out.println("<label>Forelesere i Kurset</label>");
                 out.println("<select name='forelesereIKurs' size='5' multiple>");
-                printForelesereIKurs(kursId,out);
+                printForelesereIKurs(kursId,out,rs,query);
                 out.println("</select>");
                 out.println("</div>");
                 out.println("</div>");
@@ -148,44 +150,35 @@ public class BrukerListeKurs extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             
-            /*
-            try {
-                if(rs.next()){
-                    query.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(BrukerListeKurs.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-                
+            query.close();
         }
     }
     
-    private void printStudenterIkkeIKurs(String kursId, PrintWriter out){
+    private void printStudenterIkkeIKurs(String kursId, PrintWriter out, ResultSet rs, Query query){
         //Printer Alle studenter som ikke er i kurset til <option>
         rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id NOT IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
-        printOption(out);      
+        printOption(out,rs);      
     }
 
-    private void printStudenterIKurs(String kursId, PrintWriter out){
+    private void printStudenterIKurs(String kursId, PrintWriter out, ResultSet rs, Query query){
         //Printer Alle studenter som er i kurset til <option>
         rs = query.query("SELECT id, forNavn, etterNavn FROM Student WHERE id IN(SELECT studentId FROM TarKurs where kursId='"+kursId+"')");
-        printOption(out);        
+        printOption(out,rs);        
     }
     
-    private void printForelesereIkkeIKurs(String kursId, PrintWriter out){
+    private void printForelesereIkkeIKurs(String kursId, PrintWriter out, ResultSet rs, Query query){
         //Printer Alle forelesere som ikke er i kurset til en <option>
         rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id NOT IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
-        printOption(out);
+        printOption(out,rs);
     }
     
-    private void printForelesereIKurs(String kursId, PrintWriter out){
+    private void printForelesereIKurs(String kursId, PrintWriter out, ResultSet rs, Query query){
         //Printer Alle forelesere som er i kurset til en <option>
         rs = query.query("SELECT id, forNavn, etterNavn FROM Foreleser WHERE id IN(SELECT foreleserId FROM foreleserKurs where kursId='"+kursId+"')");
-        printOption(out);       
+        printOption(out,rs);       
     }
         
-    private void printOption(PrintWriter out){
+    private void printOption(PrintWriter out, ResultSet rs){
         //Skriver ut resultset til <option>
         try {
             String id = null;
