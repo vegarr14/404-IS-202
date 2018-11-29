@@ -62,16 +62,12 @@ public class OpprettGruppe extends HttpServlet {
 
             if (!kursId.equals("null")) {
                 out.println("<div class='mainContent'>");
-                navbar.printLeftSidebar("Grupper", kursId, out);           
+                navbar.printLeftSidebar("Grupper", kursId, out);   
+                out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
             }
             else {
                 out.println("<div class='velkommen'>");  
-            }
-
-            if (!kursId.equals("null")){
-            out.println("<form name='GruppeListe' action='GruppeListe?kursId="+kursId+"&id=OpprettGruppe' method='post'>");
-            }   
-            else {out.println("<form name='GruppeListe' action='GruppeListe' method='post'>");         
+                out.println("<form name='GruppeListe' action='GruppeListe' method='post'>"); 
             }
             
             Query query = new Query();
